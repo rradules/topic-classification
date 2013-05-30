@@ -21,13 +21,13 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Roxana Radulescu <roxana.radulescu07@gmail.com>
  */
 @Entity
-@Table(name = "keywords")
+@Table(name = "keyword")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Keywords.findAll", query = "SELECT k FROM Keywords k"),
-    @NamedQuery(name = "Keywords.findByIdKeyword", query = "SELECT k FROM Keywords k WHERE k.idKeyword = :idKeyword"),
-    @NamedQuery(name = "Keywords.findByKeyword", query = "SELECT k FROM Keywords k WHERE k.keyword = :keyword")})
-public class Keywords implements Serializable {
+    @NamedQuery(name = "Keyword.findAll", query = "SELECT k FROM Keyword k"),
+    @NamedQuery(name = "Keyword.findByIdKeyword", query = "SELECT k FROM Keyword k WHERE k.idKeyword = :idKeyword"),
+    @NamedQuery(name = "Keyword.findByKeyword", query = "SELECT k FROM Keyword k WHERE k.keyword = :keyword")})
+public class Keyword implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -37,12 +37,12 @@ public class Keywords implements Serializable {
     private String keyword;
     @JoinColumn(name = "Id_Category", referencedColumnName = "Id_Category")
     @ManyToOne
-    private Categories idCategory;
+    private Category idCategory;
 
-    public Keywords() {
+    public Keyword() {
     }
 
-    public Keywords(Integer idKeyword) {
+    public Keyword(Integer idKeyword) {
         this.idKeyword = idKeyword;
     }
 
@@ -62,11 +62,11 @@ public class Keywords implements Serializable {
         this.keyword = keyword;
     }
 
-    public Categories getIdCategory() {
+    public Category getIdCategory() {
         return idCategory;
     }
 
-    public void setIdCategory(Categories idCategory) {
+    public void setIdCategory(Category idCategory) {
         this.idCategory = idCategory;
     }
 
@@ -80,10 +80,10 @@ public class Keywords implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Keywords)) {
+        if (!(object instanceof Keyword)) {
             return false;
         }
-        Keywords other = (Keywords) object;
+        Keyword other = (Keyword) object;
         if ((this.idKeyword == null && other.idKeyword != null) || (this.idKeyword != null && !this.idKeyword.equals(other.idKeyword))) {
             return false;
         }
@@ -92,7 +92,7 @@ public class Keywords implements Serializable {
 
     @Override
     public String toString() {
-        return "model.Keywords[ idKeyword=" + idKeyword + " ]";
+        return "model.Keyword[ idKeyword=" + idKeyword + " ]";
     }
     
 }

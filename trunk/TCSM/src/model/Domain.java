@@ -58,7 +58,7 @@ public class Domain implements Serializable {
     private Collection<Blogroll> blogrollCollection;
     @JoinColumn(name = "Id_Location", referencedColumnName = "Id_Location")
     @ManyToOne
-    private Locations idLocation;
+    private Location idLocation;
     @OneToMany(mappedBy = "idDomain")
     private Collection<Blogpost> blogpostCollection;
     @OneToMany(mappedBy = "idDomain")
@@ -128,11 +128,11 @@ public class Domain implements Serializable {
         this.blogrollCollection = blogrollCollection;
     }
 
-    public Locations getIdLocation() {
+    public Location getIdLocation() {
         return idLocation;
     }
 
-    public void setIdLocation(Locations idLocation) {
+    public void setIdLocation(Location idLocation) {
         this.idLocation = idLocation;
     }
 

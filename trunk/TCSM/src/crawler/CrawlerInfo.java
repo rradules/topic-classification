@@ -59,7 +59,7 @@ public class CrawlerInfo {
         this.logFile = logFile;
     }
 
-    public void search(final String logFile, final String startUrl,
+    public void search(final String startUrl,
             final int maxUrls) {
         // Start the search in a new thread.
         Thread thread = new Thread(new Runnable() {
@@ -120,14 +120,12 @@ public class CrawlerInfo {
 
             // Remove URL from the to crawl list.
             toCrawlList.remove(url);
-
             url = linkRetrieval.removeWwwFromUrl(url);
 
             // Convert string url to URL object.
             URL verifiedUrl = linkRetrieval.verifyUrl(url);
 
             // Skip URL if robots are not allowed to access it.
-
             if (!roboParser.isRobotAllowed(verifiedUrl)) {
                 continue;
             }
@@ -141,6 +139,13 @@ public class CrawlerInfo {
              links and then see if it contains the search string. */
             try {
                 doc = Jsoup.connect(verifiedUrl.toString()).get();
+
+                // Add verified URL to log file.
+                try {
+                    logFileWriter.println(verifiedUrl);
+                } catch (Exception e) {
+                    showError("Unable to log match.");
+                }
 
                 // Retrieve list of valid links from page.
                 ArrayList<String> links = linkRetrieval.retrieveLinks(verifiedUrl, crawledList, limitHost);

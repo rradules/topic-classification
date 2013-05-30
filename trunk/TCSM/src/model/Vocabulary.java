@@ -37,7 +37,7 @@ public class Vocabulary implements Serializable {
     private String word;
     @JoinColumn(name = "Id_Stem", referencedColumnName = "Id_Stem")
     @ManyToOne
-    private Stems idStem;
+    private Stem idStem;
 
     public Vocabulary() {
     }
@@ -62,11 +62,11 @@ public class Vocabulary implements Serializable {
         this.word = word;
     }
 
-    public Stems getIdStem() {
+    public Stem getIdStem() {
         return idStem;
     }
 
-    public void setIdStem(Stems idStem) {
+    public void setIdStem(Stem idStem) {
         this.idStem = idStem;
     }
 

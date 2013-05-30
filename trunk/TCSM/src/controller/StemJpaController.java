@@ -17,15 +17,15 @@ import java.util.Collection;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import model.Stems;
+import model.Stem;
 
 /**
  *
  * @author Roxana Radulescu <roxana.radulescu07@gmail.com>
  */
-public class StemsJpaController implements Serializable {
+public class StemJpaController implements Serializable {
 
-    public StemsJpaController(EntityManagerFactory emf) {
+    public StemJpaController(EntityManagerFactory emf) {
         this.emf = emf;
     }
     private EntityManagerFactory emf = null;
@@ -34,24 +34,24 @@ public class StemsJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(Stems stems) throws PreexistingEntityException, Exception {
-        if (stems.getVocabularyCollection() == null) {
-            stems.setVocabularyCollection(new ArrayList<Vocabulary>());
+    public void create(Stem stem) throws PreexistingEntityException, Exception {
+        if (stem.getVocabularyCollection() == null) {
+            stem.setVocabularyCollection(new ArrayList<Vocabulary>());
         }
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
             Collection<Vocabulary> attachedVocabularyCollection = new ArrayList<Vocabulary>();
-            for (Vocabulary vocabularyCollectionVocabularyToAttach : stems.getVocabularyCollection()) {
+            for (Vocabulary vocabularyCollectionVocabularyToAttach : stem.getVocabularyCollection()) {
                 vocabularyCollectionVocabularyToAttach = em.getReference(vocabularyCollectionVocabularyToAttach.getClass(), vocabularyCollectionVocabularyToAttach.getIdVocabulary());
                 attachedVocabularyCollection.add(vocabularyCollectionVocabularyToAttach);
             }
-            stems.setVocabularyCollection(attachedVocabularyCollection);
-            em.persist(stems);
-            for (Vocabulary vocabularyCollectionVocabulary : stems.getVocabularyCollection()) {
-                Stems oldIdStemOfVocabularyCollectionVocabulary = vocabularyCollectionVocabulary.getIdStem();
-                vocabularyCollectionVocabulary.setIdStem(stems);
+            stem.setVocabularyCollection(attachedVocabularyCollection);
+            em.persist(stem);
+            for (Vocabulary vocabularyCollectionVocabulary : stem.getVocabularyCollection()) {
+                Stem oldIdStemOfVocabularyCollectionVocabulary = vocabularyCollectionVocabulary.getIdStem();
+                vocabularyCollectionVocabulary.setIdStem(stem);
                 vocabularyCollectionVocabulary = em.merge(vocabularyCollectionVocabulary);
                 if (oldIdStemOfVocabularyCollectionVocabulary != null) {
                     oldIdStemOfVocabularyCollectionVocabulary.getVocabularyCollection().remove(vocabularyCollectionVocabulary);
@@ -60,8 +60,8 @@ public class StemsJpaController implements Serializable {
             }
             em.getTransaction().commit();
         } catch (Exception ex) {
-            if (findStems(stems.getIdStem()) != null) {
-                throw new PreexistingEntityException("Stems " + stems + " already exists.", ex);
+            if (findStem(stem.getIdStem()) != null) {
+                throw new PreexistingEntityException("Stem " + stem + " already exists.", ex);
             }
             throw ex;
         } finally {
@@ -71,22 +71,22 @@ public class StemsJpaController implements Serializable {
         }
     }
 
-    public void edit(Stems stems) throws NonexistentEntityException, Exception {
+    public void edit(Stem stem) throws NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Stems persistentStems = em.find(Stems.class, stems.getIdStem());
-            Collection<Vocabulary> vocabularyCollectionOld = persistentStems.getVocabularyCollection();
-            Collection<Vocabulary> vocabularyCollectionNew = stems.getVocabularyCollection();
+            Stem persistentStem = em.find(Stem.class, stem.getIdStem());
+            Collection<Vocabulary> vocabularyCollectionOld = persistentStem.getVocabularyCollection();
+            Collection<Vocabulary> vocabularyCollectionNew = stem.getVocabularyCollection();
             Collection<Vocabulary> attachedVocabularyCollectionNew = new ArrayList<Vocabulary>();
             for (Vocabulary vocabularyCollectionNewVocabularyToAttach : vocabularyCollectionNew) {
                 vocabularyCollectionNewVocabularyToAttach = em.getReference(vocabularyCollectionNewVocabularyToAttach.getClass(), vocabularyCollectionNewVocabularyToAttach.getIdVocabulary());
                 attachedVocabularyCollectionNew.add(vocabularyCollectionNewVocabularyToAttach);
             }
             vocabularyCollectionNew = attachedVocabularyCollectionNew;
-            stems.setVocabularyCollection(vocabularyCollectionNew);
-            stems = em.merge(stems);
+            stem.setVocabularyCollection(vocabularyCollectionNew);
+            stem = em.merge(stem);
             for (Vocabulary vocabularyCollectionOldVocabulary : vocabularyCollectionOld) {
                 if (!vocabularyCollectionNew.contains(vocabularyCollectionOldVocabulary)) {
                     vocabularyCollectionOldVocabulary.setIdStem(null);
@@ -95,10 +95,10 @@ public class StemsJpaController implements Serializable {
             }
             for (Vocabulary vocabularyCollectionNewVocabulary : vocabularyCollectionNew) {
                 if (!vocabularyCollectionOld.contains(vocabularyCollectionNewVocabulary)) {
-                    Stems oldIdStemOfVocabularyCollectionNewVocabulary = vocabularyCollectionNewVocabulary.getIdStem();
-                    vocabularyCollectionNewVocabulary.setIdStem(stems);
+                    Stem oldIdStemOfVocabularyCollectionNewVocabulary = vocabularyCollectionNewVocabulary.getIdStem();
+                    vocabularyCollectionNewVocabulary.setIdStem(stem);
                     vocabularyCollectionNewVocabulary = em.merge(vocabularyCollectionNewVocabulary);
-                    if (oldIdStemOfVocabularyCollectionNewVocabulary != null && !oldIdStemOfVocabularyCollectionNewVocabulary.equals(stems)) {
+                    if (oldIdStemOfVocabularyCollectionNewVocabulary != null && !oldIdStemOfVocabularyCollectionNewVocabulary.equals(stem)) {
                         oldIdStemOfVocabularyCollectionNewVocabulary.getVocabularyCollection().remove(vocabularyCollectionNewVocabulary);
                         oldIdStemOfVocabularyCollectionNewVocabulary = em.merge(oldIdStemOfVocabularyCollectionNewVocabulary);
                     }
@@ -108,9 +108,9 @@ public class StemsJpaController implements Serializable {
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                Integer id = stems.getIdStem();
-                if (findStems(id) == null) {
-                    throw new NonexistentEntityException("The stems with id " + id + " no longer exists.");
+                Integer id = stem.getIdStem();
+                if (findStem(id) == null) {
+                    throw new NonexistentEntityException("The stem with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -126,19 +126,19 @@ public class StemsJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Stems stems;
+            Stem stem;
             try {
-                stems = em.getReference(Stems.class, id);
-                stems.getIdStem();
+                stem = em.getReference(Stem.class, id);
+                stem.getIdStem();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The stems with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The stem with id " + id + " no longer exists.", enfe);
             }
-            Collection<Vocabulary> vocabularyCollection = stems.getVocabularyCollection();
+            Collection<Vocabulary> vocabularyCollection = stem.getVocabularyCollection();
             for (Vocabulary vocabularyCollectionVocabulary : vocabularyCollection) {
                 vocabularyCollectionVocabulary.setIdStem(null);
                 vocabularyCollectionVocabulary = em.merge(vocabularyCollectionVocabulary);
             }
-            em.remove(stems);
+            em.remove(stem);
             em.getTransaction().commit();
         } finally {
             if (em != null) {
@@ -147,19 +147,19 @@ public class StemsJpaController implements Serializable {
         }
     }
 
-    public List<Stems> findStemsEntities() {
-        return findStemsEntities(true, -1, -1);
+    public List<Stem> findStemEntities() {
+        return findStemEntities(true, -1, -1);
     }
 
-    public List<Stems> findStemsEntities(int maxResults, int firstResult) {
-        return findStemsEntities(false, maxResults, firstResult);
+    public List<Stem> findStemEntities(int maxResults, int firstResult) {
+        return findStemEntities(false, maxResults, firstResult);
     }
 
-    private List<Stems> findStemsEntities(boolean all, int maxResults, int firstResult) {
+    private List<Stem> findStemEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            cq.select(cq.from(Stems.class));
+            cq.select(cq.from(Stem.class));
             Query q = em.createQuery(cq);
             if (!all) {
                 q.setMaxResults(maxResults);
@@ -171,20 +171,20 @@ public class StemsJpaController implements Serializable {
         }
     }
 
-    public Stems findStems(Integer id) {
+    public Stem findStem(Integer id) {
         EntityManager em = getEntityManager();
         try {
-            return em.find(Stems.class, id);
+            return em.find(Stem.class, id);
         } finally {
             em.close();
         }
     }
 
-    public int getStemsCount() {
+    public int getStemCount() {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            Root<Stems> rt = cq.from(Stems.class);
+            Root<Stem> rt = cq.from(Stem.class);
             cq.select(em.getCriteriaBuilder().count(rt));
             Query q = em.createQuery(cq);
             return ((Long) q.getSingleResult()).intValue();

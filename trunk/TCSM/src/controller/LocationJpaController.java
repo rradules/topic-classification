@@ -17,15 +17,15 @@ import java.util.Collection;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import model.Locations;
+import model.Location;
 
 /**
  *
  * @author Roxana Radulescu <roxana.radulescu07@gmail.com>
  */
-public class LocationsJpaController implements Serializable {
+public class LocationJpaController implements Serializable {
 
-    public LocationsJpaController(EntityManagerFactory emf) {
+    public LocationJpaController(EntityManagerFactory emf) {
         this.emf = emf;
     }
     private EntityManagerFactory emf = null;
@@ -34,24 +34,24 @@ public class LocationsJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(Locations locations) throws PreexistingEntityException, Exception {
-        if (locations.getDomainCollection() == null) {
-            locations.setDomainCollection(new ArrayList<Domain>());
+    public void create(Location location) throws PreexistingEntityException, Exception {
+        if (location.getDomainCollection() == null) {
+            location.setDomainCollection(new ArrayList<Domain>());
         }
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
             Collection<Domain> attachedDomainCollection = new ArrayList<Domain>();
-            for (Domain domainCollectionDomainToAttach : locations.getDomainCollection()) {
+            for (Domain domainCollectionDomainToAttach : location.getDomainCollection()) {
                 domainCollectionDomainToAttach = em.getReference(domainCollectionDomainToAttach.getClass(), domainCollectionDomainToAttach.getIdDomain());
                 attachedDomainCollection.add(domainCollectionDomainToAttach);
             }
-            locations.setDomainCollection(attachedDomainCollection);
-            em.persist(locations);
-            for (Domain domainCollectionDomain : locations.getDomainCollection()) {
-                Locations oldIdLocationOfDomainCollectionDomain = domainCollectionDomain.getIdLocation();
-                domainCollectionDomain.setIdLocation(locations);
+            location.setDomainCollection(attachedDomainCollection);
+            em.persist(location);
+            for (Domain domainCollectionDomain : location.getDomainCollection()) {
+                Location oldIdLocationOfDomainCollectionDomain = domainCollectionDomain.getIdLocation();
+                domainCollectionDomain.setIdLocation(location);
                 domainCollectionDomain = em.merge(domainCollectionDomain);
                 if (oldIdLocationOfDomainCollectionDomain != null) {
                     oldIdLocationOfDomainCollectionDomain.getDomainCollection().remove(domainCollectionDomain);
@@ -60,8 +60,8 @@ public class LocationsJpaController implements Serializable {
             }
             em.getTransaction().commit();
         } catch (Exception ex) {
-            if (findLocations(locations.getIdLocation()) != null) {
-                throw new PreexistingEntityException("Locations " + locations + " already exists.", ex);
+            if (findLocation(location.getIdLocation()) != null) {
+                throw new PreexistingEntityException("Location " + location + " already exists.", ex);
             }
             throw ex;
         } finally {
@@ -71,22 +71,22 @@ public class LocationsJpaController implements Serializable {
         }
     }
 
-    public void edit(Locations locations) throws NonexistentEntityException, Exception {
+    public void edit(Location location) throws NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Locations persistentLocations = em.find(Locations.class, locations.getIdLocation());
-            Collection<Domain> domainCollectionOld = persistentLocations.getDomainCollection();
-            Collection<Domain> domainCollectionNew = locations.getDomainCollection();
+            Location persistentLocation = em.find(Location.class, location.getIdLocation());
+            Collection<Domain> domainCollectionOld = persistentLocation.getDomainCollection();
+            Collection<Domain> domainCollectionNew = location.getDomainCollection();
             Collection<Domain> attachedDomainCollectionNew = new ArrayList<Domain>();
             for (Domain domainCollectionNewDomainToAttach : domainCollectionNew) {
                 domainCollectionNewDomainToAttach = em.getReference(domainCollectionNewDomainToAttach.getClass(), domainCollectionNewDomainToAttach.getIdDomain());
                 attachedDomainCollectionNew.add(domainCollectionNewDomainToAttach);
             }
             domainCollectionNew = attachedDomainCollectionNew;
-            locations.setDomainCollection(domainCollectionNew);
-            locations = em.merge(locations);
+            location.setDomainCollection(domainCollectionNew);
+            location = em.merge(location);
             for (Domain domainCollectionOldDomain : domainCollectionOld) {
                 if (!domainCollectionNew.contains(domainCollectionOldDomain)) {
                     domainCollectionOldDomain.setIdLocation(null);
@@ -95,10 +95,10 @@ public class LocationsJpaController implements Serializable {
             }
             for (Domain domainCollectionNewDomain : domainCollectionNew) {
                 if (!domainCollectionOld.contains(domainCollectionNewDomain)) {
-                    Locations oldIdLocationOfDomainCollectionNewDomain = domainCollectionNewDomain.getIdLocation();
-                    domainCollectionNewDomain.setIdLocation(locations);
+                    Location oldIdLocationOfDomainCollectionNewDomain = domainCollectionNewDomain.getIdLocation();
+                    domainCollectionNewDomain.setIdLocation(location);
                     domainCollectionNewDomain = em.merge(domainCollectionNewDomain);
-                    if (oldIdLocationOfDomainCollectionNewDomain != null && !oldIdLocationOfDomainCollectionNewDomain.equals(locations)) {
+                    if (oldIdLocationOfDomainCollectionNewDomain != null && !oldIdLocationOfDomainCollectionNewDomain.equals(location)) {
                         oldIdLocationOfDomainCollectionNewDomain.getDomainCollection().remove(domainCollectionNewDomain);
                         oldIdLocationOfDomainCollectionNewDomain = em.merge(oldIdLocationOfDomainCollectionNewDomain);
                     }
@@ -108,9 +108,9 @@ public class LocationsJpaController implements Serializable {
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                Integer id = locations.getIdLocation();
-                if (findLocations(id) == null) {
-                    throw new NonexistentEntityException("The locations with id " + id + " no longer exists.");
+                Integer id = location.getIdLocation();
+                if (findLocation(id) == null) {
+                    throw new NonexistentEntityException("The location with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -126,19 +126,19 @@ public class LocationsJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Locations locations;
+            Location location;
             try {
-                locations = em.getReference(Locations.class, id);
-                locations.getIdLocation();
+                location = em.getReference(Location.class, id);
+                location.getIdLocation();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The locations with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The location with id " + id + " no longer exists.", enfe);
             }
-            Collection<Domain> domainCollection = locations.getDomainCollection();
+            Collection<Domain> domainCollection = location.getDomainCollection();
             for (Domain domainCollectionDomain : domainCollection) {
                 domainCollectionDomain.setIdLocation(null);
                 domainCollectionDomain = em.merge(domainCollectionDomain);
             }
-            em.remove(locations);
+            em.remove(location);
             em.getTransaction().commit();
         } finally {
             if (em != null) {
@@ -147,19 +147,19 @@ public class LocationsJpaController implements Serializable {
         }
     }
 
-    public List<Locations> findLocationsEntities() {
-        return findLocationsEntities(true, -1, -1);
+    public List<Location> findLocationEntities() {
+        return findLocationEntities(true, -1, -1);
     }
 
-    public List<Locations> findLocationsEntities(int maxResults, int firstResult) {
-        return findLocationsEntities(false, maxResults, firstResult);
+    public List<Location> findLocationEntities(int maxResults, int firstResult) {
+        return findLocationEntities(false, maxResults, firstResult);
     }
 
-    private List<Locations> findLocationsEntities(boolean all, int maxResults, int firstResult) {
+    private List<Location> findLocationEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            cq.select(cq.from(Locations.class));
+            cq.select(cq.from(Location.class));
             Query q = em.createQuery(cq);
             if (!all) {
                 q.setMaxResults(maxResults);
@@ -171,20 +171,20 @@ public class LocationsJpaController implements Serializable {
         }
     }
 
-    public Locations findLocations(Integer id) {
+    public Location findLocation(Integer id) {
         EntityManager em = getEntityManager();
         try {
-            return em.find(Locations.class, id);
+            return em.find(Location.class, id);
         } finally {
             em.close();
         }
     }
 
-    public int getLocationsCount() {
+    public int getLocationCount() {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            Root<Locations> rt = cq.from(Locations.class);
+            Root<Location> rt = cq.from(Location.class);
             cq.select(em.getCriteriaBuilder().count(rt));
             Query q = em.createQuery(cq);
             return ((Long) q.getSingleResult()).intValue();

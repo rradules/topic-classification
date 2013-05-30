@@ -22,13 +22,13 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author Roxana Radulescu <roxana.radulescu07@gmail.com>
  */
 @Entity
-@Table(name = "locations")
+@Table(name = "location")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Locations.findAll", query = "SELECT l FROM Locations l"),
-    @NamedQuery(name = "Locations.findByIdLocation", query = "SELECT l FROM Locations l WHERE l.idLocation = :idLocation"),
-    @NamedQuery(name = "Locations.findByLocation", query = "SELECT l FROM Locations l WHERE l.location = :location")})
-public class Locations implements Serializable {
+    @NamedQuery(name = "Location.findAll", query = "SELECT l FROM Location l"),
+    @NamedQuery(name = "Location.findByIdLocation", query = "SELECT l FROM Location l WHERE l.idLocation = :idLocation"),
+    @NamedQuery(name = "Location.findByLocation", query = "SELECT l FROM Location l WHERE l.location = :location")})
+public class Location implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -39,10 +39,10 @@ public class Locations implements Serializable {
     @OneToMany(mappedBy = "idLocation")
     private Collection<Domain> domainCollection;
 
-    public Locations() {
+    public Location() {
     }
 
-    public Locations(Integer idLocation) {
+    public Location(Integer idLocation) {
         this.idLocation = idLocation;
     }
 
@@ -81,10 +81,10 @@ public class Locations implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Locations)) {
+        if (!(object instanceof Location)) {
             return false;
         }
-        Locations other = (Locations) object;
+        Location other = (Location) object;
         if ((this.idLocation == null && other.idLocation != null) || (this.idLocation != null && !this.idLocation.equals(other.idLocation))) {
             return false;
         }
@@ -93,7 +93,7 @@ public class Locations implements Serializable {
 
     @Override
     public String toString() {
-        return "model.Locations[ idLocation=" + idLocation + " ]";
+        return "model.Location[ idLocation=" + idLocation + " ]";
     }
     
 }

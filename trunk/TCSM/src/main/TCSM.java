@@ -21,7 +21,7 @@ public class TCSM {
         System.out.println("Crawl");
 
         CrawlerInfo crawler = new CrawlerInfo();
-        crawler.search("test.txt", "http://eusimuntele.blogspot.ro/", 10);
+        crawler.search("http://eusimuntele.blogspot.ro/", 10);
 
     }
 }

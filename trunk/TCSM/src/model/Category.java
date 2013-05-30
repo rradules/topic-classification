@@ -22,13 +22,13 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author Roxana Radulescu <roxana.radulescu07@gmail.com>
  */
 @Entity
-@Table(name = "categories")
+@Table(name = "category")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Categories.findAll", query = "SELECT c FROM Categories c"),
-    @NamedQuery(name = "Categories.findByIdCategory", query = "SELECT c FROM Categories c WHERE c.idCategory = :idCategory"),
-    @NamedQuery(name = "Categories.findByCategory", query = "SELECT c FROM Categories c WHERE c.category = :category")})
-public class Categories implements Serializable {
+    @NamedQuery(name = "Category.findAll", query = "SELECT c FROM Category c"),
+    @NamedQuery(name = "Category.findByIdCategory", query = "SELECT c FROM Category c WHERE c.idCategory = :idCategory"),
+    @NamedQuery(name = "Category.findByCategory", query = "SELECT c FROM Category c WHERE c.category = :category")})
+public class Category implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -37,12 +37,12 @@ public class Categories implements Serializable {
     @Column(name = "Category")
     private String category;
     @OneToMany(mappedBy = "idCategory")
-    private Collection<Keywords> keywordsCollection;
+    private Collection<Keyword> keywordsCollection;
 
-    public Categories() {
+    public Category() {
     }
 
-    public Categories(Integer idCategory) {
+    public Category(Integer idCategory) {
         this.idCategory = idCategory;
     }
 
@@ -63,11 +63,11 @@ public class Categories implements Serializable {
     }
 
     @XmlTransient
-    public Collection<Keywords> getKeywordsCollection() {
+    public Collection<Keyword> getKeywordsCollection() {
         return keywordsCollection;
     }
 
-    public void setKeywordsCollection(Collection<Keywords> keywordsCollection) {
+    public void setKeywordsCollection(Collection<Keyword> keywordsCollection) {
         this.keywordsCollection = keywordsCollection;
     }
 
@@ -81,10 +81,10 @@ public class Categories implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Categories)) {
+        if (!(object instanceof Category)) {
             return false;
         }
-        Categories other = (Categories) object;
+        Category other = (Category) object;
         if ((this.idCategory == null && other.idCategory != null) || (this.idCategory != null && !this.idCategory.equals(other.idCategory))) {
             return false;
         }
@@ -93,7 +93,7 @@ public class Categories implements Serializable {
 
     @Override
     public String toString() {
-        return "model.Categories[ idCategory=" + idCategory + " ]";
+        return "model.Category[ idCategory=" + idCategory + " ]";
     }
     
 }

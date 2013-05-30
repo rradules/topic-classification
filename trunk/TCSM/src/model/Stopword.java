@@ -19,13 +19,13 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Roxana Radulescu <roxana.radulescu07@gmail.com>
  */
 @Entity
-@Table(name = "stopwords")
+@Table(name = "stopword")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Stopwords.findAll", query = "SELECT s FROM Stopwords s"),
-    @NamedQuery(name = "Stopwords.findByIdStopWord", query = "SELECT s FROM Stopwords s WHERE s.idStopWord = :idStopWord"),
-    @NamedQuery(name = "Stopwords.findByStopWord", query = "SELECT s FROM Stopwords s WHERE s.stopWord = :stopWord")})
-public class Stopwords implements Serializable {
+    @NamedQuery(name = "Stopword.findAll", query = "SELECT s FROM Stopword s"),
+    @NamedQuery(name = "Stopword.findByIdStopWord", query = "SELECT s FROM Stopword s WHERE s.idStopWord = :idStopWord"),
+    @NamedQuery(name = "Stopword.findByStopWord", query = "SELECT s FROM Stopword s WHERE s.stopWord = :stopWord")})
+public class Stopword implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -34,10 +34,10 @@ public class Stopwords implements Serializable {
     @Column(name = "StopWord")
     private String stopWord;
 
-    public Stopwords() {
+    public Stopword() {
     }
 
-    public Stopwords(Integer idStopWord) {
+    public Stopword(Integer idStopWord) {
         this.idStopWord = idStopWord;
     }
 
@@ -67,10 +67,10 @@ public class Stopwords implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Stopwords)) {
+        if (!(object instanceof Stopword)) {
             return false;
         }
-        Stopwords other = (Stopwords) object;
+        Stopword other = (Stopword) object;
         if ((this.idStopWord == null && other.idStopWord != null) || (this.idStopWord != null && !this.idStopWord.equals(other.idStopWord))) {
             return false;
         }
@@ -79,7 +79,7 @@ public class Stopwords implements Serializable {
 
     @Override
     public String toString() {
-        return "model.Stopwords[ idStopWord=" + idStopWord + " ]";
+        return "model.Stopword[ idStopWord=" + idStopWord + " ]";
     }
     
 }

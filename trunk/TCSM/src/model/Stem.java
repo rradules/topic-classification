@@ -22,13 +22,13 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author Roxana Radulescu <roxana.radulescu07@gmail.com>
  */
 @Entity
-@Table(name = "stems")
+@Table(name = "stem")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Stems.findAll", query = "SELECT s FROM Stems s"),
-    @NamedQuery(name = "Stems.findByIdStem", query = "SELECT s FROM Stems s WHERE s.idStem = :idStem"),
-    @NamedQuery(name = "Stems.findByStemWord", query = "SELECT s FROM Stems s WHERE s.stemWord = :stemWord")})
-public class Stems implements Serializable {
+    @NamedQuery(name = "Stem.findAll", query = "SELECT s FROM Stem s"),
+    @NamedQuery(name = "Stem.findByIdStem", query = "SELECT s FROM Stem s WHERE s.idStem = :idStem"),
+    @NamedQuery(name = "Stem.findByStemWord", query = "SELECT s FROM Stem s WHERE s.stemWord = :stemWord")})
+public class Stem implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -39,10 +39,10 @@ public class Stems implements Serializable {
     @OneToMany(mappedBy = "idStem")
     private Collection<Vocabulary> vocabularyCollection;
 
-    public Stems() {
+    public Stem() {
     }
 
-    public Stems(Integer idStem) {
+    public Stem(Integer idStem) {
         this.idStem = idStem;
     }
 
@@ -81,10 +81,10 @@ public class Stems implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Stems)) {
+        if (!(object instanceof Stem)) {
             return false;
         }
-        Stems other = (Stems) object;
+        Stem other = (Stem) object;
         if ((this.idStem == null && other.idStem != null) || (this.idStem != null && !this.idStem.equals(other.idStem))) {
             return false;
         }
@@ -93,7 +93,7 @@ public class Stems implements Serializable {
 
     @Override
     public String toString() {
-        return "model.Stems[ idStem=" + idStem + " ]";
+        return "model.Stem[ idStem=" + idStem + " ]";
     }
     
 }
