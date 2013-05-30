@@ -22,99 +22,95 @@ import org.jsoup.select.Elements;
 public class LinkRetrieval {
     // Parse through page contents and retrieve links.
 
-    public ArrayList retrieveLinks(URL pageUrl, HashSet crawledList, boolean limitHost) {
+    public ArrayList retrieveLinks(Document doc, URL pageUrl, HashSet crawledList, boolean limitHost) {
 
         System.out.println("Crawling: " + pageUrl.toString());
 
         ArrayList<String> links = new ArrayList<>();
 
-        try {
-            Document doc = Jsoup.connect(pageUrl.toString()).get();
-            Elements allLinks = doc.select("a[href]");
-            
-            for (Element linkElem : allLinks) {
-                // get the value from href attribute
-                String link = linkElem.attr("href");
-                // Skip empty links.
-                if (link.length() < 1) {
-                    continue;
-                }
+        // Document doc = Jsoup.connect(pageUrl.toString()).get();
+        Elements allLinks = doc.select("a[href]");
 
-                // Skip links that are just page anchors.
-                if (link.charAt(0) == '#') {
-                    continue;
-                }
-
-                // Skip mailto links.
-                if (link.indexOf("mailto:") != -1) {
-                    continue;
-                }
-
-                // Skip JavaScript links.
-                if (link.toLowerCase().indexOf("javascript") != -1) {
-                    continue;
-                }
-
-                // Prefix absolute and relative URLs if necessary.
-
-
-                if (link.indexOf("//") == -1) {
-                    // Handle absolute URLs.
-                    if (link.charAt(0) == '/') {
-                        link = "http://" + pageUrl.getHost() + link;
-                        // Handle relative URLs.
-                    } else {
-                        String file = pageUrl.getFile();
-                        if (file.indexOf('/') == -1) {
-                            link = "http://" + pageUrl.getHost() + "/" + link;
-                        } else {
-                            String path =
-                                    file.substring(0, file.lastIndexOf('/') + 1);
-                            link = "http://" + pageUrl.getHost() + path + link;
-                        }
-                    }
-                }
-
-                // Remove anchors from link.
-                int index = link.indexOf('#');
-                if (index != -1) {
-                    link = link.substring(0, index);
-                }
-
-                // Remove leading "www" from URL's host if present.
-                link = removeWwwFromUrl(link);
-
-                // Verify link and skip if invalid.
-                URL verifiedLink = verifyUrl(link);
-                // URL pageLink = verifyUrl(linkPage);
-
-                if (verifiedLink == null) {
-                    continue;
-                }
-
-                /* If specified, limit links to those
-                 having the same host as the start URL. */
-
-
-                if (limitHost && !pageUrl.getHost().toLowerCase().equals(
-                        verifiedLink.getHost().toLowerCase())) {
-                    continue;
-                }
-
-                // Skip link if it has already been crawled.
-                if (crawledList.contains(link)) {
-                    continue;
-                }
-
-                // System.out.println(link);
-                // Add link to list.
-                links.add(link);
-
+        for (Element linkElem : allLinks) {
+            // get the value from href attribute
+            String link = linkElem.attr("href");
+            // Skip empty links.
+            if (link.length() < 1) {
+                continue;
             }
 
-        } catch (IOException ex) {
-            Logger.getLogger(CrawlerInfo.class.getName()).log(Level.SEVERE, null, ex);
+            // Skip links that are just page anchors.
+            if (link.charAt(0) == '#') {
+                continue;
+            }
+
+            // Skip mailto links.
+            if (link.indexOf("mailto:") != -1) {
+                continue;
+            }
+
+            // Skip JavaScript links.
+            if (link.toLowerCase().indexOf("javascript") != -1) {
+                continue;
+            }
+
+            // Prefix absolute and relative URLs if necessary.
+
+
+            if (link.indexOf("//") == -1) {
+                // Handle absolute URLs.
+                if (link.charAt(0) == '/') {
+                    link = "http://" + pageUrl.getHost() + link;
+                    // Handle relative URLs.
+                } else {
+                    String file = pageUrl.getFile();
+                    if (file.indexOf('/') == -1) {
+                        link = "http://" + pageUrl.getHost() + "/" + link;
+                    } else {
+                        String path =
+                                file.substring(0, file.lastIndexOf('/') + 1);
+                        link = "http://" + pageUrl.getHost() + path + link;
+                    }
+                }
+            }
+
+            // Remove anchors from link.
+            int index = link.indexOf('#');
+            if (index != -1) {
+                link = link.substring(0, index);
+            }
+
+            // Remove leading "www" from URL's host if present.
+            link = removeWwwFromUrl(link);
+
+            // Verify link and skip if invalid.
+            URL verifiedLink = verifyUrl(link);
+            // URL pageLink = verifyUrl(linkPage);
+
+            if (verifiedLink == null) {
+                continue;
+            }
+
+            /* If specified, limit links to those
+             having the same host as the start URL. */
+
+
+            if (limitHost && !pageUrl.getHost().toLowerCase().equals(
+                    verifiedLink.getHost().toLowerCase())) {
+                continue;
+            }
+
+            // Skip link if it has already been crawled.
+            if (crawledList.contains(link)) {
+                continue;
+            }
+
+            // System.out.println(link);
+            // Add link to list.
+            links.add(link);
+
         }
+
         return links;
     }
 

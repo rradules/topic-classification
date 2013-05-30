@@ -4,6 +4,7 @@
  */
 package crawler;
 
+import controller.MainController;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -11,6 +12,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -59,8 +62,7 @@ public class CrawlerInfo {
         this.logFile = logFile;
     }
 
-    public void search(final String startUrl,
-            final int maxUrls) {
+    public void search(final String startUrl, final int maxUrls) {
         // Start the search in a new thread.
         Thread thread = new Thread(new Runnable() {
             public void run() {
@@ -72,6 +74,13 @@ public class CrawlerInfo {
                     showError("Unable to open matches log file.");
                     return;
                 }
+                try {
+                    //add location in DB
+                    MainController.getInstance().addLocation(startUrl);
+                } catch (Exception ex) {
+                    Logger.getLogger(CrawlerInfo.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
                 // Turn crawling flag on.
                 crawling = true;
                 // Perform the actual crawling.
@@ -148,7 +157,7 @@ public class CrawlerInfo {
                 }
 
                 // Retrieve list of valid links from page.
-                ArrayList<String> links = linkRetrieval.retrieveLinks(verifiedUrl, crawledList, limitHost);
+                ArrayList<String> links = linkRetrieval.retrieveLinks(doc, verifiedUrl, crawledList, limitHost);
 
                 // Add links to the to crawl list.
                 toCrawlList.addAll(links);
