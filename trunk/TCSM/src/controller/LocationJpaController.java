@@ -192,5 +192,16 @@ public class LocationJpaController implements Serializable {
             em.close();
         }
     }
-    
+
+    public Location findByLocation(String location) {
+        EntityManager em = getEntityManager();
+        Query q = em.createNamedQuery("Location.findByLocation");
+        q.setParameter("location", location);
+
+        try {
+            return (Location) q.getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }
 }

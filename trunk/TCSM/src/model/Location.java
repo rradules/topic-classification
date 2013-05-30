@@ -5,6 +5,7 @@
 package model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -29,6 +30,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Location.findByIdLocation", query = "SELECT l FROM Location l WHERE l.idLocation = :idLocation"),
     @NamedQuery(name = "Location.findByLocation", query = "SELECT l FROM Location l WHERE l.location = :location")})
 public class Location implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -40,6 +42,7 @@ public class Location implements Serializable {
     private Collection<Domain> domainCollection;
 
     public Location() {
+        domainCollection = new ArrayList<>();
     }
 
     public Location(Integer idLocation) {
@@ -70,6 +73,9 @@ public class Location implements Serializable {
     public void setDomainCollection(Collection<Domain> domainCollection) {
         this.domainCollection = domainCollection;
     }
+    public void addDomain(Domain d){
+        domainCollection.add(d);
+    }
 
     @Override
     public int hashCode() {
@@ -95,5 +101,4 @@ public class Location implements Serializable {
     public String toString() {
         return "model.Location[ idLocation=" + idLocation + " ]";
     }
-    
 }
