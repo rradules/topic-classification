@@ -14,7 +14,7 @@ import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import model.Stems;
+import model.Stem;
 import model.Vocabulary;
 
 /**
@@ -37,7 +37,7 @@ public class VocabularyJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Stems idStem = vocabulary.getIdStem();
+            Stem idStem = vocabulary.getIdStem();
             if (idStem != null) {
                 idStem = em.getReference(idStem.getClass(), idStem.getIdStem());
                 vocabulary.setIdStem(idStem);
@@ -66,8 +66,8 @@ public class VocabularyJpaController implements Serializable {
             em = getEntityManager();
             em.getTransaction().begin();
             Vocabulary persistentVocabulary = em.find(Vocabulary.class, vocabulary.getIdVocabulary());
-            Stems idStemOld = persistentVocabulary.getIdStem();
-            Stems idStemNew = vocabulary.getIdStem();
+            Stem idStemOld = persistentVocabulary.getIdStem();
+            Stem idStemNew = vocabulary.getIdStem();
             if (idStemNew != null) {
                 idStemNew = em.getReference(idStemNew.getClass(), idStemNew.getIdStem());
                 vocabulary.setIdStem(idStemNew);
@@ -110,7 +110,7 @@ public class VocabularyJpaController implements Serializable {
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The vocabulary with id " + id + " no longer exists.", enfe);
             }
-            Stems idStem = vocabulary.getIdStem();
+            Stem idStem = vocabulary.getIdStem();
             if (idStem != null) {
                 idStem.getVocabularyCollection().remove(vocabulary);
                 idStem = em.merge(idStem);

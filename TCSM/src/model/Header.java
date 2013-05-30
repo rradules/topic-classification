@@ -21,14 +21,14 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Roxana Radulescu <roxana.radulescu07@gmail.com>
  */
 @Entity
-@Table(name = "headers")
+@Table(name = "header")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Headers.findAll", query = "SELECT h FROM Headers h"),
-    @NamedQuery(name = "Headers.findByIdHeader", query = "SELECT h FROM Headers h WHERE h.idHeader = :idHeader"),
-    @NamedQuery(name = "Headers.findByIdOrder", query = "SELECT h FROM Headers h WHERE h.idOrder = :idOrder"),
-    @NamedQuery(name = "Headers.findByHeader", query = "SELECT h FROM Headers h WHERE h.header = :header")})
-public class Headers implements Serializable {
+    @NamedQuery(name = "Header.findAll", query = "SELECT h FROM Header h"),
+    @NamedQuery(name = "Header.findByIdHeader", query = "SELECT h FROM Header h WHERE h.idHeader = :idHeader"),
+    @NamedQuery(name = "Header.findByIdOrder", query = "SELECT h FROM Header h WHERE h.idOrder = :idOrder"),
+    @NamedQuery(name = "Header.findByHeader", query = "SELECT h FROM Header h WHERE h.header = :header")})
+public class Header implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -42,10 +42,10 @@ public class Headers implements Serializable {
     @ManyToOne
     private Rawdata idRawData;
 
-    public Headers() {
+    public Header() {
     }
 
-    public Headers(Integer idHeader) {
+    public Header(Integer idHeader) {
         this.idHeader = idHeader;
     }
 
@@ -91,10 +91,10 @@ public class Headers implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Headers)) {
+        if (!(object instanceof Header)) {
             return false;
         }
-        Headers other = (Headers) object;
+        Header other = (Header) object;
         if ((this.idHeader == null && other.idHeader != null) || (this.idHeader != null && !this.idHeader.equals(other.idHeader))) {
             return false;
         }
@@ -103,7 +103,7 @@ public class Headers implements Serializable {
 
     @Override
     public String toString() {
-        return "model.Headers[ idHeader=" + idHeader + " ]";
+        return "model.Header[ idHeader=" + idHeader + " ]";
     }
     
 }

@@ -64,7 +64,7 @@ public class Rawdata implements Serializable {
     @Column(name = "Description")
     private String description;
     @OneToMany(mappedBy = "idRawData")
-    private Collection<Headers> headersCollection;
+    private Collection<Header> headersCollection;
     @JoinColumn(name = "Id_Domain", referencedColumnName = "Id_Domain")
     @ManyToOne
     private Domain idDomain;
@@ -149,11 +149,11 @@ public class Rawdata implements Serializable {
     }
 
     @XmlTransient
-    public Collection<Headers> getHeadersCollection() {
+    public Collection<Header> getHeadersCollection() {
         return headersCollection;
     }
 
-    public void setHeadersCollection(Collection<Headers> headersCollection) {
+    public void setHeadersCollection(Collection<Header> headersCollection) {
         this.headersCollection = headersCollection;
     }
 

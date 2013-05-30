@@ -169,4 +169,5 @@ public class BlogpostJpaController implements Serializable {
             em.close();
         }
     }
+    
 }

@@ -11,7 +11,7 @@ import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import model.Locations;
+import model.Location;
 import model.Blogroll;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -51,7 +51,7 @@ public class DomainJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Locations idLocation = domain.getIdLocation();
+            Location idLocation = domain.getIdLocation();
             if (idLocation != null) {
                 idLocation = em.getReference(idLocation.getClass(), idLocation.getIdLocation());
                 domain.setIdLocation(idLocation);
@@ -125,8 +125,8 @@ public class DomainJpaController implements Serializable {
             em = getEntityManager();
             em.getTransaction().begin();
             Domain persistentDomain = em.find(Domain.class, domain.getIdDomain());
-            Locations idLocationOld = persistentDomain.getIdLocation();
-            Locations idLocationNew = domain.getIdLocation();
+            Location idLocationOld = persistentDomain.getIdLocation();
+            Location idLocationNew = domain.getIdLocation();
             Collection<Blogroll> blogrollCollectionOld = persistentDomain.getBlogrollCollection();
             Collection<Blogroll> blogrollCollectionNew = domain.getBlogrollCollection();
             Collection<Blogpost> blogpostCollectionOld = persistentDomain.getBlogpostCollection();
@@ -247,7 +247,7 @@ public class DomainJpaController implements Serializable {
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The domain with id " + id + " no longer exists.", enfe);
             }
-            Locations idLocation = domain.getIdLocation();
+            Location idLocation = domain.getIdLocation();
             if (idLocation != null) {
                 idLocation.getDomainCollection().remove(domain);
                 idLocation = em.merge(idLocation);

@@ -14,16 +14,16 @@ import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import model.Headers;
+import model.Header;
 import model.Rawdata;
 
 /**
  *
  * @author Roxana Radulescu <roxana.radulescu07@gmail.com>
  */
-public class HeadersJpaController implements Serializable {
+public class HeaderJpaController implements Serializable {
 
-    public HeadersJpaController(EntityManagerFactory emf) {
+    public HeaderJpaController(EntityManagerFactory emf) {
         this.emf = emf;
     }
     private EntityManagerFactory emf = null;
@@ -32,25 +32,25 @@ public class HeadersJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(Headers headers) throws PreexistingEntityException, Exception {
+    public void create(Header header) throws PreexistingEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Rawdata idRawData = headers.getIdRawData();
+            Rawdata idRawData = header.getIdRawData();
             if (idRawData != null) {
                 idRawData = em.getReference(idRawData.getClass(), idRawData.getIdRawData());
-                headers.setIdRawData(idRawData);
+                header.setIdRawData(idRawData);
             }
-            em.persist(headers);
+            em.persist(header);
             if (idRawData != null) {
-                idRawData.getHeadersCollection().add(headers);
+                idRawData.getHeadersCollection().add(header);
                 idRawData = em.merge(idRawData);
             }
             em.getTransaction().commit();
         } catch (Exception ex) {
-            if (findHeaders(headers.getIdHeader()) != null) {
-                throw new PreexistingEntityException("Headers " + headers + " already exists.", ex);
+            if (findHeader(header.getIdHeader()) != null) {
+                throw new PreexistingEntityException("Header " + header + " already exists.", ex);
             }
             throw ex;
         } finally {
@@ -60,34 +60,34 @@ public class HeadersJpaController implements Serializable {
         }
     }
 
-    public void edit(Headers headers) throws NonexistentEntityException, Exception {
+    public void edit(Header header) throws NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Headers persistentHeaders = em.find(Headers.class, headers.getIdHeader());
-            Rawdata idRawDataOld = persistentHeaders.getIdRawData();
-            Rawdata idRawDataNew = headers.getIdRawData();
+            Header persistentHeader = em.find(Header.class, header.getIdHeader());
+            Rawdata idRawDataOld = persistentHeader.getIdRawData();
+            Rawdata idRawDataNew = header.getIdRawData();
             if (idRawDataNew != null) {
                 idRawDataNew = em.getReference(idRawDataNew.getClass(), idRawDataNew.getIdRawData());
-                headers.setIdRawData(idRawDataNew);
+                header.setIdRawData(idRawDataNew);
             }
-            headers = em.merge(headers);
+            header = em.merge(header);
             if (idRawDataOld != null && !idRawDataOld.equals(idRawDataNew)) {
-                idRawDataOld.getHeadersCollection().remove(headers);
+                idRawDataOld.getHeadersCollection().remove(header);
                 idRawDataOld = em.merge(idRawDataOld);
             }
             if (idRawDataNew != null && !idRawDataNew.equals(idRawDataOld)) {
-                idRawDataNew.getHeadersCollection().add(headers);
+                idRawDataNew.getHeadersCollection().add(header);
                 idRawDataNew = em.merge(idRawDataNew);
             }
             em.getTransaction().commit();
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                Integer id = headers.getIdHeader();
-                if (findHeaders(id) == null) {
-                    throw new NonexistentEntityException("The headers with id " + id + " no longer exists.");
+                Integer id = header.getIdHeader();
+                if (findHeader(id) == null) {
+                    throw new NonexistentEntityException("The header with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -103,19 +103,19 @@ public class HeadersJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Headers headers;
+            Header header;
             try {
-                headers = em.getReference(Headers.class, id);
-                headers.getIdHeader();
+                header = em.getReference(Header.class, id);
+                header.getIdHeader();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The headers with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The header with id " + id + " no longer exists.", enfe);
             }
-            Rawdata idRawData = headers.getIdRawData();
+            Rawdata idRawData = header.getIdRawData();
             if (idRawData != null) {
-                idRawData.getHeadersCollection().remove(headers);
+                idRawData.getHeadersCollection().remove(header);
                 idRawData = em.merge(idRawData);
             }
-            em.remove(headers);
+            em.remove(header);
             em.getTransaction().commit();
         } finally {
             if (em != null) {
@@ -124,19 +124,19 @@ public class HeadersJpaController implements Serializable {
         }
     }
 
-    public List<Headers> findHeadersEntities() {
-        return findHeadersEntities(true, -1, -1);
+    public List<Header> findHeaderEntities() {
+        return findHeaderEntities(true, -1, -1);
     }
 
-    public List<Headers> findHeadersEntities(int maxResults, int firstResult) {
-        return findHeadersEntities(false, maxResults, firstResult);
+    public List<Header> findHeaderEntities(int maxResults, int firstResult) {
+        return findHeaderEntities(false, maxResults, firstResult);
     }
 
-    private List<Headers> findHeadersEntities(boolean all, int maxResults, int firstResult) {
+    private List<Header> findHeaderEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            cq.select(cq.from(Headers.class));
+            cq.select(cq.from(Header.class));
             Query q = em.createQuery(cq);
             if (!all) {
                 q.setMaxResults(maxResults);
@@ -148,20 +148,20 @@ public class HeadersJpaController implements Serializable {
         }
     }
 
-    public Headers findHeaders(Integer id) {
+    public Header findHeader(Integer id) {
         EntityManager em = getEntityManager();
         try {
-            return em.find(Headers.class, id);
+            return em.find(Header.class, id);
         } finally {
             em.close();
         }
     }
 
-    public int getHeadersCount() {
+    public int getHeaderCount() {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            Root<Headers> rt = cq.from(Headers.class);
+            Root<Header> rt = cq.from(Header.class);
             cq.select(em.getCriteriaBuilder().count(rt));
             Query q = em.createQuery(cq);
             return ((Long) q.getSingleResult()).intValue();

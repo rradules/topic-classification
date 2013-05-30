@@ -12,7 +12,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import model.Domain;
-import model.Headers;
+import model.Header;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -37,7 +37,7 @@ public class RawdataJpaController implements Serializable {
 
     public void create(Rawdata rawdata) throws PreexistingEntityException, Exception {
         if (rawdata.getHeadersCollection() == null) {
-            rawdata.setHeadersCollection(new ArrayList<Headers>());
+            rawdata.setHeadersCollection(new ArrayList<Header>());
         }
         EntityManager em = null;
         try {
@@ -48,10 +48,10 @@ public class RawdataJpaController implements Serializable {
                 idDomain = em.getReference(idDomain.getClass(), idDomain.getIdDomain());
                 rawdata.setIdDomain(idDomain);
             }
-            Collection<Headers> attachedHeadersCollection = new ArrayList<Headers>();
-            for (Headers headersCollectionHeadersToAttach : rawdata.getHeadersCollection()) {
-                headersCollectionHeadersToAttach = em.getReference(headersCollectionHeadersToAttach.getClass(), headersCollectionHeadersToAttach.getIdHeader());
-                attachedHeadersCollection.add(headersCollectionHeadersToAttach);
+            Collection<Header> attachedHeadersCollection = new ArrayList<Header>();
+            for (Header headersCollectionHeaderToAttach : rawdata.getHeadersCollection()) {
+                headersCollectionHeaderToAttach = em.getReference(headersCollectionHeaderToAttach.getClass(), headersCollectionHeaderToAttach.getIdHeader());
+                attachedHeadersCollection.add(headersCollectionHeaderToAttach);
             }
             rawdata.setHeadersCollection(attachedHeadersCollection);
             em.persist(rawdata);
@@ -59,13 +59,13 @@ public class RawdataJpaController implements Serializable {
                 idDomain.getRawdataCollection().add(rawdata);
                 idDomain = em.merge(idDomain);
             }
-            for (Headers headersCollectionHeaders : rawdata.getHeadersCollection()) {
-                Rawdata oldIdRawDataOfHeadersCollectionHeaders = headersCollectionHeaders.getIdRawData();
-                headersCollectionHeaders.setIdRawData(rawdata);
-                headersCollectionHeaders = em.merge(headersCollectionHeaders);
-                if (oldIdRawDataOfHeadersCollectionHeaders != null) {
-                    oldIdRawDataOfHeadersCollectionHeaders.getHeadersCollection().remove(headersCollectionHeaders);
-                    oldIdRawDataOfHeadersCollectionHeaders = em.merge(oldIdRawDataOfHeadersCollectionHeaders);
+            for (Header headersCollectionHeader : rawdata.getHeadersCollection()) {
+                Rawdata oldIdRawDataOfHeadersCollectionHeader = headersCollectionHeader.getIdRawData();
+                headersCollectionHeader.setIdRawData(rawdata);
+                headersCollectionHeader = em.merge(headersCollectionHeader);
+                if (oldIdRawDataOfHeadersCollectionHeader != null) {
+                    oldIdRawDataOfHeadersCollectionHeader.getHeadersCollection().remove(headersCollectionHeader);
+                    oldIdRawDataOfHeadersCollectionHeader = em.merge(oldIdRawDataOfHeadersCollectionHeader);
                 }
             }
             em.getTransaction().commit();
@@ -89,16 +89,16 @@ public class RawdataJpaController implements Serializable {
             Rawdata persistentRawdata = em.find(Rawdata.class, rawdata.getIdRawData());
             Domain idDomainOld = persistentRawdata.getIdDomain();
             Domain idDomainNew = rawdata.getIdDomain();
-            Collection<Headers> headersCollectionOld = persistentRawdata.getHeadersCollection();
-            Collection<Headers> headersCollectionNew = rawdata.getHeadersCollection();
+            Collection<Header> headersCollectionOld = persistentRawdata.getHeadersCollection();
+            Collection<Header> headersCollectionNew = rawdata.getHeadersCollection();
             if (idDomainNew != null) {
                 idDomainNew = em.getReference(idDomainNew.getClass(), idDomainNew.getIdDomain());
                 rawdata.setIdDomain(idDomainNew);
             }
-            Collection<Headers> attachedHeadersCollectionNew = new ArrayList<Headers>();
-            for (Headers headersCollectionNewHeadersToAttach : headersCollectionNew) {
-                headersCollectionNewHeadersToAttach = em.getReference(headersCollectionNewHeadersToAttach.getClass(), headersCollectionNewHeadersToAttach.getIdHeader());
-                attachedHeadersCollectionNew.add(headersCollectionNewHeadersToAttach);
+            Collection<Header> attachedHeadersCollectionNew = new ArrayList<Header>();
+            for (Header headersCollectionNewHeaderToAttach : headersCollectionNew) {
+                headersCollectionNewHeaderToAttach = em.getReference(headersCollectionNewHeaderToAttach.getClass(), headersCollectionNewHeaderToAttach.getIdHeader());
+                attachedHeadersCollectionNew.add(headersCollectionNewHeaderToAttach);
             }
             headersCollectionNew = attachedHeadersCollectionNew;
             rawdata.setHeadersCollection(headersCollectionNew);
@@ -111,20 +111,20 @@ public class RawdataJpaController implements Serializable {
                 idDomainNew.getRawdataCollection().add(rawdata);
                 idDomainNew = em.merge(idDomainNew);
             }
-            for (Headers headersCollectionOldHeaders : headersCollectionOld) {
-                if (!headersCollectionNew.contains(headersCollectionOldHeaders)) {
-                    headersCollectionOldHeaders.setIdRawData(null);
-                    headersCollectionOldHeaders = em.merge(headersCollectionOldHeaders);
+            for (Header headersCollectionOldHeader : headersCollectionOld) {
+                if (!headersCollectionNew.contains(headersCollectionOldHeader)) {
+                    headersCollectionOldHeader.setIdRawData(null);
+                    headersCollectionOldHeader = em.merge(headersCollectionOldHeader);
                 }
             }
-            for (Headers headersCollectionNewHeaders : headersCollectionNew) {
-                if (!headersCollectionOld.contains(headersCollectionNewHeaders)) {
-                    Rawdata oldIdRawDataOfHeadersCollectionNewHeaders = headersCollectionNewHeaders.getIdRawData();
-                    headersCollectionNewHeaders.setIdRawData(rawdata);
-                    headersCollectionNewHeaders = em.merge(headersCollectionNewHeaders);
-                    if (oldIdRawDataOfHeadersCollectionNewHeaders != null && !oldIdRawDataOfHeadersCollectionNewHeaders.equals(rawdata)) {
-                        oldIdRawDataOfHeadersCollectionNewHeaders.getHeadersCollection().remove(headersCollectionNewHeaders);
-                        oldIdRawDataOfHeadersCollectionNewHeaders = em.merge(oldIdRawDataOfHeadersCollectionNewHeaders);
+            for (Header headersCollectionNewHeader : headersCollectionNew) {
+                if (!headersCollectionOld.contains(headersCollectionNewHeader)) {
+                    Rawdata oldIdRawDataOfHeadersCollectionNewHeader = headersCollectionNewHeader.getIdRawData();
+                    headersCollectionNewHeader.setIdRawData(rawdata);
+                    headersCollectionNewHeader = em.merge(headersCollectionNewHeader);
+                    if (oldIdRawDataOfHeadersCollectionNewHeader != null && !oldIdRawDataOfHeadersCollectionNewHeader.equals(rawdata)) {
+                        oldIdRawDataOfHeadersCollectionNewHeader.getHeadersCollection().remove(headersCollectionNewHeader);
+                        oldIdRawDataOfHeadersCollectionNewHeader = em.merge(oldIdRawDataOfHeadersCollectionNewHeader);
                     }
                 }
             }
@@ -162,10 +162,10 @@ public class RawdataJpaController implements Serializable {
                 idDomain.getRawdataCollection().remove(rawdata);
                 idDomain = em.merge(idDomain);
             }
-            Collection<Headers> headersCollection = rawdata.getHeadersCollection();
-            for (Headers headersCollectionHeaders : headersCollection) {
-                headersCollectionHeaders.setIdRawData(null);
-                headersCollectionHeaders = em.merge(headersCollectionHeaders);
+            Collection<Header> headersCollection = rawdata.getHeadersCollection();
+            for (Header headersCollectionHeader : headersCollection) {
+                headersCollectionHeader.setIdRawData(null);
+                headersCollectionHeader = em.merge(headersCollectionHeader);
             }
             em.remove(rawdata);
             em.getTransaction().commit();
