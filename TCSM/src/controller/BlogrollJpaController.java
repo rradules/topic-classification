@@ -169,5 +169,29 @@ public class BlogrollJpaController implements Serializable {
             em.close();
         }
     }
-    
+
+    public List<Blogroll> findByIdDomain(Domain domain) {
+        EntityManager em = getEntityManager();
+        Query q = em.createNamedQuery("Blogroll.findByIddomain");
+        q.setParameter("idDomain", domain);
+
+        try {
+            return q.getResultList();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public Blogroll findByDomainAndName(Domain dom, String blog) {
+        EntityManager em = getEntityManager();
+        Query q = em.createNamedQuery("Blogroll.findByDomainBlog");
+        q.setParameter("idDomain", dom);
+        q.setParameter("blog", blog);
+
+        try {
+            return (Blogroll) q.getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }
 }
