@@ -11,7 +11,6 @@ import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import model.Location;
 import model.Blogroll;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -51,11 +50,6 @@ public class DomainJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Location idLocation = domain.getIdLocation();
-            if (idLocation != null) {
-                idLocation = em.getReference(idLocation.getClass(), idLocation.getIdLocation());
-                domain.setIdLocation(idLocation);
-            }
             Collection<Blogroll> attachedBlogrollCollection = new ArrayList<Blogroll>();
             for (Blogroll blogrollCollectionBlogrollToAttach : domain.getBlogrollCollection()) {
                 blogrollCollectionBlogrollToAttach = em.getReference(blogrollCollectionBlogrollToAttach.getClass(), blogrollCollectionBlogrollToAttach.getIdBlogRoll());
@@ -75,10 +69,6 @@ public class DomainJpaController implements Serializable {
             }
             domain.setRawdataCollection(attachedRawdataCollection);
             em.persist(domain);
-            if (idLocation != null) {
-                idLocation.getDomainCollection().add(domain);
-                idLocation = em.merge(idLocation);
-            }
             for (Blogroll blogrollCollectionBlogroll : domain.getBlogrollCollection()) {
                 Domain oldIdDomainOfBlogrollCollectionBlogroll = blogrollCollectionBlogroll.getIdDomain();
                 blogrollCollectionBlogroll.setIdDomain(domain);
@@ -125,18 +115,12 @@ public class DomainJpaController implements Serializable {
             em = getEntityManager();
             em.getTransaction().begin();
             Domain persistentDomain = em.find(Domain.class, domain.getIdDomain());
-            Location idLocationOld = persistentDomain.getIdLocation();
-            Location idLocationNew = domain.getIdLocation();
             Collection<Blogroll> blogrollCollectionOld = persistentDomain.getBlogrollCollection();
             Collection<Blogroll> blogrollCollectionNew = domain.getBlogrollCollection();
             Collection<Blogpost> blogpostCollectionOld = persistentDomain.getBlogpostCollection();
             Collection<Blogpost> blogpostCollectionNew = domain.getBlogpostCollection();
             Collection<Rawdata> rawdataCollectionOld = persistentDomain.getRawdataCollection();
             Collection<Rawdata> rawdataCollectionNew = domain.getRawdataCollection();
-            if (idLocationNew != null) {
-                idLocationNew = em.getReference(idLocationNew.getClass(), idLocationNew.getIdLocation());
-                domain.setIdLocation(idLocationNew);
-            }
             Collection<Blogroll> attachedBlogrollCollectionNew = new ArrayList<Blogroll>();
             for (Blogroll blogrollCollectionNewBlogrollToAttach : blogrollCollectionNew) {
                 blogrollCollectionNewBlogrollToAttach = em.getReference(blogrollCollectionNewBlogrollToAttach.getClass(), blogrollCollectionNewBlogrollToAttach.getIdBlogRoll());
@@ -159,14 +143,6 @@ public class DomainJpaController implements Serializable {
             rawdataCollectionNew = attachedRawdataCollectionNew;
             domain.setRawdataCollection(rawdataCollectionNew);
             domain = em.merge(domain);
-            if (idLocationOld != null && !idLocationOld.equals(idLocationNew)) {
-                idLocationOld.getDomainCollection().remove(domain);
-                idLocationOld = em.merge(idLocationOld);
-            }
-            if (idLocationNew != null && !idLocationNew.equals(idLocationOld)) {
-                idLocationNew.getDomainCollection().add(domain);
-                idLocationNew = em.merge(idLocationNew);
-            }
             for (Blogroll blogrollCollectionOldBlogroll : blogrollCollectionOld) {
                 if (!blogrollCollectionNew.contains(blogrollCollectionOldBlogroll)) {
                     blogrollCollectionOldBlogroll.setIdDomain(null);
@@ -247,11 +223,6 @@ public class DomainJpaController implements Serializable {
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The domain with id " + id + " no longer exists.", enfe);
             }
-            Location idLocation = domain.getIdLocation();
-            if (idLocation != null) {
-                idLocation.getDomainCollection().remove(domain);
-                idLocation = em.merge(idLocation);
-            }
             Collection<Blogroll> blogrollCollection = domain.getBlogrollCollection();
             for (Blogroll blogrollCollectionBlogroll : blogrollCollection) {
                 blogrollCollectionBlogroll.setIdDomain(null);
@@ -321,5 +292,16 @@ public class DomainJpaController implements Serializable {
             em.close();
         }
     }
-    
+
+    public Domain findByDomainName(String name) {
+        EntityManager em = getEntityManager();
+        Query q = em.createNamedQuery("Domain.findByDomainName");
+        q.setParameter("domainName", name);
+
+        try {
+            return (Domain) q.getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }
 }

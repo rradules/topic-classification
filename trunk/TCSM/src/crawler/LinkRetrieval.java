@@ -4,13 +4,11 @@
  */
 package crawler;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.jsoup.Jsoup;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -34,6 +32,7 @@ public class LinkRetrieval {
         for (Element linkElem : allLinks) {
             // get the value from href attribute
             String link = linkElem.attr("href");
+
             // Skip empty links.
             if (link.length() < 1) {
                 continue;
@@ -100,6 +99,10 @@ public class LinkRetrieval {
                 continue;
             }
 
+            if (!containsDate(verifiedLink)) {
+                continue;
+            }
+
             // Skip link if it has already been crawled.
             if (crawledList.contains(link)) {
                 continue;
@@ -139,5 +142,20 @@ public class LinkRetrieval {
                     + url.substring(index + 7);
         }
         return (url);
+    }
+
+    public boolean containsDate(URL url) {
+        if (url.getHost().contains("blogspot")) {
+            String path = url.getPath();
+
+            Pattern p = Pattern.compile("((19|20)\\d\\d)/(0?[1-9]|1[012])");
+            Matcher m = p.matcher(path);
+            if (m.find()) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return true;
     }
 }

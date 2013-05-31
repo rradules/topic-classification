@@ -75,8 +75,11 @@ public class CrawlerInfo {
                     return;
                 }
                 try {
-                    //add location in DB
-                    MainController.getInstance().addLocation(startUrl);
+                    String url = linkRetrieval.removeWwwFromUrl(startUrl);
+                    // Convert string url to URL object.
+                    URL verifiedUrl = linkRetrieval.verifyUrl(url);
+//                    //add location in DB
+//                    MainController.getInstance().addLocation(verifiedUrl.getHost());
                 } catch (Exception ex) {
                     Logger.getLogger(CrawlerInfo.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -112,11 +115,12 @@ public class CrawlerInfo {
         // Add start URL to the to crawl list.
         toCrawlList.add(startUrl);
 
-        /* Perform actual crawling by looping
-         through the to crawl list. */
+        /* Perform actual crawling by looping through the to crawl list. */
         while (crawling && toCrawlList.size() > 0) {
             /* Check to see if the max URL count has
              been reached, if it was specified.*/
+           //  System.out.println("To Crawl list size: "+toCrawlList.size());
+          //  System.out.println("Crawled list size: "+crawledList.size());
 
             if (maxUrls != -1) {
                 if (crawledList.size() == maxUrls) {
@@ -148,6 +152,15 @@ public class CrawlerInfo {
              links and then see if it contains the search string. */
             try {
                 doc = Jsoup.connect(verifiedUrl.toString()).get();
+//                System.out.println("Authority: "+verifiedUrl.getAuthority());
+//                System.out.println("Host: "+verifiedUrl.getHost());
+//                System.out.println("Path: "+verifiedUrl.getPath());
+//                System.out.println("Protocol: "+verifiedUrl.getProtocol());
+//                System.out.println("Query: "+verifiedUrl.getQuery());
+//                System.out.println("Ref: "+verifiedUrl.getRef());
+//                System.out.println("UserInfo: "+verifiedUrl.getUserInfo());
+//                System.out.println("Hash code: "+verifiedUrl.hashCode());
+                            
 
                 // Add verified URL to log file.
                 try {
@@ -155,7 +168,8 @@ public class CrawlerInfo {
                 } catch (Exception e) {
                     showError("Unable to log match.");
                 }
-
+                //add new domain to DB
+                
                 // Retrieve list of valid links from page.
                 ArrayList<String> links = linkRetrieval.retrieveLinks(doc, verifiedUrl, crawledList, limitHost);
 
