@@ -28,7 +28,10 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Blogroll.findByIdBlogRoll", query = "SELECT b FROM Blogroll b WHERE b.idBlogRoll = :idBlogRoll"),
     @NamedQuery(name = "Blogroll.findByBlog", query = "SELECT b FROM Blogroll b WHERE b.blog = :blog"),
     @NamedQuery(name = "Blogroll.findByTypeBlogRoll", query = "SELECT b FROM Blogroll b WHERE b.typeBlogRoll = :typeBlogRoll"),
-    @NamedQuery(name = "Blogroll.findByIddestination", query = "SELECT b FROM Blogroll b WHERE b.iddestination = :iddestination")})
+    @NamedQuery(name = "Blogroll.findByIddestination", query = "SELECT b FROM Blogroll b WHERE b.iddestination = :iddestination"),
+    @NamedQuery(name = "Blogroll.findByIddomain", query = "SELECT b FROM Blogroll b WHERE b.idDomain = :idDomain"),
+    @NamedQuery(name = "Blogroll.findByDomainBlog", query = "SELECT b FROM Blogroll b WHERE b.idDomain = :idDomain AND b.blog = :blog")
+})
 public class Blogroll implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
