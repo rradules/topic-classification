@@ -5,6 +5,7 @@
 package model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
@@ -38,6 +39,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Domain.findByRobots", query = "SELECT d FROM Domain d WHERE d.robots = :robots"),
     @NamedQuery(name = "Domain.findByDepth", query = "SELECT d FROM Domain d WHERE d.depth = :depth")})
 public class Domain implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -65,6 +67,9 @@ public class Domain implements Serializable {
     private Collection<Rawdata> rawdataCollection;
 
     public Domain() {
+        blogrollCollection = new ArrayList<>();
+        blogpostCollection = new ArrayList<>();
+        rawdataCollection = new ArrayList<>();
     }
 
     public Domain(Integer idDomain) {
@@ -178,5 +183,4 @@ public class Domain implements Serializable {
     public String toString() {
         return "model.Domain[ idDomain=" + idDomain + " ]";
     }
-    
 }

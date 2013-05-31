@@ -18,10 +18,9 @@ public class TCSM {
     public static void main(String[] args) {
         // TODO code application logic here
 
-        System.out.println("Crawl");
-
         CrawlerInfo crawler = new CrawlerInfo();
-        crawler.search("http://eusimuntele.blogspot.ro/", 10);
+        crawler.search("http://www.ciutacu.ro/", 10);
 
-    }
+        }
+
 }
