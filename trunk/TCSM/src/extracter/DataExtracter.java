@@ -2,7 +2,13 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package crawler;
+package extracter;
+
+import extracter.AbstractExtracter;
+import extracter.BlogpostExtracter;
+import extracter.BlogrollExtracter;
+import extracter.DomainExtracter;
+import extracter.LocationExtracter;
 
 /**
  *
