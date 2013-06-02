@@ -4,12 +4,6 @@
  */
 package crawler;
 
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-
 /**
  *
  * @author Student
@@ -18,17 +12,12 @@ public class DataExtracter {
 
     private String url;
     private String code;
-    private Document doc;
     private AbstractExtracter extracter;
 
     public DataExtracter(String code, String url) {
         this.url = url;
         this.code = code;
-        try {
-            doc = Jsoup.connect(url).get();
-        } catch (IOException ex) {
-            Logger.getLogger(DataExtracter.class.getName()).log(Level.SEVERE, null, ex);
-        }
+
     }
 
     public String getUrl() {
