@@ -11,7 +11,6 @@ import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import model.Domain;
 import model.Header;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,7 +21,7 @@ import model.Rawdata;
 
 /**
  *
- * @author Roxana Radulescu <roxana.radulescu07@gmail.com>
+ * @author Student
  */
 public class RawdataJpaController implements Serializable {
 
@@ -43,11 +42,6 @@ public class RawdataJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Domain idDomain = rawdata.getIdDomain();
-            if (idDomain != null) {
-                idDomain = em.getReference(idDomain.getClass(), idDomain.getIdDomain());
-                rawdata.setIdDomain(idDomain);
-            }
             Collection<Header> attachedHeadersCollection = new ArrayList<Header>();
             for (Header headersCollectionHeaderToAttach : rawdata.getHeadersCollection()) {
                 headersCollectionHeaderToAttach = em.getReference(headersCollectionHeaderToAttach.getClass(), headersCollectionHeaderToAttach.getIdHeader());
@@ -55,10 +49,6 @@ public class RawdataJpaController implements Serializable {
             }
             rawdata.setHeadersCollection(attachedHeadersCollection);
             em.persist(rawdata);
-            if (idDomain != null) {
-                idDomain.getRawdataCollection().add(rawdata);
-                idDomain = em.merge(idDomain);
-            }
             for (Header headersCollectionHeader : rawdata.getHeadersCollection()) {
                 Rawdata oldIdRawDataOfHeadersCollectionHeader = headersCollectionHeader.getIdRawData();
                 headersCollectionHeader.setIdRawData(rawdata);
@@ -87,14 +77,8 @@ public class RawdataJpaController implements Serializable {
             em = getEntityManager();
             em.getTransaction().begin();
             Rawdata persistentRawdata = em.find(Rawdata.class, rawdata.getIdRawData());
-            Domain idDomainOld = persistentRawdata.getIdDomain();
-            Domain idDomainNew = rawdata.getIdDomain();
             Collection<Header> headersCollectionOld = persistentRawdata.getHeadersCollection();
             Collection<Header> headersCollectionNew = rawdata.getHeadersCollection();
-            if (idDomainNew != null) {
-                idDomainNew = em.getReference(idDomainNew.getClass(), idDomainNew.getIdDomain());
-                rawdata.setIdDomain(idDomainNew);
-            }
             Collection<Header> attachedHeadersCollectionNew = new ArrayList<Header>();
             for (Header headersCollectionNewHeaderToAttach : headersCollectionNew) {
                 headersCollectionNewHeaderToAttach = em.getReference(headersCollectionNewHeaderToAttach.getClass(), headersCollectionNewHeaderToAttach.getIdHeader());
@@ -103,14 +87,6 @@ public class RawdataJpaController implements Serializable {
             headersCollectionNew = attachedHeadersCollectionNew;
             rawdata.setHeadersCollection(headersCollectionNew);
             rawdata = em.merge(rawdata);
-            if (idDomainOld != null && !idDomainOld.equals(idDomainNew)) {
-                idDomainOld.getRawdataCollection().remove(rawdata);
-                idDomainOld = em.merge(idDomainOld);
-            }
-            if (idDomainNew != null && !idDomainNew.equals(idDomainOld)) {
-                idDomainNew.getRawdataCollection().add(rawdata);
-                idDomainNew = em.merge(idDomainNew);
-            }
             for (Header headersCollectionOldHeader : headersCollectionOld) {
                 if (!headersCollectionNew.contains(headersCollectionOldHeader)) {
                     headersCollectionOldHeader.setIdRawData(null);
@@ -156,11 +132,6 @@ public class RawdataJpaController implements Serializable {
                 rawdata.getIdRawData();
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The rawdata with id " + id + " no longer exists.", enfe);
-            }
-            Domain idDomain = rawdata.getIdDomain();
-            if (idDomain != null) {
-                idDomain.getRawdataCollection().remove(rawdata);
-                idDomain = em.merge(idDomain);
             }
             Collection<Header> headersCollection = rawdata.getHeadersCollection();
             for (Header headersCollectionHeader : headersCollection) {

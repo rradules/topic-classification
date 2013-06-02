@@ -5,7 +5,6 @@
 package controller;
 
 import controller.exceptions.NonexistentEntityException;
-import controller.exceptions.PreexistingEntityException;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -15,11 +14,10 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import model.Blogpost;
-import model.Domain;
 
 /**
  *
- * @author Roxana Radulescu <roxana.radulescu07@gmail.com>
+ * @author Student
  */
 public class BlogpostJpaController implements Serializable {
 
@@ -32,27 +30,13 @@ public class BlogpostJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(Blogpost blogpost) throws PreexistingEntityException, Exception {
+    public void create(Blogpost blogpost) {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Domain idDomain = blogpost.getIdDomain();
-            if (idDomain != null) {
-                idDomain = em.getReference(idDomain.getClass(), idDomain.getIdDomain());
-                blogpost.setIdDomain(idDomain);
-            }
             em.persist(blogpost);
-            if (idDomain != null) {
-                idDomain.getBlogpostCollection().add(blogpost);
-                idDomain = em.merge(idDomain);
-            }
             em.getTransaction().commit();
-        } catch (Exception ex) {
-            if (findBlogpost(blogpost.getIdBlogPost()) != null) {
-                throw new PreexistingEntityException("Blogpost " + blogpost + " already exists.", ex);
-            }
-            throw ex;
         } finally {
             if (em != null) {
                 em.close();
@@ -65,22 +49,7 @@ public class BlogpostJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Blogpost persistentBlogpost = em.find(Blogpost.class, blogpost.getIdBlogPost());
-            Domain idDomainOld = persistentBlogpost.getIdDomain();
-            Domain idDomainNew = blogpost.getIdDomain();
-            if (idDomainNew != null) {
-                idDomainNew = em.getReference(idDomainNew.getClass(), idDomainNew.getIdDomain());
-                blogpost.setIdDomain(idDomainNew);
-            }
             blogpost = em.merge(blogpost);
-            if (idDomainOld != null && !idDomainOld.equals(idDomainNew)) {
-                idDomainOld.getBlogpostCollection().remove(blogpost);
-                idDomainOld = em.merge(idDomainOld);
-            }
-            if (idDomainNew != null && !idDomainNew.equals(idDomainOld)) {
-                idDomainNew.getBlogpostCollection().add(blogpost);
-                idDomainNew = em.merge(idDomainNew);
-            }
             em.getTransaction().commit();
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
@@ -109,11 +78,6 @@ public class BlogpostJpaController implements Serializable {
                 blogpost.getIdBlogPost();
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The blogpost with id " + id + " no longer exists.", enfe);
-            }
-            Domain idDomain = blogpost.getIdDomain();
-            if (idDomain != null) {
-                idDomain.getBlogpostCollection().remove(blogpost);
-                idDomain = em.merge(idDomain);
             }
             em.remove(blogpost);
             em.getTransaction().commit();
