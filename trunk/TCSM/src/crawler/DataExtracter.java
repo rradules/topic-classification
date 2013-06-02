@@ -7,7 +7,6 @@ package crawler;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import model.Domain;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
