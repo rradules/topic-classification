@@ -4,12 +4,6 @@
  */
 package extracter;
 
-import extracter.AbstractExtracter;
-import extracter.BlogpostExtracter;
-import extracter.BlogrollExtracter;
-import extracter.DomainExtracter;
-import extracter.LocationExtracter;
-
 /**
  *
  * @author Student
