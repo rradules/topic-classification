@@ -2,15 +2,15 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package crawler;
+package extracter;
 
 /**
  *
  * @author Student
  */
-public class BlogrollExtracter extends AbstractExtracter {
+public class DomainExtracter extends AbstractExtracter {
 
-    public BlogrollExtracter(String url) {
+    public DomainExtracter(String url) {
         super(url);
     }
 

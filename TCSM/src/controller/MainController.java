@@ -108,7 +108,7 @@ public class MainController {
         return blogrollController.findByDomainAndName(domain, blog);
     }
 
-    public void addBlogroll(Domain domain, String blog) throws Exception {
+    public Blogroll addBlogroll(Domain domain, String blog) throws Exception {
 
         Blogroll br = findBlogrollByDomainAndBlog(domain, blog);
 
@@ -121,9 +121,11 @@ public class MainController {
                 aux.setIddestination(destination.getIdDomain());
             }
             blogrollController.create(aux);
+            return aux;
 
         } else {
-            throw new Exception("This blogroll already exists in the database.");
+            return br;
+            //throw new Exception("This blogroll already exists in the database.");
         }
 
     }
@@ -134,7 +136,7 @@ public class MainController {
         return blogpostController.findByPageAddress(address);
     }
 
-    public void addBlogpost(String address, Date date,
+    public Blogpost addBlogpost(String address, Date date,
             String title, String content,
             String description, Domain domain) throws Exception {
 
@@ -153,9 +155,10 @@ public class MainController {
             aux.setIdDomain(domain);
 
             blogpostController.create(aux);
+            return aux;
         } else {
-            throw new Exception("This blogpost already exists in the database.");
-            // return bp.getIdBlogPost();   
+            //throw new Exception("This blogpost already exists in the database.");
+            return bp;   
         }
     }
 //------------------------------------------------------------------------
