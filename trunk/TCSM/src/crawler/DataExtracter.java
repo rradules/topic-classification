@@ -5,7 +5,6 @@
 package crawler;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Domain;
@@ -18,33 +17,50 @@ import org.jsoup.nodes.Document;
  */
 public class DataExtracter {
 
-    URL url;
-    Document doc;
+    private String url;
+    private String code;
+    private Document doc;
+    private AbstractExtracter extracter;
 
-    public DataExtracter(URL url) {
+    public DataExtracter(String code, String url) {
         this.url = url;
+        this.code = code;
         try {
-            doc = Jsoup.connect(url.toString()).get();
+            doc = Jsoup.connect(url).get();
         } catch (IOException ex) {
             Logger.getLogger(DataExtracter.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public URL getUrl() {
+    public String getUrl() {
         return url;
     }
 
-    public void setUrl(URL url) {
+    public void setUrl(String url) {
         this.url = url;
     }
 
-    public Domain extractDomain() {
-        return null;
-    }
-
-    public void extractBlogroll() {
-    }
-
-    public void extractBlogpost() {
+    public Object extractData() {
+        switch (code) {
+            case "location": {
+                extracter = new LocationExtracter(url);
+                break;
+            }
+            case "domain": {
+                extracter = new DomainExtracter(url);
+                break;
+            }
+            case "blogroll": {
+                extracter = new BlogrollExtracter(url);
+                break;
+            }
+            case "blogpost": {
+                extracter = new BlogpostExtracter(url);
+                break;
+            }
+            default:
+                return null;
+        }
+        return extracter.getData();
     }
 }
