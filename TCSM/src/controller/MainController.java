@@ -13,6 +13,7 @@ import model.Blogpost;
 import model.Blogroll;
 import model.Domain;
 import model.Location;
+import model.Rawdata;
 
 /**
  *
@@ -76,7 +77,8 @@ public class MainController {
         return domainController.findByDomainName(name);
     }
 
-    public int addDomain(String name, String suffix, String robots, int depth, Date activation) throws Exception {
+    public int addDomain(String name, String suffix, String robots, 
+            int depth, Date activation) throws Exception {
         Domain dom = findDomainByName(name);
         Location loc = findLocationBySuffix(suffix);
 
@@ -135,11 +137,11 @@ public class MainController {
     public void addBlogpost(String address, Date date,
             String title, String content,
             String description, Domain domain) throws Exception {
-        
+
         Blogpost bp = findBlogpostByAddress(address);
-        if (bp == null) {            
+        if (bp == null) {
             long CRC = computeCRC.computeChecksum(content);
-            
+
             Blogpost aux = new Blogpost();
             aux.setPageAddress(address);
             aux.setBlogContent(content);
@@ -158,7 +160,15 @@ public class MainController {
     }
 //------------------------------------------------------------------------
 //-------------Rawdata related methods------------------------------------
-    
+
+    public Rawdata findRawdataByAddress(String address) {
+        return rawdataController.findByPageAddress(address);
+    }
+
+    public void addRawdata(String address, String content,
+            int level, String title,
+            String description, Domain domain) {
+    }
 //------------------------------------------------------------------------
 //-------------Headers related methods------------------------------------ 
 //------------------------------------------------------------------------
