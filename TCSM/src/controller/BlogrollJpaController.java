@@ -19,7 +19,7 @@ import model.Domain;
 
 /**
  *
- * @author Roxana Radulescu <roxana.radulescu07@gmail.com>
+ * @author Student
  */
 public class BlogrollJpaController implements Serializable {
 
@@ -37,16 +37,7 @@ public class BlogrollJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Domain idDomain = blogroll.getIdDomain();
-            if (idDomain != null) {
-                idDomain = em.getReference(idDomain.getClass(), idDomain.getIdDomain());
-                blogroll.setIdDomain(idDomain);
-            }
             em.persist(blogroll);
-            if (idDomain != null) {
-                idDomain.getBlogrollCollection().add(blogroll);
-                idDomain = em.merge(idDomain);
-            }
             em.getTransaction().commit();
         } catch (Exception ex) {
             if (findBlogroll(blogroll.getIdBlogRoll()) != null) {
@@ -65,22 +56,7 @@ public class BlogrollJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Blogroll persistentBlogroll = em.find(Blogroll.class, blogroll.getIdBlogRoll());
-            Domain idDomainOld = persistentBlogroll.getIdDomain();
-            Domain idDomainNew = blogroll.getIdDomain();
-            if (idDomainNew != null) {
-                idDomainNew = em.getReference(idDomainNew.getClass(), idDomainNew.getIdDomain());
-                blogroll.setIdDomain(idDomainNew);
-            }
             blogroll = em.merge(blogroll);
-            if (idDomainOld != null && !idDomainOld.equals(idDomainNew)) {
-                idDomainOld.getBlogrollCollection().remove(blogroll);
-                idDomainOld = em.merge(idDomainOld);
-            }
-            if (idDomainNew != null && !idDomainNew.equals(idDomainOld)) {
-                idDomainNew.getBlogrollCollection().add(blogroll);
-                idDomainNew = em.merge(idDomainNew);
-            }
             em.getTransaction().commit();
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
@@ -109,11 +85,6 @@ public class BlogrollJpaController implements Serializable {
                 blogroll.getIdBlogRoll();
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The blogroll with id " + id + " no longer exists.", enfe);
-            }
-            Domain idDomain = blogroll.getIdDomain();
-            if (idDomain != null) {
-                idDomain.getBlogrollCollection().remove(blogroll);
-                idDomain = em.merge(idDomain);
             }
             em.remove(blogroll);
             em.getTransaction().commit();

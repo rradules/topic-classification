@@ -77,17 +77,16 @@ public class MainController {
         return domainController.findByDomainName(name);
     }
 
-    public Domain addDomain(String name, String suffix, String robots, 
-            int depth, Date activation) throws Exception {
+    public Domain addDomain(String name, Location loc, String robots,
+            String description, Date activation) throws Exception {
         Domain dom = findDomainByName(name);
-        Location loc = findLocationBySuffix(suffix);
 
         if (dom == null) {
             Domain aux = new Domain();
             aux.setDomainName(name);
             aux.setIdLocation(loc);
             aux.setRobots(robots);
-            aux.setDepth(depth);
+            aux.setDescription(description);
             aux.setActivation(activation);
             domainController.create(dom);
 
@@ -158,7 +157,7 @@ public class MainController {
             return aux;
         } else {
             //throw new Exception("This blogpost already exists in the database.");
-            return bp;   
+            return bp;
         }
     }
 //------------------------------------------------------------------------

@@ -21,7 +21,5 @@ public class TCSM {
         Crawler crawler = new Crawler();
         crawler.search("http://www.ciutacu.ro/", 10);
 
-
-
     }
 }

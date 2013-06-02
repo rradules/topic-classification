@@ -5,25 +5,20 @@
 package controller;
 
 import controller.exceptions.NonexistentEntityException;
-import controller.exceptions.PreexistingEntityException;
 import java.io.Serializable;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import model.Blogroll;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import model.Blogpost;
 import model.Domain;
-import model.Rawdata;
+import model.Location;
 
 /**
  *
- * @author Roxana Radulescu <roxana.radulescu07@gmail.com>
+ * @author Student
  */
 public class DomainJpaController implements Serializable {
 
@@ -36,72 +31,22 @@ public class DomainJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(Domain domain) throws PreexistingEntityException, Exception {
-        if (domain.getBlogrollCollection() == null) {
-            domain.setBlogrollCollection(new ArrayList<Blogroll>());
-        }
-        if (domain.getBlogpostCollection() == null) {
-            domain.setBlogpostCollection(new ArrayList<Blogpost>());
-        }
-        if (domain.getRawdataCollection() == null) {
-            domain.setRawdataCollection(new ArrayList<Rawdata>());
-        }
+    public void create(Domain domain) {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Collection<Blogroll> attachedBlogrollCollection = new ArrayList<Blogroll>();
-            for (Blogroll blogrollCollectionBlogrollToAttach : domain.getBlogrollCollection()) {
-                blogrollCollectionBlogrollToAttach = em.getReference(blogrollCollectionBlogrollToAttach.getClass(), blogrollCollectionBlogrollToAttach.getIdBlogRoll());
-                attachedBlogrollCollection.add(blogrollCollectionBlogrollToAttach);
+            Location idLocation = domain.getIdLocation();
+            if (idLocation != null) {
+                idLocation = em.getReference(idLocation.getClass(), idLocation.getIdLocation());
+                domain.setIdLocation(idLocation);
             }
-            domain.setBlogrollCollection(attachedBlogrollCollection);
-            Collection<Blogpost> attachedBlogpostCollection = new ArrayList<Blogpost>();
-            for (Blogpost blogpostCollectionBlogpostToAttach : domain.getBlogpostCollection()) {
-                blogpostCollectionBlogpostToAttach = em.getReference(blogpostCollectionBlogpostToAttach.getClass(), blogpostCollectionBlogpostToAttach.getIdBlogPost());
-                attachedBlogpostCollection.add(blogpostCollectionBlogpostToAttach);
-            }
-            domain.setBlogpostCollection(attachedBlogpostCollection);
-            Collection<Rawdata> attachedRawdataCollection = new ArrayList<Rawdata>();
-            for (Rawdata rawdataCollectionRawdataToAttach : domain.getRawdataCollection()) {
-                rawdataCollectionRawdataToAttach = em.getReference(rawdataCollectionRawdataToAttach.getClass(), rawdataCollectionRawdataToAttach.getIdRawData());
-                attachedRawdataCollection.add(rawdataCollectionRawdataToAttach);
-            }
-            domain.setRawdataCollection(attachedRawdataCollection);
             em.persist(domain);
-            for (Blogroll blogrollCollectionBlogroll : domain.getBlogrollCollection()) {
-                Domain oldIdDomainOfBlogrollCollectionBlogroll = blogrollCollectionBlogroll.getIdDomain();
-                blogrollCollectionBlogroll.setIdDomain(domain);
-                blogrollCollectionBlogroll = em.merge(blogrollCollectionBlogroll);
-                if (oldIdDomainOfBlogrollCollectionBlogroll != null) {
-                    oldIdDomainOfBlogrollCollectionBlogroll.getBlogrollCollection().remove(blogrollCollectionBlogroll);
-                    oldIdDomainOfBlogrollCollectionBlogroll = em.merge(oldIdDomainOfBlogrollCollectionBlogroll);
-                }
-            }
-            for (Blogpost blogpostCollectionBlogpost : domain.getBlogpostCollection()) {
-                Domain oldIdDomainOfBlogpostCollectionBlogpost = blogpostCollectionBlogpost.getIdDomain();
-                blogpostCollectionBlogpost.setIdDomain(domain);
-                blogpostCollectionBlogpost = em.merge(blogpostCollectionBlogpost);
-                if (oldIdDomainOfBlogpostCollectionBlogpost != null) {
-                    oldIdDomainOfBlogpostCollectionBlogpost.getBlogpostCollection().remove(blogpostCollectionBlogpost);
-                    oldIdDomainOfBlogpostCollectionBlogpost = em.merge(oldIdDomainOfBlogpostCollectionBlogpost);
-                }
-            }
-            for (Rawdata rawdataCollectionRawdata : domain.getRawdataCollection()) {
-                Domain oldIdDomainOfRawdataCollectionRawdata = rawdataCollectionRawdata.getIdDomain();
-                rawdataCollectionRawdata.setIdDomain(domain);
-                rawdataCollectionRawdata = em.merge(rawdataCollectionRawdata);
-                if (oldIdDomainOfRawdataCollectionRawdata != null) {
-                    oldIdDomainOfRawdataCollectionRawdata.getRawdataCollection().remove(rawdataCollectionRawdata);
-                    oldIdDomainOfRawdataCollectionRawdata = em.merge(oldIdDomainOfRawdataCollectionRawdata);
-                }
+            if (idLocation != null) {
+                idLocation.getDomainCollection().add(domain);
+                idLocation = em.merge(idLocation);
             }
             em.getTransaction().commit();
-        } catch (Exception ex) {
-            if (findDomain(domain.getIdDomain()) != null) {
-                throw new PreexistingEntityException("Domain " + domain + " already exists.", ex);
-            }
-            throw ex;
         } finally {
             if (em != null) {
                 em.close();
@@ -115,84 +60,20 @@ public class DomainJpaController implements Serializable {
             em = getEntityManager();
             em.getTransaction().begin();
             Domain persistentDomain = em.find(Domain.class, domain.getIdDomain());
-            Collection<Blogroll> blogrollCollectionOld = persistentDomain.getBlogrollCollection();
-            Collection<Blogroll> blogrollCollectionNew = domain.getBlogrollCollection();
-            Collection<Blogpost> blogpostCollectionOld = persistentDomain.getBlogpostCollection();
-            Collection<Blogpost> blogpostCollectionNew = domain.getBlogpostCollection();
-            Collection<Rawdata> rawdataCollectionOld = persistentDomain.getRawdataCollection();
-            Collection<Rawdata> rawdataCollectionNew = domain.getRawdataCollection();
-            Collection<Blogroll> attachedBlogrollCollectionNew = new ArrayList<Blogroll>();
-            for (Blogroll blogrollCollectionNewBlogrollToAttach : blogrollCollectionNew) {
-                blogrollCollectionNewBlogrollToAttach = em.getReference(blogrollCollectionNewBlogrollToAttach.getClass(), blogrollCollectionNewBlogrollToAttach.getIdBlogRoll());
-                attachedBlogrollCollectionNew.add(blogrollCollectionNewBlogrollToAttach);
+            Location idLocationOld = persistentDomain.getIdLocation();
+            Location idLocationNew = domain.getIdLocation();
+            if (idLocationNew != null) {
+                idLocationNew = em.getReference(idLocationNew.getClass(), idLocationNew.getIdLocation());
+                domain.setIdLocation(idLocationNew);
             }
-            blogrollCollectionNew = attachedBlogrollCollectionNew;
-            domain.setBlogrollCollection(blogrollCollectionNew);
-            Collection<Blogpost> attachedBlogpostCollectionNew = new ArrayList<Blogpost>();
-            for (Blogpost blogpostCollectionNewBlogpostToAttach : blogpostCollectionNew) {
-                blogpostCollectionNewBlogpostToAttach = em.getReference(blogpostCollectionNewBlogpostToAttach.getClass(), blogpostCollectionNewBlogpostToAttach.getIdBlogPost());
-                attachedBlogpostCollectionNew.add(blogpostCollectionNewBlogpostToAttach);
-            }
-            blogpostCollectionNew = attachedBlogpostCollectionNew;
-            domain.setBlogpostCollection(blogpostCollectionNew);
-            Collection<Rawdata> attachedRawdataCollectionNew = new ArrayList<Rawdata>();
-            for (Rawdata rawdataCollectionNewRawdataToAttach : rawdataCollectionNew) {
-                rawdataCollectionNewRawdataToAttach = em.getReference(rawdataCollectionNewRawdataToAttach.getClass(), rawdataCollectionNewRawdataToAttach.getIdRawData());
-                attachedRawdataCollectionNew.add(rawdataCollectionNewRawdataToAttach);
-            }
-            rawdataCollectionNew = attachedRawdataCollectionNew;
-            domain.setRawdataCollection(rawdataCollectionNew);
             domain = em.merge(domain);
-            for (Blogroll blogrollCollectionOldBlogroll : blogrollCollectionOld) {
-                if (!blogrollCollectionNew.contains(blogrollCollectionOldBlogroll)) {
-                    blogrollCollectionOldBlogroll.setIdDomain(null);
-                    blogrollCollectionOldBlogroll = em.merge(blogrollCollectionOldBlogroll);
-                }
+            if (idLocationOld != null && !idLocationOld.equals(idLocationNew)) {
+                idLocationOld.getDomainCollection().remove(domain);
+                idLocationOld = em.merge(idLocationOld);
             }
-            for (Blogroll blogrollCollectionNewBlogroll : blogrollCollectionNew) {
-                if (!blogrollCollectionOld.contains(blogrollCollectionNewBlogroll)) {
-                    Domain oldIdDomainOfBlogrollCollectionNewBlogroll = blogrollCollectionNewBlogroll.getIdDomain();
-                    blogrollCollectionNewBlogroll.setIdDomain(domain);
-                    blogrollCollectionNewBlogroll = em.merge(blogrollCollectionNewBlogroll);
-                    if (oldIdDomainOfBlogrollCollectionNewBlogroll != null && !oldIdDomainOfBlogrollCollectionNewBlogroll.equals(domain)) {
-                        oldIdDomainOfBlogrollCollectionNewBlogroll.getBlogrollCollection().remove(blogrollCollectionNewBlogroll);
-                        oldIdDomainOfBlogrollCollectionNewBlogroll = em.merge(oldIdDomainOfBlogrollCollectionNewBlogroll);
-                    }
-                }
-            }
-            for (Blogpost blogpostCollectionOldBlogpost : blogpostCollectionOld) {
-                if (!blogpostCollectionNew.contains(blogpostCollectionOldBlogpost)) {
-                    blogpostCollectionOldBlogpost.setIdDomain(null);
-                    blogpostCollectionOldBlogpost = em.merge(blogpostCollectionOldBlogpost);
-                }
-            }
-            for (Blogpost blogpostCollectionNewBlogpost : blogpostCollectionNew) {
-                if (!blogpostCollectionOld.contains(blogpostCollectionNewBlogpost)) {
-                    Domain oldIdDomainOfBlogpostCollectionNewBlogpost = blogpostCollectionNewBlogpost.getIdDomain();
-                    blogpostCollectionNewBlogpost.setIdDomain(domain);
-                    blogpostCollectionNewBlogpost = em.merge(blogpostCollectionNewBlogpost);
-                    if (oldIdDomainOfBlogpostCollectionNewBlogpost != null && !oldIdDomainOfBlogpostCollectionNewBlogpost.equals(domain)) {
-                        oldIdDomainOfBlogpostCollectionNewBlogpost.getBlogpostCollection().remove(blogpostCollectionNewBlogpost);
-                        oldIdDomainOfBlogpostCollectionNewBlogpost = em.merge(oldIdDomainOfBlogpostCollectionNewBlogpost);
-                    }
-                }
-            }
-            for (Rawdata rawdataCollectionOldRawdata : rawdataCollectionOld) {
-                if (!rawdataCollectionNew.contains(rawdataCollectionOldRawdata)) {
-                    rawdataCollectionOldRawdata.setIdDomain(null);
-                    rawdataCollectionOldRawdata = em.merge(rawdataCollectionOldRawdata);
-                }
-            }
-            for (Rawdata rawdataCollectionNewRawdata : rawdataCollectionNew) {
-                if (!rawdataCollectionOld.contains(rawdataCollectionNewRawdata)) {
-                    Domain oldIdDomainOfRawdataCollectionNewRawdata = rawdataCollectionNewRawdata.getIdDomain();
-                    rawdataCollectionNewRawdata.setIdDomain(domain);
-                    rawdataCollectionNewRawdata = em.merge(rawdataCollectionNewRawdata);
-                    if (oldIdDomainOfRawdataCollectionNewRawdata != null && !oldIdDomainOfRawdataCollectionNewRawdata.equals(domain)) {
-                        oldIdDomainOfRawdataCollectionNewRawdata.getRawdataCollection().remove(rawdataCollectionNewRawdata);
-                        oldIdDomainOfRawdataCollectionNewRawdata = em.merge(oldIdDomainOfRawdataCollectionNewRawdata);
-                    }
-                }
+            if (idLocationNew != null && !idLocationNew.equals(idLocationOld)) {
+                idLocationNew.getDomainCollection().add(domain);
+                idLocationNew = em.merge(idLocationNew);
             }
             em.getTransaction().commit();
         } catch (Exception ex) {
@@ -223,20 +104,10 @@ public class DomainJpaController implements Serializable {
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The domain with id " + id + " no longer exists.", enfe);
             }
-            Collection<Blogroll> blogrollCollection = domain.getBlogrollCollection();
-            for (Blogroll blogrollCollectionBlogroll : blogrollCollection) {
-                blogrollCollectionBlogroll.setIdDomain(null);
-                blogrollCollectionBlogroll = em.merge(blogrollCollectionBlogroll);
-            }
-            Collection<Blogpost> blogpostCollection = domain.getBlogpostCollection();
-            for (Blogpost blogpostCollectionBlogpost : blogpostCollection) {
-                blogpostCollectionBlogpost.setIdDomain(null);
-                blogpostCollectionBlogpost = em.merge(blogpostCollectionBlogpost);
-            }
-            Collection<Rawdata> rawdataCollection = domain.getRawdataCollection();
-            for (Rawdata rawdataCollectionRawdata : rawdataCollection) {
-                rawdataCollectionRawdata.setIdDomain(null);
-                rawdataCollectionRawdata = em.merge(rawdataCollectionRawdata);
+            Location idLocation = domain.getIdLocation();
+            if (idLocation != null) {
+                idLocation.getDomainCollection().remove(domain);
+                idLocation = em.merge(idLocation);
             }
             em.remove(domain);
             em.getTransaction().commit();

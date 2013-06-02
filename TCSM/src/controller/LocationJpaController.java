@@ -6,18 +6,21 @@ package controller;
 
 import controller.exceptions.NonexistentEntityException;
 import java.io.Serializable;
-import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import model.Domain;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import model.Location;
 
 /**
  *
- * @author Roxana Radulescu <roxana.radulescu07@gmail.com>
+ * @author Student
  */
 public class LocationJpaController implements Serializable {
 
@@ -31,11 +34,29 @@ public class LocationJpaController implements Serializable {
     }
 
     public void create(Location location) {
+        if (location.getDomainCollection() == null) {
+            location.setDomainCollection(new ArrayList<Domain>());
+        }
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
+            Collection<Domain> attachedDomainCollection = new ArrayList<Domain>();
+            for (Domain domainCollectionDomainToAttach : location.getDomainCollection()) {
+                domainCollectionDomainToAttach = em.getReference(domainCollectionDomainToAttach.getClass(), domainCollectionDomainToAttach.getIdDomain());
+                attachedDomainCollection.add(domainCollectionDomainToAttach);
+            }
+            location.setDomainCollection(attachedDomainCollection);
             em.persist(location);
+            for (Domain domainCollectionDomain : location.getDomainCollection()) {
+                Location oldIdLocationOfDomainCollectionDomain = domainCollectionDomain.getIdLocation();
+                domainCollectionDomain.setIdLocation(location);
+                domainCollectionDomain = em.merge(domainCollectionDomain);
+                if (oldIdLocationOfDomainCollectionDomain != null) {
+                    oldIdLocationOfDomainCollectionDomain.getDomainCollection().remove(domainCollectionDomain);
+                    oldIdLocationOfDomainCollectionDomain = em.merge(oldIdLocationOfDomainCollectionDomain);
+                }
+            }
             em.getTransaction().commit();
         } finally {
             if (em != null) {
@@ -49,7 +70,34 @@ public class LocationJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
+            Location persistentLocation = em.find(Location.class, location.getIdLocation());
+            Collection<Domain> domainCollectionOld = persistentLocation.getDomainCollection();
+            Collection<Domain> domainCollectionNew = location.getDomainCollection();
+            Collection<Domain> attachedDomainCollectionNew = new ArrayList<Domain>();
+            for (Domain domainCollectionNewDomainToAttach : domainCollectionNew) {
+                domainCollectionNewDomainToAttach = em.getReference(domainCollectionNewDomainToAttach.getClass(), domainCollectionNewDomainToAttach.getIdDomain());
+                attachedDomainCollectionNew.add(domainCollectionNewDomainToAttach);
+            }
+            domainCollectionNew = attachedDomainCollectionNew;
+            location.setDomainCollection(domainCollectionNew);
             location = em.merge(location);
+            for (Domain domainCollectionOldDomain : domainCollectionOld) {
+                if (!domainCollectionNew.contains(domainCollectionOldDomain)) {
+                    domainCollectionOldDomain.setIdLocation(null);
+                    domainCollectionOldDomain = em.merge(domainCollectionOldDomain);
+                }
+            }
+            for (Domain domainCollectionNewDomain : domainCollectionNew) {
+                if (!domainCollectionOld.contains(domainCollectionNewDomain)) {
+                    Location oldIdLocationOfDomainCollectionNewDomain = domainCollectionNewDomain.getIdLocation();
+                    domainCollectionNewDomain.setIdLocation(location);
+                    domainCollectionNewDomain = em.merge(domainCollectionNewDomain);
+                    if (oldIdLocationOfDomainCollectionNewDomain != null && !oldIdLocationOfDomainCollectionNewDomain.equals(location)) {
+                        oldIdLocationOfDomainCollectionNewDomain.getDomainCollection().remove(domainCollectionNewDomain);
+                        oldIdLocationOfDomainCollectionNewDomain = em.merge(oldIdLocationOfDomainCollectionNewDomain);
+                    }
+                }
+            }
             em.getTransaction().commit();
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
@@ -78,6 +126,11 @@ public class LocationJpaController implements Serializable {
                 location.getIdLocation();
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The location with id " + id + " no longer exists.", enfe);
+            }
+            Collection<Domain> domainCollection = location.getDomainCollection();
+            for (Domain domainCollectionDomain : domainCollection) {
+                domainCollectionDomain.setIdLocation(null);
+                domainCollectionDomain = em.merge(domainCollectionDomain);
             }
             em.remove(location);
             em.getTransaction().commit();

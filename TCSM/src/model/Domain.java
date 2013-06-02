@@ -5,27 +5,25 @@
 package model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Roxana Radulescu <roxana.radulescu07@gmail.com>
+ * @author Student
  */
 @Entity
 @Table(name = "domain")
@@ -37,11 +35,11 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Domain.findByTypeDomain", query = "SELECT d FROM Domain d WHERE d.typeDomain = :typeDomain"),
     @NamedQuery(name = "Domain.findByActivation", query = "SELECT d FROM Domain d WHERE d.activation = :activation"),
     @NamedQuery(name = "Domain.findByRobots", query = "SELECT d FROM Domain d WHERE d.robots = :robots"),
-    @NamedQuery(name = "Domain.findByDepth", query = "SELECT d FROM Domain d WHERE d.depth = :depth")})
+    @NamedQuery(name = "Domain.findByDescription", query = "SELECT d FROM Domain d WHERE d.description = :description")})
 public class Domain implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "Id_Domain")
     private Integer idDomain;
@@ -54,22 +52,13 @@ public class Domain implements Serializable {
     private Date activation;
     @Column(name = "Robots")
     private String robots;
-    @Column(name = "Depth")
-    private Integer depth;
-    @OneToMany(mappedBy = "idDomain")
-    private Collection<Blogroll> blogrollCollection;
+    @Column(name = "Description")
+    private String description;
     @JoinColumn(name = "Id_Location", referencedColumnName = "Id_Location")
     @ManyToOne
     private Location idLocation;
-    @OneToMany(mappedBy = "idDomain")
-    private Collection<Blogpost> blogpostCollection;
-    @OneToMany(mappedBy = "idDomain")
-    private Collection<Rawdata> rawdataCollection;
 
     public Domain() {
-        blogrollCollection = new ArrayList<>();
-        blogpostCollection = new ArrayList<>();
-        rawdataCollection = new ArrayList<>();
     }
 
     public Domain(Integer idDomain) {
@@ -116,21 +105,12 @@ public class Domain implements Serializable {
         this.robots = robots;
     }
 
-    public Integer getDepth() {
-        return depth;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDepth(Integer depth) {
-        this.depth = depth;
-    }
-
-    @XmlTransient
-    public Collection<Blogroll> getBlogrollCollection() {
-        return blogrollCollection;
-    }
-
-    public void setBlogrollCollection(Collection<Blogroll> blogrollCollection) {
-        this.blogrollCollection = blogrollCollection;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Location getIdLocation() {
@@ -139,24 +119,6 @@ public class Domain implements Serializable {
 
     public void setIdLocation(Location idLocation) {
         this.idLocation = idLocation;
-    }
-
-    @XmlTransient
-    public Collection<Blogpost> getBlogpostCollection() {
-        return blogpostCollection;
-    }
-
-    public void setBlogpostCollection(Collection<Blogpost> blogpostCollection) {
-        this.blogpostCollection = blogpostCollection;
-    }
-
-    @XmlTransient
-    public Collection<Rawdata> getRawdataCollection() {
-        return rawdataCollection;
-    }
-
-    public void setRawdataCollection(Collection<Rawdata> rawdataCollection) {
-        this.rawdataCollection = rawdataCollection;
     }
 
     @Override
@@ -183,4 +145,5 @@ public class Domain implements Serializable {
     public String toString() {
         return "model.Domain[ idDomain=" + idDomain + " ]";
     }
+    
 }
