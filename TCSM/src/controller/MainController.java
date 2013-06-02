@@ -77,7 +77,7 @@ public class MainController {
         return domainController.findByDomainName(name);
     }
 
-    public int addDomain(String name, String suffix, String robots, 
+    public Domain addDomain(String name, String suffix, String robots, 
             int depth, Date activation) throws Exception {
         Domain dom = findDomainByName(name);
         Location loc = findLocationBySuffix(suffix);
@@ -91,10 +91,10 @@ public class MainController {
             aux.setActivation(activation);
             domainController.create(dom);
 
-            return findDomainByName(name).getIdDomain();
+            return findDomainByName(name);
         } else {
             //throw new Exception("This domain already exists in the database.");
-            return dom.getIdDomain();
+            return dom;
         }
     }
 //---------------------------------------------------------------------
