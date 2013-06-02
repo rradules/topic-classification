@@ -9,6 +9,8 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -21,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author Roxana Radulescu <roxana.radulescu07@gmail.com>
+ * @author Student
  */
 @Entity
 @Table(name = "blogpost")
@@ -39,6 +41,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Blogpost implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "Id_BlogPost")
     private Integer idBlogPost;
@@ -52,7 +55,7 @@ public class Blogpost implements Serializable {
     @Column(name = "Processed")
     private Integer processed;
     @Column(name = "CRC")
-    private Integer crc;
+    private Long crc;
     @Column(name = "Title")
     private String title;
     @Column(name = "Description")
@@ -108,11 +111,11 @@ public class Blogpost implements Serializable {
         this.processed = processed;
     }
 
-    public Integer getCrc() {
+    public long getCrc() {
         return crc;
     }
 
-    public void setCrc(Integer crc) {
+    public void setCrc(long crc) {
         this.crc = crc;
     }
 
