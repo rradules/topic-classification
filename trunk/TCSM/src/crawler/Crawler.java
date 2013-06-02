@@ -4,7 +4,6 @@
  */
 package crawler;
 
-import controller.MainController;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,6 +14,7 @@ import java.util.LinkedHashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import model.Domain;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -22,7 +22,7 @@ import org.jsoup.nodes.Document;
  *
  * @author Roxana Radulescu <roxana.radulescu07@gmail.com>
  */
-public class CrawlerInfo {
+public class Crawler {
 
     // crawling flag
     private boolean crawling = false;
@@ -32,8 +32,9 @@ public class CrawlerInfo {
     private String logFile = "crawlerLog.txt";
     private RobotsParser roboParser;
     private LinkRetrieval linkRetrieval;
+    private Domain currentDomain;
 
-    public CrawlerInfo() {
+    public Crawler() {
         roboParser = new RobotsParser();
         linkRetrieval = new LinkRetrieval();
     }
@@ -78,10 +79,11 @@ public class CrawlerInfo {
                     String url = linkRetrieval.removeWwwFromUrl(startUrl);
                     // Convert string url to URL object.
                     URL verifiedUrl = linkRetrieval.verifyUrl(url);
-//                    //add location in DB
+//                    //add domain in DB and fix current domain
+                    //currentDomain = 
 //                    MainController.getInstance().addLocation(verifiedUrl.getHost());
                 } catch (Exception ex) {
-                    Logger.getLogger(CrawlerInfo.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Crawler.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
                 // Turn crawling flag on.
@@ -119,8 +121,8 @@ public class CrawlerInfo {
         while (crawling && toCrawlList.size() > 0) {
             /* Check to see if the max URL count has
              been reached, if it was specified.*/
-           //  System.out.println("To Crawl list size: "+toCrawlList.size());
-          //  System.out.println("Crawled list size: "+crawledList.size());
+            //  System.out.println("To Crawl list size: "+toCrawlList.size());
+            //  System.out.println("Crawled list size: "+crawledList.size());
 
             if (maxUrls != -1) {
                 if (crawledList.size() == maxUrls) {
@@ -160,7 +162,7 @@ public class CrawlerInfo {
 //                System.out.println("Ref: "+verifiedUrl.getRef());
 //                System.out.println("UserInfo: "+verifiedUrl.getUserInfo());
 //                System.out.println("Hash code: "+verifiedUrl.hashCode());
-                            
+
 
                 // Add verified URL to log file.
                 try {
@@ -169,7 +171,7 @@ public class CrawlerInfo {
                     showError("Unable to log match.");
                 }
                 //add new domain to DB
-                
+
                 // Retrieve list of valid links from page.
                 ArrayList<String> links = linkRetrieval.retrieveLinks(doc, verifiedUrl, crawledList, limitHost);
 

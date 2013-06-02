@@ -4,7 +4,7 @@
  */
 package main;
 
-import crawler.CrawlerInfo;
+import crawler.Crawler;
 
 /**
  *
@@ -18,7 +18,7 @@ public class TCSM {
     public static void main(String[] args) {
         // TODO code application logic here
 
-        CrawlerInfo crawler = new CrawlerInfo();
+        Crawler crawler = new Crawler();
         crawler.search("http://www.ciutacu.ro/", 10);
 
         }
