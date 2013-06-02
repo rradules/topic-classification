@@ -5,6 +5,7 @@
 package model;
 
 import java.io.Serializable;
+import java.util.Collection;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,8 +14,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -29,6 +32,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Location.findByLocation", query = "SELECT l FROM Location l WHERE l.location = :location"),
     @NamedQuery(name = "Location.findBySuffix", query = "SELECT l FROM Location l WHERE l.suffix = :suffix")})
 public class Location implements Serializable {
+    @OneToMany(mappedBy = "idLocation")
+    private Collection<Domain> domainCollection;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -100,6 +105,15 @@ public class Location implements Serializable {
     @Override
     public String toString() {
         return "model.Location[ idLocation=" + idLocation + " ]";
+    }
+
+    @XmlTransient
+    public Collection<Domain> getDomainCollection() {
+        return domainCollection;
+    }
+
+    public void setDomainCollection(Collection<Domain> domainCollection) {
+        this.domainCollection = domainCollection;
     }
     
 }

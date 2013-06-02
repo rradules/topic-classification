@@ -169,5 +169,16 @@ public class BlogpostJpaController implements Serializable {
             em.close();
         }
     }
-    
+
+    public Blogpost findByPageAddress(String address) {
+        EntityManager em = getEntityManager();
+        Query q = em.createNamedQuery("Blogpost.findByPageAddress");
+        q.setParameter("pageAddress", address);
+
+        try {
+            return (Blogpost) q.getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }
 }

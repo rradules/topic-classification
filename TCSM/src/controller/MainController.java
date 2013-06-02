@@ -4,10 +4,12 @@
  */
 package controller;
 
+import functions.ComputeCRC;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import model.Blogpost;
 import model.Blogroll;
 import model.Domain;
 import model.Location;
@@ -17,7 +19,7 @@ import model.Location;
  * @author Roxana Radulescu <roxana.radulescu07@gmail.com>
  */
 public class MainController {
-    
+
     private static MainController singleton = null;
     private LocationJpaController locationController;
     private DomainJpaController domainController;
@@ -26,10 +28,11 @@ public class MainController {
     private HeaderJpaController headerController;
     private RawdataJpaController rawdataController;
     private EntityManagerFactory emf;
+    private ComputeCRC computeCRC;
 
 // private constructer    
     private MainController() {
-        
+
         emf = Persistence.createEntityManagerFactory("Crawler1.0PU");
         locationController = new LocationJpaController(emf);
         domainController = new DomainJpaController(emf);
@@ -37,6 +40,8 @@ public class MainController {
         blogpostController = new BlogpostJpaController(emf);
         headerController = new HeaderJpaController(emf);
         rawdataController = new RawdataJpaController(emf);
+
+        computeCRC = new ComputeCRC();
     }
 //singleton pattern
 
@@ -48,13 +53,13 @@ public class MainController {
     }
 //-----------Location related methods-----------------------------
 
-    public Location getLocationBySuffix(String suffix) {
+    public Location findLocationBySuffix(String suffix) {
         return locationController.findBySuffix(suffix);
     }
-    
+
     public void addLocation(String suffix, String location) throws Exception {
-        Location loc = getLocationBySuffix(suffix);
-        
+        Location loc = findLocationBySuffix(suffix);
+
         if (loc == null) {
             Location aux = new Location();
             aux.setSuffix(suffix);
@@ -67,14 +72,14 @@ public class MainController {
 //-------------------------------------------------------------------
 
 //-------------Domain related methods--------------------------------    
-    public Domain getDomainByName(String name) {
+    public Domain findDomainByName(String name) {
         return domainController.findByDomainName(name);
     }
-    
+
     public int addDomain(String name, String suffix, String robots, int depth, Date activation) throws Exception {
-        Domain dom = getDomainByName(name);
-        Location loc = getLocationBySuffix(suffix);
-        
+        Domain dom = findDomainByName(name);
+        Location loc = findLocationBySuffix(suffix);
+
         if (dom == null) {
             Domain aux = new Domain();
             aux.setDomainName(name);
@@ -83,47 +88,77 @@ public class MainController {
             aux.setDepth(depth);
             aux.setActivation(activation);
             domainController.create(dom);
-            
-            return getDomainByName(name).getIdDomain();
+
+            return findDomainByName(name).getIdDomain();
         } else {
-            // throw new Exception("This domain already exists in the database.");
-            return -1;
+            //throw new Exception("This domain already exists in the database.");
+            return dom.getIdDomain();
         }
     }
 //---------------------------------------------------------------------
 //-------------Blogroll related methods-------------------------------- 
 
-    public List<Blogroll> getBlogrollByIdDomain(Domain domain) {
+    public List<Blogroll> findBlogrollByIdDomain(Domain domain) {
         return blogrollController.findByIdDomain(domain);
     }
-    
-    public Blogroll getBlogrollByDomainAndBlog(Domain domain, String blog) {
+
+    public Blogroll findBlogrollByDomainAndBlog(Domain domain, String blog) {
         return blogrollController.findByDomainAndName(domain, blog);
     }
-    
+
     public void addBlogroll(Domain domain, String blog) throws Exception {
-        
-        Blogroll br = getBlogrollByDomainAndBlog(domain, blog);
-        
+
+        Blogroll br = findBlogrollByDomainAndBlog(domain, blog);
+
         if (br == null) {
             Blogroll aux = new Blogroll();
             aux.setBlog(blog);
             aux.setIdDomain(domain);
-            Domain destination = getDomainByName(blog);
+            Domain destination = findDomainByName(blog);
             if (destination != null) {
                 aux.setIddestination(destination.getIdDomain());
             }
             blogrollController.create(aux);
-            
+
         } else {
             throw new Exception("This blogroll already exists in the database.");
         }
-        
+
     }
 //---------------------------------------------------------------------
 //-------------Blogpost related methods--------------------------------
+
+    public Blogpost findBlogpostByAddress(String address) {
+        return blogpostController.findByPageAddress(address);
+    }
+
+    public void addBlogpost(String address, Date date,
+            String title, String content,
+            String description, Domain domain) throws Exception {
+        
+        Blogpost bp = findBlogpostByAddress(address);
+        if (bp == null) {            
+            long CRC = computeCRC.computeChecksum(content);
+            
+            Blogpost aux = new Blogpost();
+            aux.setPageAddress(address);
+            aux.setBlogContent(content);
+            aux.setBlogDate(date);
+            aux.setProcessed(1);
+            aux.setCrc(CRC);
+            aux.setTitle(title);
+            aux.setDescription(description);
+            aux.setIdDomain(domain);
+
+            blogpostController.create(aux);
+        } else {
+            throw new Exception("This blogpost already exists in the database.");
+            // return bp.getIdBlogPost();   
+        }
+    }
 //------------------------------------------------------------------------
 //-------------Rawdata related methods------------------------------------
+    
 //------------------------------------------------------------------------
 //-------------Headers related methods------------------------------------ 
 //------------------------------------------------------------------------
