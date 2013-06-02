@@ -221,5 +221,16 @@ public class RawdataJpaController implements Serializable {
             em.close();
         }
     }
-    
+
+    public Rawdata findByPageAddress(String address) {
+        EntityManager em = getEntityManager();
+        Query q = em.createNamedQuery("Rawdata.findByPageAddress");
+        q.setParameter("pageAddress", address);
+
+        try {
+            return (Rawdata) q.getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }
 }
