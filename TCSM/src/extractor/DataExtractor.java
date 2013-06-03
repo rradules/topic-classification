@@ -12,7 +12,7 @@ public class DataExtractor {
 
     private String url;
     private String code;
-    private AbstractExtractor extracter;
+    private AbstractExtractor extractor;
 
     public DataExtractor(String code, String url) {
         this.url = url;
@@ -31,24 +31,24 @@ public class DataExtractor {
     public Object extractData() {
         switch (code) {
             case "location": {
-                extracter = new LocationExtractor(url);
+                extractor = new LocationExtractor(url);
                 break;
             }
             case "domain": {
-                extracter = new DomainExtractor(url);
+                extractor = new DomainExtractor(url);
                 break;
             }
             case "blogroll": {
-                extracter = new BlogrollExtractor(url);
+                extractor = new BlogrollExtractor(url);
                 break;
             }
             case "blogpost": {
-                extracter = new BlogpostExtractor(url);
+                extractor = new BlogpostExtractor(url);
                 break;
             }
             default:
                 return null;
         }
-        return extracter.getData();
+        return extractor.getData();
     }
 }
