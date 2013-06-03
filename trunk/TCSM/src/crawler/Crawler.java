@@ -121,8 +121,6 @@ public class Crawler {
         while (crawling && toCrawlList.size() > 0) {
             /* Check to see if the max URL count has
              been reached, if it was specified.*/
-            //  System.out.println("To Crawl list size: "+toCrawlList.size());
-            //  System.out.println("Crawled list size: "+crawledList.size());
 
             if (maxUrls != -1) {
                 if (crawledList.size() == maxUrls) {
@@ -154,16 +152,6 @@ public class Crawler {
              links and then see if it contains the search string. */
             try {
                 doc = Jsoup.connect(verifiedUrl.toString()).get();
-//                System.out.println("Authority: "+verifiedUrl.getAuthority());
-//                System.out.println("Host: "+verifiedUrl.getHost());
-//                System.out.println("Path: "+verifiedUrl.getPath());
-//                System.out.println("Protocol: "+verifiedUrl.getProtocol());
-//                System.out.println("Query: "+verifiedUrl.getQuery());
-//                System.out.println("Ref: "+verifiedUrl.getRef());
-//                System.out.println("UserInfo: "+verifiedUrl.getUserInfo());
-//                System.out.println("Hash code: "+verifiedUrl.hashCode());
-
-
                 // Add verified URL to log file.
                 try {
                     logFileWriter.println(verifiedUrl);
