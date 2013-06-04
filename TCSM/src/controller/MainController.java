@@ -108,7 +108,7 @@ public class MainController {
         return blogrollController.findByDomainAndName(domain, blog);
     }
 
-    public Blogroll addBlogroll(Domain domain, String blog) throws Exception {
+    public Blogroll addBlogroll(Domain domain, String blog, int type, int destination) throws Exception {
 
         Blogroll br = findBlogrollByDomainAndBlog(domain, blog);
 
@@ -116,10 +116,8 @@ public class MainController {
             Blogroll aux = new Blogroll();
             aux.setBlog(blog);
             aux.setIdDomain(domain);
-            Domain destination = findDomainByName(blog);
-            if (destination != null) {
-                aux.setIddestination(destination.getIdDomain());
-            }
+            aux.setTypeBlogRoll(type);
+            aux.setIddestination(destination);
             blogrollController.create(aux);
             return findBlogrollByDomainAndBlog(domain, blog);
 

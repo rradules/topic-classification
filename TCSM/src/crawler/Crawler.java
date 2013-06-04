@@ -56,6 +56,14 @@ public class Crawler {
         return crawling;
     }
 
+    public Domain getCurrentDomain() {
+        return currentDomain;
+    }
+
+    public void setCurrentDomain(Domain currentDomain) {
+        this.currentDomain = currentDomain;
+    }
+
     public void setCrawling(boolean crawling) {
         this.crawling = crawling;
     }

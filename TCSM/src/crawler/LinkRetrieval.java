@@ -53,6 +53,11 @@ public class LinkRetrieval {
                 continue;
             }
 
+            // Skip share to SN (facebook, twitter, etc.) links.
+            if (link.toLowerCase().indexOf("share") != -1) {
+                continue;
+            }
+
             // Prefix absolute and relative URLs if necessary.
 
 
@@ -78,6 +83,7 @@ public class LinkRetrieval {
             if (index != -1) {
                 link = link.substring(0, index);
             }
+
 
             // Remove leading "www" from URL's host if present.
             link = removeWwwFromUrl(link);
@@ -145,7 +151,7 @@ public class LinkRetrieval {
     }
 
     public boolean containsDate(URL url) {
-        if (url.getHost().contains("blogspot")) {
+        if (url.getHost().contains("blogspot") || url.getHost().contains("wordpress")) {
             String path = url.getPath();
 
             Pattern p = Pattern.compile("((19|20)\\d\\d)/(0?[1-9]|1[012])");
