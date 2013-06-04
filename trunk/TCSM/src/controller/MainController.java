@@ -88,9 +88,10 @@ public class MainController {
             aux.setRobots(robots);
             aux.setDescription(description);
             aux.setActivation(activation);
-            domainController.create(dom);
+            domainController.create(aux);
 
             return findDomainByName(name);
+
         } else {
             //throw new Exception("This domain already exists in the database.");
             return dom;
@@ -120,7 +121,7 @@ public class MainController {
                 aux.setIddestination(destination.getIdDomain());
             }
             blogrollController.create(aux);
-            return aux;
+            return findBlogrollByDomainAndBlog(domain, blog);
 
         } else {
             return br;
@@ -154,7 +155,7 @@ public class MainController {
             aux.setIdDomain(domain);
 
             blogpostController.create(aux);
-            return aux;
+            return findBlogpostByAddress(address);
         } else {
             //throw new Exception("This blogpost already exists in the database.");
             return bp;
