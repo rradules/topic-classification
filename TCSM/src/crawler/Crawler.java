@@ -28,15 +28,28 @@ public class Crawler {
     private boolean crawling = false;
     // Matches log file print writer.
     private PrintWriter logFileWriter;
+    //limit links to host
     private boolean limitToHost = true;
+    //log files
     private String logFile = "crawlerLog.txt";
+    //robots.txt parser
     private RobotsParser roboParser;
+    //link retrieval module
     private LinkRetrieval linkRetrieval;
+    //current domain crawling
     private Domain currentDomain;
+    private static Crawler singleton = null;
 
-    public Crawler() {
+    private Crawler() {
         roboParser = new RobotsParser();
         linkRetrieval = new LinkRetrieval();
+    }
+
+    public static Crawler getInstance() {
+        if (singleton == null) {
+            singleton = new Crawler();
+        }
+        return singleton;
     }
 
     public boolean isCrawling() {

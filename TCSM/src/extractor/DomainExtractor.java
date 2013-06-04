@@ -5,6 +5,7 @@
 package extractor;
 
 import controller.MainController;
+import crawler.LinkRetrieval;
 import functions.MetaTag;
 import java.net.URL;
 import java.text.ParseException;
@@ -38,6 +39,8 @@ public class DomainExtractor extends AbstractExtractor {
         try {
             Document doc = Jsoup.connect(url).get();
 
+            url = new LinkRetrieval().removeWwwFromUrl(url);
+
             URL verifiedURL = new URL(url);
 
             String description = metaTag.getMetaTag(doc, "description");
@@ -61,11 +64,13 @@ public class DomainExtractor extends AbstractExtractor {
         try {
             Element lastDiv = doc.select("div[class=footer]").last();
             Pattern p = Pattern.compile("(19|20)\\d\\d");
-            Matcher m = p.matcher(lastDiv.text());
+            if (lastDiv != null) {
+                Matcher m = p.matcher(lastDiv.text());
 
-            if (m.find()) {
-                String year = m.group();
-                date = sdf.parse(year);
+                if (m.find()) {
+                    String year = m.group();
+                    date = sdf.parse(year);
+                }
             }
         } catch (ParseException ex) {
             Logger.getLogger(DomainExtractor.class.getName()).log(Level.SEVERE, null, ex);
