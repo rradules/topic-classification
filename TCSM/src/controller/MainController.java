@@ -146,7 +146,7 @@ public class MainController {
             aux.setPageAddress(address);
             aux.setBlogContent(content);
             aux.setBlogDate(date);
-            aux.setProcessed(1);
+            aux.setProcessed(0);
             aux.setCrc(CRC);
             aux.setTitle(title);
             aux.setDescription(description);

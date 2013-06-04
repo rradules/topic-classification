@@ -13,6 +13,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import model.Blogroll;
 import model.Domain;
 import org.jsoup.Jsoup;
@@ -35,12 +37,12 @@ public class BlogrollExtractor extends AbstractExtractor {
     @Override
     public Object getData() {
         ArrayList<Blogroll> blogrollList = new ArrayList<>();
+        Domain domain, destination;
+        int type, idDest;
         try {
             Document doc = Jsoup.connect(url).get();
             URL verifiedURL = normalizeURL(url);
-            Domain domain;
-            //= Crawler.getInstance().getCurrentDomain();
-            int type;
+            //= Crawler.getInstance().getCurrentDomain();         
             if (url.contains("wordpress")) {
                 type = WORDPRESS;
             } else {
@@ -49,13 +51,13 @@ public class BlogrollExtractor extends AbstractExtractor {
             domain = MainController.getInstance().findDomainByName(verifiedURL.getHost());
 
             Elements blogrollLinks = doc.select("ul[class=xoxo blogroll] li a[href]");
-            System.out.println(blogrollLinks.size());
+
             for (Element link : blogrollLinks) {
                 if (link != null) {
                     String blog = link.attr("href");
                     URL dest = normalizeURL(blog);
-                    Domain destination = MainController.getInstance().findDomainByName(dest.getHost());
-                    int idDest = -1;
+                    destination = MainController.getInstance().findDomainByName(dest.getHost());
+                    idDest = -1;
                     if (destination != null) {
                         idDest = destination.getIdDomain();
                     }
@@ -70,15 +72,4 @@ public class BlogrollExtractor extends AbstractExtractor {
         // throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public URL normalizeURL(String url) {
-        try {
-            String newUrl = new LinkRetrieval().removeWwwFromUrl(url);
-            URL verifiedURL = new URL(newUrl);
-
-            return verifiedURL;
-        } catch (MalformedURLException ex) {
-            Logger.getLogger(BlogrollExtractor.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
-    }
 }

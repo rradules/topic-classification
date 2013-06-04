@@ -188,7 +188,7 @@ public class Crawler {
                 toCrawlList.addAll(links);
 
             } catch (IOException ex) {
-                //   Logger.getLogger(CrawlerInfo.class.getName()).log(Level.SEVERE, null, ex);
+                   Logger.getLogger(Crawler.class.getName()).log(Level.SEVERE, null, ex);
             }
 
 
