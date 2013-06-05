@@ -5,7 +5,6 @@
 package main;
 
 import crawler.Crawler;
-import extractor.BlogpostExtractor;
 
 /**
  *
@@ -18,9 +17,11 @@ public class TCSM {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        //Crawler.getInstance().search("http://nastase.wordpress.com/", 10);
-        BlogpostExtractor be = new BlogpostExtractor("http://tudorchirila.blogspot.ro/2013/05/junk-thoughts.html");
-        be.getData();
+        Crawler.getInstance().search("http://nastase.wordpress.com/", 10);
+        //BlogpostExtractor be = new BlogpostExtractor("http://mihaibendeac.ro/2013/03/niciodata-o-femeie-nu-va-fi-mai-importanta-decat-cariera-mea.html");
+
+ 
+        
 
 
     }

@@ -4,10 +4,13 @@
  */
 package extractor;
 
+import com.sun.corba.se.impl.ior.NewObjectKeyTemplateBase;
 import controller.MainController;
 import functions.MetaTag;
 import java.io.IOException;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Level;
@@ -39,6 +42,7 @@ public class BlogpostExtractor extends AbstractExtractor {
         String title, content, address, description;
         Domain domain;
         Date date;
+        String aux;
         StringBuilder builder = new StringBuilder();
         try {
             Document doc = Jsoup.connect(url).get();
@@ -46,12 +50,13 @@ public class BlogpostExtractor extends AbstractExtractor {
             domain = MainController.getInstance().findDomainByName(verifiedURL.getHost());
             Elements contentElem = doc.select("div[class]");
             for (Element cont : contentElem) {
-                if (cont.attr("class").contains("content") && !cont.attr("class").contains("comment")) {
+                if ((cont.attr("class").contains("content") || cont.attr("class").contains("entry")) && !cont.attr("class").contains("comment")) {
                     if (!cont.text().equals("")) {
-                        if (!contentList.contains(cont.text())) {
-                            contentList.add(cont.text());
-                            System.out.println(cont.text());
-                            builder.append(cont.text());
+                        aux = normalizeContent(cont.text().toLowerCase());
+                        if (!contentList.contains(aux)) {
+                            contentList.add(aux);
+                            builder.append(aux);
+                            // System.out.println(aux);
                         }
                     }
                 }
@@ -60,26 +65,81 @@ public class BlogpostExtractor extends AbstractExtractor {
             title = doc.select("title").text();
             description = new MetaTag().getMetaTag(doc, "description");
             address = verifiedURL.toString();
-            // return MainController.getInstance().addBlogpost(address, date, title, content, description, domain);
+            date = getPostDate(verifiedURL);
 
+            return MainController.getInstance().addBlogpost(address, date, title, content, description, domain);
 
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(BlogpostExtractor.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
         //throw new UnsupportedOperationException("Not supported yet.");
     }
-    
-    public boolean containsDate(URL url) {
-        if (url.getHost().contains("blogspot") || url.getHost().contains("wordpress")) {
-            String path = url.getPath();
 
-            Pattern p = Pattern.compile("((19|20)\\d\\d)/(0?[1-9]|1[012])");
-            Matcher m = p.matcher(path);
-            if (m.find()) {
-                return true;
+    public Date getPostDate(URL url) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/mm");
+        Date date = null;
+        String path = url.getPath();
+        Pattern p = Pattern.compile("((19|20)\\d\\d)/(0?[1-9]|1[012])");
+        Matcher m = p.matcher(path);
+        if (m.find()) {
+            String aux = m.group();
+            try {
+                date = sdf.parse(aux);
+            } catch (ParseException ex) {
+                Logger.getLogger(BlogpostExtractor.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return date;
+        }
+//        } else {
+//            try {
+//                Document doc = Jsoup.connect(url.toString()).get();
+//                Elements metaElem = doc.select("div[class]");
+//                for (Element meta : metaElem) {
+//                    if (meta.attr("class").contains("date") || meta.attr("class").contains("meta")) {
+//                        m = p.matcher(meta.text());
+//                        if (m.find()) {
+//                            String aux = m.group();
+//                            try {
+//                                date = sdf.parse(aux);
+//                            } catch (ParseException ex) {
+//                                Logger.getLogger(BlogpostExtractor.class.getName()).log(Level.SEVERE, null, ex);
+//                            }
+//                            return date;
+//                        }
+//                    }
+//                }
+//            } catch (IOException ex) {
+//                Logger.getLogger(BlogpostExtractor.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//        }
+        return null;
+    }
+
+    public String normalizeContent(String content) {
+        String newContent = "";
+        for (char ch : content.toCharArray()) {
+            switch (ch) {
+                case 'ă':
+                    newContent += 'a';
+                    break;
+                case 'î':
+                    newContent += 'i';
+                    break;
+                case 'â':
+                    newContent += 'a';
+                    break;
+                case 'ș':
+                    newContent += 's';
+                    break;
+                case 'ț':
+                    newContent += 't';
+                    break;
+                default:
+                    newContent += ch;
+                    break;
             }
         }
-        return true;
+        return newContent;
     }
 }
