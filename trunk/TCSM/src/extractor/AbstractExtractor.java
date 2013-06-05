@@ -40,26 +40,28 @@ public abstract class AbstractExtractor {
     //eliminare diacritice
     public String normalizeContent(String content) {
         String newContent = "";
-        for (char ch : content.toCharArray()) {
-            switch (ch) {
-                case 'ă':
-                    newContent += 'a';
-                    break;
-                case 'î':
-                    newContent += 'i';
-                    break;
-                case 'â':
-                    newContent += 'a';
-                    break;
-                case 'ș':
-                    newContent += 's';
-                    break;
-                case 'ț':
-                    newContent += 't';
-                    break;
-                default:
-                    newContent += ch;
-                    break;
+        if (content != null) {
+            for (char ch : content.toCharArray()) {
+                switch (ch) {
+                    case 'ă':
+                        newContent += 'a';
+                        break;
+                    case 'î':
+                        newContent += 'i';
+                        break;
+                    case 'â':
+                        newContent += 'a';
+                        break;
+                    case 'ș':
+                        newContent += 's';
+                        break;
+                    case 'ț':
+                        newContent += 't';
+                        break;
+                    default:
+                        newContent += ch;
+                        break;
+                }
             }
         }
         return newContent;

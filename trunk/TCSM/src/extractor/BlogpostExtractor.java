@@ -10,6 +10,7 @@ import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -58,7 +59,7 @@ public class BlogpostExtractor extends AbstractExtractor {
                         if (!contentList.contains(aux)) {
                             contentList.add(aux);
                             builder.append(aux);
-                            //System.out.println(aux);
+                            System.out.println(aux);
                         }
                     }
                 }
@@ -76,7 +77,7 @@ public class BlogpostExtractor extends AbstractExtractor {
 
             System.out.println("Length: " + content.length());
 
-            return MainController.getInstance().addBlogpost(address, date, title, content, description, domain);
+            //  return MainController.getInstance().addBlogpost(address, date, title, content, description, domain);
 
         } catch (Exception ex) {
             Logger.getLogger(BlogpostExtractor.class.getName()).log(Level.SEVERE, null, ex);
@@ -86,18 +87,21 @@ public class BlogpostExtractor extends AbstractExtractor {
     }
 
     public Date getPostDate(URL url) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/mm");
-        Date date = null;
+        Date date;
         String path = url.getPath();
-        Pattern p = Pattern.compile("((19|20)\\d\\d)/(0?[1-9]|1[012])");
-        Matcher m = p.matcher(path);
-        if (m.find()) {
-            String aux = m.group();
-            try {
-                date = sdf.parse(aux);
-            } catch (ParseException ex) {
-                Logger.getLogger(BlogpostExtractor.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        Pattern p1 = Pattern.compile("((19|20)\\d\\d)/(0?[1-9]|1[012]/(0[1-9]|[12][0-9]|3[01]))");
+        Pattern p2 = Pattern.compile("((19|20)\\d\\d)/(0?[1-9]|1[012])");
+        Matcher m1 = p1.matcher(path);
+        Matcher m2 = p2.matcher(path);
+        if (m1.find()) {
+            int year = Integer.parseInt(m1.group(1));
+            int month = Integer.parseInt(m1.group(3));
+            int day = Integer.parseInt(m1.group(4));
+            System.out.println(year + " " + month + " " + day);
+            Calendar cal = Calendar.getInstance();
+            cal.set(year, month - 1, day, 0, 0, 0);
+            date = cal.getTime();
+
             return date;
         }
 //        } else {

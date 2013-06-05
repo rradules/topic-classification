@@ -55,7 +55,7 @@ public class BlogrollExtractor extends AbstractExtractor {
                     if (destination != null) {
                         idDest = destination.getIdDomain();
                     }
-                    blogrollList.add(MainController.getInstance().addBlogroll(domain, dest.toString(), type, idDest));
+                 //   blogrollList.add(MainController.getInstance().addBlogroll(domain, dest.toString(), type, idDest));
                 }
             }
             return blogrollList;
