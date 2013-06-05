@@ -4,10 +4,8 @@
  */
 package extractor;
 
-import com.sun.corba.se.impl.ior.NewObjectKeyTemplateBase;
 import controller.MainController;
 import functions.MetaTag;
-import java.io.IOException;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -25,7 +23,7 @@ import org.jsoup.select.Elements;
 
 /**
  *
- * @author Student
+ * @author Roxana Radulescu <roxana.radulescu07@gmail.com>
  */
 public class BlogpostExtractor extends AbstractExtractor {
 

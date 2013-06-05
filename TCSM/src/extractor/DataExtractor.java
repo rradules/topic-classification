@@ -6,7 +6,7 @@ package extractor;
 
 /**
  *
- * @author Student
+ * @author Roxana Radulescu <roxana.radulescu07@gmail.com>
  */
 public class DataExtractor {
 

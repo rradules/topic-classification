@@ -10,7 +10,7 @@ import org.jsoup.select.Elements;
 
 /**
  *
- * @author Student
+ * @author Roxana Radulescu <roxana.radulescu07@gmail.com>
  */
 public class MetaTag {
 
