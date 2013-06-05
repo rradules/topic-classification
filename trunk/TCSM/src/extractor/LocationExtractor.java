@@ -9,7 +9,7 @@ import model.Location;
 
 /**
  *
- * @author Student
+ * @author Roxana Radulescu <roxana.radulescu07@gmail.com>
  */
 public class LocationExtractor extends AbstractExtractor {
 

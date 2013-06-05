@@ -9,7 +9,7 @@ import java.util.zip.Checksum;
 
 /**
  *
- * @author Student
+ * @author Roxana Radulescu <roxana.radulescu07@gmail.com>
  */
 public class ComputeCRC {
 

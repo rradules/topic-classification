@@ -22,7 +22,7 @@ import org.jsoup.nodes.Element;
 
 /**
  *
- * @author Student
+ * @author Roxana Radulescu <roxana.radulescu07@gmail.com>
  */
 public class DomainExtractor extends AbstractExtractor {
 
