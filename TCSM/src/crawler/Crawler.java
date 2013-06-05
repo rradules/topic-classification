@@ -15,6 +15,7 @@ import java.util.LinkedHashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import model.Blogpost;
 import model.Domain;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -171,7 +172,9 @@ public class Crawler {
             //extract the Blogpost for each crawled page except the starting one
             if (!verifiedUrl.toString().equals(startUrl)) {
                 dataExtractor = new DataExtractor("blogpost", verifiedUrl.toString());
-                System.out.println("Blogpost: " + dataExtractor.extractData());
+                //  System.out.println("Blogpost: " + 
+                dataExtractor.extractData();
+                //     );
             }
 
             // Skip URL if robots are not allowed to access it.

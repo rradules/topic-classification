@@ -151,7 +151,7 @@ public class LinkRetrieval {
     }
 
     public boolean containsDate(URL url) {
-        if (url.getHost().contains("blogspot") || url.getHost().contains("wordpress")) {
+    //    if (url.getHost().contains("blogspot") || url.getHost().contains("wordpress")) {
             String path = url.getPath();
 
             Pattern p = Pattern.compile("((19|20)\\d\\d)/(0?[1-9]|1[012])");
@@ -161,7 +161,7 @@ public class LinkRetrieval {
             } else {
                 return false;
             }
-        }
-        return true;
+      //  }
+      //  return true;
     }
 }

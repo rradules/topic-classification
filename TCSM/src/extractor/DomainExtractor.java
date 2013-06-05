@@ -49,7 +49,7 @@ public class DomainExtractor extends AbstractExtractor {
             Location loc = (Location) new LocationExtractor(url).getData();
             Date activation = getActivationDate(doc);
 
-            return MainController.getInstance().addDomain(name, loc, robots, description, activation);
+           // return MainController.getInstance().addDomain(name, loc, robots, description, activation);
 
 
         } catch (Exception ex) {
