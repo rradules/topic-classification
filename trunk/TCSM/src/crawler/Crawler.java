@@ -4,6 +4,7 @@
  */
 package crawler;
 
+import extractor.DataExtractor;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -39,6 +40,7 @@ public class Crawler {
     //current domain crawling
     private Domain currentDomain;
     private static Crawler singleton = null;
+    private DataExtractor dataExtractor = null;
 
     private Crawler() {
         roboParser = new RobotsParser();
@@ -87,6 +89,7 @@ public class Crawler {
     public void search(final String startUrl, final int maxUrls) {
         // Start the search in a new thread.
         Thread thread = new Thread(new Runnable() {
+            @Override
             public void run() {
 
                 // Open matches log file.
@@ -100,24 +103,30 @@ public class Crawler {
                     String url = linkRetrieval.removeWwwFromUrl(startUrl);
                     // Convert string url to URL object.
                     URL verifiedUrl = linkRetrieval.verifyUrl(url);
-//                    //add domain in DB and fix current domain
-                    //currentDomain = 
-//                    MainController.getInstance().addLocation(verifiedUrl.getHost());
+
+                    //add domain in DB and fix current domain
+                    dataExtractor = new DataExtractor("domain", verifiedUrl.toString());
+                    currentDomain = (Domain) dataExtractor.extractData();
+                    //extract the blogroll
+                    dataExtractor = new DataExtractor("blogroll", verifiedUrl.toString());
+                    System.out.println("Blogroll: " + dataExtractor.extractData());
+
+                    // Turn crawling flag on.
+                    crawling = true;
+                    // Perform the actual crawling.
+                    crawl(verifiedUrl.toString(), maxUrls, limitToHost);
+                    // Turn crawling flag off.
+                    crawling = false;
+                    // Close matches log file.
+                    try {
+                        logFileWriter.close();
+
+                    } catch (Exception e) {
+                        showError("Unable to close matches log file.");
+                    }
+
                 } catch (Exception ex) {
                     Logger.getLogger(Crawler.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
-                // Turn crawling flag on.
-                crawling = true;
-                // Perform the actual crawling.
-                crawl(startUrl, maxUrls, limitToHost);
-                // Turn crawling flag off.
-                crawling = false;
-                // Close matches log file.
-                try {
-                    logFileWriter.close();
-                } catch (Exception e) {
-                    showError("Unable to close matches log file.");
                 }
             }
         });
@@ -159,6 +168,12 @@ public class Crawler {
             // Convert string url to URL object.
             URL verifiedUrl = linkRetrieval.verifyUrl(url);
 
+            //extract the Blogpost for each crawled page except the starting one
+            if (!verifiedUrl.toString().equals(startUrl)) {
+                dataExtractor = new DataExtractor("blogpost", verifiedUrl.toString());
+                System.out.println("Blogpost: " + dataExtractor.extractData());
+            }
+
             // Skip URL if robots are not allowed to access it.
             if (!roboParser.isRobotAllowed(verifiedUrl)) {
                 continue;
@@ -188,7 +203,7 @@ public class Crawler {
                 toCrawlList.addAll(links);
 
             } catch (IOException ex) {
-                   Logger.getLogger(Crawler.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Crawler.class.getName()).log(Level.SEVERE, null, ex);
             }
 
 

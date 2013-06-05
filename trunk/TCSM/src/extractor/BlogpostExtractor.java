@@ -27,6 +27,8 @@ import org.jsoup.select.Elements;
  */
 public class BlogpostExtractor extends AbstractExtractor {
 
+    private final int MAX_LENGHT = 10000;
+
     public BlogpostExtractor(String url) {
         super(url);
     }
@@ -47,23 +49,32 @@ public class BlogpostExtractor extends AbstractExtractor {
             URL verifiedURL = normalizeURL(url);
             domain = MainController.getInstance().findDomainByName(verifiedURL.getHost());
             Elements contentElem = doc.select("div[class]");
+
             for (Element cont : contentElem) {
-                if ((cont.attr("class").contains("content") || cont.attr("class").contains("entry")) && !cont.attr("class").contains("comment")) {
+                if ((cont.attr("class").contains("content") || cont.attr("class").contains("entry"))
+                        && !cont.attr("class").contains("comment") && !cont.attr("class").contains("widget")) {
                     if (!cont.text().equals("")) {
                         aux = normalizeContent(cont.text().toLowerCase());
                         if (!contentList.contains(aux)) {
                             contentList.add(aux);
                             builder.append(aux);
-                            // System.out.println(aux);
+                            //System.out.println(aux);
                         }
                     }
                 }
+
             }
-            content = builder.toString();
-            title = doc.select("title").text();
-            description = new MetaTag().getMetaTag(doc, "description");
+            String auxContent = builder.toString();
+            if (builder.toString().length() > 20000) {
+                auxContent = trimToSize(builder.toString());
+            }
+            content = auxContent;
+            title = normalizeContent(doc.select("title").text());
+            description = normalizeContent(new MetaTag().getMetaTag(doc, "description"));
             address = verifiedURL.toString();
             date = getPostDate(verifiedURL);
+
+            System.out.println("Length: " + content.length());
 
             return MainController.getInstance().addBlogpost(address, date, title, content, description, domain);
 
@@ -114,30 +125,8 @@ public class BlogpostExtractor extends AbstractExtractor {
         return null;
     }
 
-    public String normalizeContent(String content) {
-        String newContent = "";
-        for (char ch : content.toCharArray()) {
-            switch (ch) {
-                case 'ă':
-                    newContent += 'a';
-                    break;
-                case 'î':
-                    newContent += 'i';
-                    break;
-                case 'â':
-                    newContent += 'a';
-                    break;
-                case 'ș':
-                    newContent += 's';
-                    break;
-                case 'ț':
-                    newContent += 't';
-                    break;
-                default:
-                    newContent += ch;
-                    break;
-            }
-        }
-        return newContent;
+    public String trimToSize(String string) {
+        String newString = string.trim().substring(0, 20000);
+        return newString;
     }
 }
