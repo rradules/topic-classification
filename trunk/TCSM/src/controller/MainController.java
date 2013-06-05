@@ -94,6 +94,7 @@ public class MainController {
 
         } else {
             //throw new Exception("This domain already exists in the database.");
+            domainController.edit(dom);
             return dom;
         }
     }
@@ -122,6 +123,7 @@ public class MainController {
             return findBlogrollByDomainAndBlog(domain, blog);
 
         } else {
+            blogrollController.edit(br);
             return br;
             //throw new Exception("This blogroll already exists in the database.");
         }
@@ -156,6 +158,7 @@ public class MainController {
             return findBlogpostByAddress(address);
         } else {
             //throw new Exception("This blogpost already exists in the database.");
+            blogpostController.edit(bp);
             return bp;
         }
     }
