@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author Student
+ * @author  Roxana Radulescu <roxana.radulescu07@gmail.com>
  */
 public abstract class AbstractExtractor {
 
