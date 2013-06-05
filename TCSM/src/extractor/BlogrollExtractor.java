@@ -5,16 +5,10 @@
 package extractor;
 
 import controller.MainController;
-import crawler.Crawler;
-import crawler.LinkRetrieval;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import model.Blogroll;
 import model.Domain;
 import org.jsoup.Jsoup;

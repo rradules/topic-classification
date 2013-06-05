@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author  Roxana Radulescu <roxana.radulescu07@gmail.com>
+ * @author Roxana Radulescu <roxana.radulescu07@gmail.com>
  */
 public abstract class AbstractExtractor {
 
@@ -24,6 +24,7 @@ public abstract class AbstractExtractor {
 
     public abstract Object getData();
 
+    //normalize url: remove www and transform in URL object
     public URL normalizeURL(String url) {
         try {
             String newUrl = new LinkRetrieval().removeWwwFromUrl(url);
@@ -34,5 +35,33 @@ public abstract class AbstractExtractor {
             Logger.getLogger(AbstractExtractor.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
+    }
+
+    //eliminare diacritice
+    public String normalizeContent(String content) {
+        String newContent = "";
+        for (char ch : content.toCharArray()) {
+            switch (ch) {
+                case 'ă':
+                    newContent += 'a';
+                    break;
+                case 'î':
+                    newContent += 'i';
+                    break;
+                case 'â':
+                    newContent += 'a';
+                    break;
+                case 'ș':
+                    newContent += 's';
+                    break;
+                case 'ț':
+                    newContent += 't';
+                    break;
+                default:
+                    newContent += ch;
+                    break;
+            }
+        }
+        return newContent;
     }
 }
