@@ -89,11 +89,12 @@ public class BlogpostExtractor extends AbstractExtractor {
     public Date getPostDate(URL url) {
         Date date;
         String path = url.getPath();
-        Pattern p1 = Pattern.compile("((19|20)\\d\\d)/(0?[1-9]|1[012]/(0[1-9]|[12][0-9]|3[01]))");
+        Pattern p1 = Pattern.compile("((19|20)\\d\\d)/(0?[1-9]|1[012])/(0[1-9]|[12][0-9]|3[01])");
         Pattern p2 = Pattern.compile("((19|20)\\d\\d)/(0?[1-9]|1[012])");
         Matcher m1 = p1.matcher(path);
         Matcher m2 = p2.matcher(path);
         if (m1.find()) {
+            System.out.println(m1.group());
             int year = Integer.parseInt(m1.group(1));
             int month = Integer.parseInt(m1.group(3));
             int day = Integer.parseInt(m1.group(4));
@@ -103,6 +104,18 @@ public class BlogpostExtractor extends AbstractExtractor {
             date = cal.getTime();
 
             return date;
+
+        } else {
+            if (m2.find()) {
+                int year = Integer.parseInt(m2.group(1));
+                int month = Integer.parseInt(m2.group(3));
+                System.out.println(year + " " + month);
+                Calendar cal = Calendar.getInstance();
+                cal.set(year, month - 1, 1, 0, 0, 0);
+                date = cal.getTime();
+
+                return date;
+            }
         }
 //        } else {
 //            try {
