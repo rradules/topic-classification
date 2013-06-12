@@ -1035,8 +1035,5 @@ private static final long serialVersionUID = 1L;
         public int hashCode() {
             return RomanianStemmer.class.getName().hashCode();
         }
-
-
-
 }
 
