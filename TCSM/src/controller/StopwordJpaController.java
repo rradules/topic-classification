@@ -139,5 +139,16 @@ public class StopwordJpaController implements Serializable {
             em.close();
         }
     }
-    
+
+    public Stopword findByStopword(String word) {
+        EntityManager em = getEntityManager();
+        Query q = em.createNamedQuery("Stopword.findByStopWord");
+        q.setParameter("stopWord", word);
+
+        try {
+            return (Stopword) q.getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }
 }
