@@ -38,7 +38,7 @@ public abstract class AbstractExtractor {
     }
 
     //eliminare diacritice
-    public String normalizeContent(String content) {
+    public String elliminateAccents(String content) {
         String newContent = "";
         if (content != null) {
             for (char ch : content.toCharArray()) {

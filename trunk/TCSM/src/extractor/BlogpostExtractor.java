@@ -55,7 +55,8 @@ public class BlogpostExtractor extends AbstractExtractor {
                 if ((cont.attr("class").contains("content") || cont.attr("class").contains("entry"))
                         && !cont.attr("class").contains("comment") && !cont.attr("class").contains("widget")) {
                     if (!cont.text().equals("")) {
-                        aux = normalizeContent(cont.text().toLowerCase());
+                        // aux = elliminateAccents(cont.text().toLowerCase());
+                        aux = cont.text().toLowerCase();
                         if (!contentList.contains(aux)) {
                             contentList.add(aux);
                             builder.append(aux);
@@ -70,8 +71,8 @@ public class BlogpostExtractor extends AbstractExtractor {
                 auxContent = trimToSize(builder.toString());
             }
             content = auxContent;
-            title = normalizeContent(doc.select("title").text());
-            description = normalizeContent(new MetaTag().getMetaTag(doc, "description"));
+            title = elliminateAccents(doc.select("title").text());
+            description = elliminateAccents(new MetaTag().getMetaTag(doc, "description"));
             address = verifiedURL.toString();
             date = getPostDate(verifiedURL);
 
