@@ -78,7 +78,7 @@ public class BlogpostExtractor extends AbstractExtractor {
 
             System.out.println("Length: " + content.length());
 
-            //  return MainController.getInstance().addBlogpost(address, date, title, content, description, domain);
+            return MainController.getInstance().addBlogpost(address, date, title, content, description, domain);
 
         } catch (Exception ex) {
             Logger.getLogger(BlogpostExtractor.class.getName()).log(Level.SEVERE, null, ex);
