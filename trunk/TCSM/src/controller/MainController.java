@@ -4,9 +4,12 @@
  */
 package controller;
 
+import controller.exceptions.PreexistingEntityException;
 import functions.ComputeCRC;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import model.Blogpost;
@@ -14,6 +17,7 @@ import model.Blogroll;
 import model.Domain;
 import model.Location;
 import model.Rawdata;
+import model.Stopword;
 
 /**
  *
@@ -29,6 +33,7 @@ public class MainController {
     private HeaderJpaController headerController;
     private RawdataJpaController rawdataController;
     private EntityManagerFactory emf;
+    private StopwordJpaController stopwordController;
     private ComputeCRC computeCRC;
 
 // private constructer    
@@ -41,6 +46,7 @@ public class MainController {
         blogpostController = new BlogpostJpaController(emf);
         headerController = new HeaderJpaController(emf);
         rawdataController = new RawdataJpaController(emf);
+        stopwordController = new StopwordJpaController(emf);
 
         computeCRC = new ComputeCRC();
     }
@@ -175,5 +181,24 @@ public class MainController {
     }
 //------------------------------------------------------------------------
 //-------------Headers related methods------------------------------------ 
+//------------------------------------------------------------------------
+
+//-------------Stopwords related methods----------------------------------
+    public Stopword findStopwordByStopword(String word) {
+        return stopwordController.findByStopword(word);
+    }
+
+    public void addStopword(String word) {
+        try {
+            Stopword stopword = new Stopword();
+            stopword.setStopWord(word);
+            stopwordController.create(stopword);
+        } catch (PreexistingEntityException ex) {
+            Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
 //------------------------------------------------------------------------
 }
