@@ -4,6 +4,7 @@
  */
 package controller;
 
+import controller.exceptions.NonexistentEntityException;
 import controller.exceptions.PreexistingEntityException;
 import functions.ComputeCRC;
 import java.util.Date;
@@ -14,6 +15,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import model.Blogpost;
 import model.Blogroll;
+import model.Category;
 import model.Domain;
 import model.Location;
 import model.Rawdata;
@@ -34,6 +36,7 @@ public class MainController {
     private RawdataJpaController rawdataController;
     private EntityManagerFactory emf;
     private StopwordJpaController stopwordController;
+    private CategoryJpaController categoryController;
     private ComputeCRC computeCRC;
 
 // private constructer    
@@ -47,6 +50,7 @@ public class MainController {
         headerController = new HeaderJpaController(emf);
         rawdataController = new RawdataJpaController(emf);
         stopwordController = new StopwordJpaController(emf);
+        categoryController = new CategoryJpaController(emf);
 
         computeCRC = new ComputeCRC();
     }
@@ -103,6 +107,23 @@ public class MainController {
             domainController.edit(dom);
             return dom;
         }
+    }
+
+    public void addDomainCategory(String name, String categ) {
+        Domain domain = findDomainByName(name);
+        Category category = findCategoryByName(categ);
+        if (domain != null && category != null) {
+            domain.setIdCategory(category);
+            try {
+                domainController.edit(domain);
+            } catch (NonexistentEntityException ex) {
+                Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (Exception ex) {
+                Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+
     }
 //---------------------------------------------------------------------
 //-------------Blogroll related methods-------------------------------- 
@@ -199,6 +220,12 @@ public class MainController {
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+    }
+//------------------------------------------------------------------------
+//-------------Category related methods-----------------------------------
+
+    public Category findCategoryByName(String name) {
+        return categoryController.findByCategory(name);
     }
 //------------------------------------------------------------------------
 }

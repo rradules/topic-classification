@@ -13,12 +13,13 @@ import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import model.Domain;
 import model.Location;
+import model.Category;
+import model.Domain;
 
 /**
  *
- * @author Student
+ * @author Roxana Radulescu <roxana.radulescu07@gmail.com>
  */
 public class DomainJpaController implements Serializable {
 
@@ -41,10 +42,19 @@ public class DomainJpaController implements Serializable {
                 idLocation = em.getReference(idLocation.getClass(), idLocation.getIdLocation());
                 domain.setIdLocation(idLocation);
             }
+            Category idCategory = domain.getIdCategory();
+            if (idCategory != null) {
+                idCategory = em.getReference(idCategory.getClass(), idCategory.getIdCategory());
+                domain.setIdCategory(idCategory);
+            }
             em.persist(domain);
             if (idLocation != null) {
                 idLocation.getDomainCollection().add(domain);
                 idLocation = em.merge(idLocation);
+            }
+            if (idCategory != null) {
+                idCategory.getDomainCollection().add(domain);
+                idCategory = em.merge(idCategory);
             }
             em.getTransaction().commit();
         } finally {
@@ -62,9 +72,15 @@ public class DomainJpaController implements Serializable {
             Domain persistentDomain = em.find(Domain.class, domain.getIdDomain());
             Location idLocationOld = persistentDomain.getIdLocation();
             Location idLocationNew = domain.getIdLocation();
+            Category idCategoryOld = persistentDomain.getIdCategory();
+            Category idCategoryNew = domain.getIdCategory();
             if (idLocationNew != null) {
                 idLocationNew = em.getReference(idLocationNew.getClass(), idLocationNew.getIdLocation());
                 domain.setIdLocation(idLocationNew);
+            }
+            if (idCategoryNew != null) {
+                idCategoryNew = em.getReference(idCategoryNew.getClass(), idCategoryNew.getIdCategory());
+                domain.setIdCategory(idCategoryNew);
             }
             domain = em.merge(domain);
             if (idLocationOld != null && !idLocationOld.equals(idLocationNew)) {
@@ -74,6 +90,14 @@ public class DomainJpaController implements Serializable {
             if (idLocationNew != null && !idLocationNew.equals(idLocationOld)) {
                 idLocationNew.getDomainCollection().add(domain);
                 idLocationNew = em.merge(idLocationNew);
+            }
+            if (idCategoryOld != null && !idCategoryOld.equals(idCategoryNew)) {
+                idCategoryOld.getDomainCollection().remove(domain);
+                idCategoryOld = em.merge(idCategoryOld);
+            }
+            if (idCategoryNew != null && !idCategoryNew.equals(idCategoryOld)) {
+                idCategoryNew.getDomainCollection().add(domain);
+                idCategoryNew = em.merge(idCategoryNew);
             }
             em.getTransaction().commit();
         } catch (Exception ex) {
@@ -108,6 +132,11 @@ public class DomainJpaController implements Serializable {
             if (idLocation != null) {
                 idLocation.getDomainCollection().remove(domain);
                 idLocation = em.merge(idLocation);
+            }
+            Category idCategory = domain.getIdCategory();
+            if (idCategory != null) {
+                idCategory.getDomainCollection().remove(domain);
+                idCategory = em.merge(idCategory);
             }
             em.remove(domain);
             em.getTransaction().commit();

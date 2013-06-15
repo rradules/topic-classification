@@ -38,7 +38,7 @@ public class ComputeCRC {
          */
         long lngChecksum = checksum.getValue();
 
-        System.out.println("CRC32 checksum for byte array is :" + lngChecksum);
+        //System.out.println("CRC32 checksum for byte array is: " + lngChecksum);
         
         return lngChecksum;
     }

@@ -89,9 +89,9 @@ public class Crawler {
 
     public void search(final String startUrl, final int maxUrls) {
         // Start the search in a new thread.
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
+       // Thread thread = new Thread(new Runnable() {
+          //  @Override
+          //  public void run() {
 
                 // Open matches log file.
                 try {
@@ -110,7 +110,7 @@ public class Crawler {
                     currentDomain = (Domain) dataExtractor.extractData();
                     //extract the blogroll
                     dataExtractor = new DataExtractor("blogroll", verifiedUrl.toString());
-                    System.out.println("Blogroll: " + dataExtractor.extractData());
+                    //System.out.println("Blogroll: " + dataExtractor.extractData());
 
                     // Turn crawling flag on.
                     crawling = true;
@@ -129,9 +129,9 @@ public class Crawler {
                 } catch (Exception ex) {
                     Logger.getLogger(Crawler.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            }
-        });
-        thread.start();
+          //  }
+      //  });
+      //  thread.start();
     }
 
     // Show dialog box with error message.

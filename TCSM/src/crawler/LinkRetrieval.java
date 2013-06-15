@@ -22,7 +22,7 @@ public class LinkRetrieval {
 
     public ArrayList retrieveLinks(Document doc, URL pageUrl, HashSet crawledList, boolean limitHost) {
 
-        System.out.println("Crawling: " + pageUrl.toString());
+        //System.out.println("Crawling: " + pageUrl.toString());
 
         ArrayList<String> links = new ArrayList<>();
 

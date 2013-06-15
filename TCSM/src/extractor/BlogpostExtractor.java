@@ -7,8 +7,6 @@ package extractor;
 import controller.MainController;
 import functions.MetaTag;
 import java.net.URL;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -60,7 +58,7 @@ public class BlogpostExtractor extends AbstractExtractor {
                         if (!contentList.contains(aux)) {
                             contentList.add(aux);
                             builder.append(aux);
-                            System.out.println(aux);
+                            //System.out.println(aux);
                         }
                     }
                 }
@@ -76,7 +74,7 @@ public class BlogpostExtractor extends AbstractExtractor {
             address = verifiedURL.toString();
             date = getPostDate(verifiedURL);
 
-            System.out.println("Length: " + content.length());
+            //System.out.println("Length: " + content.length());
 
             return MainController.getInstance().addBlogpost(address, date, title, content, description, domain);
 
@@ -95,11 +93,11 @@ public class BlogpostExtractor extends AbstractExtractor {
         Matcher m1 = p1.matcher(path);
         Matcher m2 = p2.matcher(path);
         if (m1.find()) {
-            System.out.println(m1.group());
+            //System.out.println(m1.group());
             int year = Integer.parseInt(m1.group(1));
             int month = Integer.parseInt(m1.group(3));
             int day = Integer.parseInt(m1.group(4));
-            System.out.println(year + " " + month + " " + day);
+            //System.out.println(year + " " + month + " " + day);
             Calendar cal = Calendar.getInstance();
             cal.set(year, month - 1, day, 0, 0, 0);
             date = cal.getTime();
@@ -110,7 +108,7 @@ public class BlogpostExtractor extends AbstractExtractor {
             if (m2.find()) {
                 int year = Integer.parseInt(m2.group(1));
                 int month = Integer.parseInt(m2.group(3));
-                System.out.println(year + " " + month);
+                //System.out.println(year + " " + month);
                 Calendar cal = Calendar.getInstance();
                 cal.set(year, month - 1, 1, 0, 0, 0);
                 date = cal.getTime();
