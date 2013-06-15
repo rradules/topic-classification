@@ -23,6 +23,7 @@ import org.jsoup.select.Elements;
 public class BlogrollExtractor extends AbstractExtractor {
 
     public final int WORDPRESS = 0;
+    public final int BLOGSPOT = 1;
 
     public BlogrollExtractor(String url) {
         super(url);
@@ -36,11 +37,13 @@ public class BlogrollExtractor extends AbstractExtractor {
         try {
             Document doc = Jsoup.connect(url).get();
             URL verifiedURL = normalizeURL(url);
-            //= Crawler.getInstance().getCurrentDomain();         
+            // Crawler.getInstance().getCurrentDomain();         
             if (url.contains("wordpress")) {
                 type = WORDPRESS;
-            } else {
+            } else if (url.contains("blogspot")) {
                 type = 1;
+            } else {
+                type = 2;
             }
             domain = MainController.getInstance().findDomainByName(verifiedURL.getHost());
 
@@ -55,7 +58,7 @@ public class BlogrollExtractor extends AbstractExtractor {
                     if (destination != null) {
                         idDest = destination.getIdDomain();
                     }
-                 //   blogrollList.add(MainController.getInstance().addBlogroll(domain, dest.toString(), type, idDest));
+                    blogrollList.add(MainController.getInstance().addBlogroll(domain, dest.toString(), type, idDest));
                 }
             }
             return blogrollList;
@@ -65,5 +68,4 @@ public class BlogrollExtractor extends AbstractExtractor {
         return null;
         // throw new UnsupportedOperationException("Not supported yet.");
     }
-
 }

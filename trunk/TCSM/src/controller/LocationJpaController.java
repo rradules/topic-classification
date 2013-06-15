@@ -20,7 +20,7 @@ import model.Location;
 
 /**
  *
- * @author Student
+ * @author Roxana Radulescu <roxana.radulescu07@gmail.com>
  */
 public class LocationJpaController implements Serializable {
 

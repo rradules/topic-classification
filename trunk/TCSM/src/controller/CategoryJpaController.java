@@ -5,13 +5,12 @@
 package controller;
 
 import controller.exceptions.NonexistentEntityException;
-import controller.exceptions.PreexistingEntityException;
 import java.io.Serializable;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import model.Keyword;
+import model.Domain;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -34,36 +33,31 @@ public class CategoryJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(Category category) throws PreexistingEntityException, Exception {
-        if (category.getKeywordsCollection() == null) {
-            category.setKeywordsCollection(new ArrayList<Keyword>());
+    public void create(Category category) {
+        if (category.getDomainCollection() == null) {
+            category.setDomainCollection(new ArrayList<Domain>());
         }
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Collection<Keyword> attachedKeywordsCollection = new ArrayList<Keyword>();
-            for (Keyword keywordsCollectionKeywordToAttach : category.getKeywordsCollection()) {
-                keywordsCollectionKeywordToAttach = em.getReference(keywordsCollectionKeywordToAttach.getClass(), keywordsCollectionKeywordToAttach.getIdKeyword());
-                attachedKeywordsCollection.add(keywordsCollectionKeywordToAttach);
+            Collection<Domain> attachedDomainCollection = new ArrayList<Domain>();
+            for (Domain domainCollectionDomainToAttach : category.getDomainCollection()) {
+                domainCollectionDomainToAttach = em.getReference(domainCollectionDomainToAttach.getClass(), domainCollectionDomainToAttach.getIdDomain());
+                attachedDomainCollection.add(domainCollectionDomainToAttach);
             }
-            category.setKeywordsCollection(attachedKeywordsCollection);
+            category.setDomainCollection(attachedDomainCollection);
             em.persist(category);
-            for (Keyword keywordsCollectionKeyword : category.getKeywordsCollection()) {
-                Category oldIdCategoryOfKeywordsCollectionKeyword = keywordsCollectionKeyword.getIdCategory();
-                keywordsCollectionKeyword.setIdCategory(category);
-                keywordsCollectionKeyword = em.merge(keywordsCollectionKeyword);
-                if (oldIdCategoryOfKeywordsCollectionKeyword != null) {
-                    oldIdCategoryOfKeywordsCollectionKeyword.getKeywordsCollection().remove(keywordsCollectionKeyword);
-                    oldIdCategoryOfKeywordsCollectionKeyword = em.merge(oldIdCategoryOfKeywordsCollectionKeyword);
+            for (Domain domainCollectionDomain : category.getDomainCollection()) {
+                Category oldIdCategoryOfDomainCollectionDomain = domainCollectionDomain.getIdCategory();
+                domainCollectionDomain.setIdCategory(category);
+                domainCollectionDomain = em.merge(domainCollectionDomain);
+                if (oldIdCategoryOfDomainCollectionDomain != null) {
+                    oldIdCategoryOfDomainCollectionDomain.getDomainCollection().remove(domainCollectionDomain);
+                    oldIdCategoryOfDomainCollectionDomain = em.merge(oldIdCategoryOfDomainCollectionDomain);
                 }
             }
             em.getTransaction().commit();
-        } catch (Exception ex) {
-            if (findCategory(category.getIdCategory()) != null) {
-                throw new PreexistingEntityException("Category " + category + " already exists.", ex);
-            }
-            throw ex;
         } finally {
             if (em != null) {
                 em.close();
@@ -77,30 +71,30 @@ public class CategoryJpaController implements Serializable {
             em = getEntityManager();
             em.getTransaction().begin();
             Category persistentCategory = em.find(Category.class, category.getIdCategory());
-            Collection<Keyword> keywordsCollectionOld = persistentCategory.getKeywordsCollection();
-            Collection<Keyword> keywordsCollectionNew = category.getKeywordsCollection();
-            Collection<Keyword> attachedKeywordsCollectionNew = new ArrayList<Keyword>();
-            for (Keyword keywordsCollectionNewKeywordToAttach : keywordsCollectionNew) {
-                keywordsCollectionNewKeywordToAttach = em.getReference(keywordsCollectionNewKeywordToAttach.getClass(), keywordsCollectionNewKeywordToAttach.getIdKeyword());
-                attachedKeywordsCollectionNew.add(keywordsCollectionNewKeywordToAttach);
+            Collection<Domain> domainCollectionOld = persistentCategory.getDomainCollection();
+            Collection<Domain> domainCollectionNew = category.getDomainCollection();
+            Collection<Domain> attachedDomainCollectionNew = new ArrayList<Domain>();
+            for (Domain domainCollectionNewDomainToAttach : domainCollectionNew) {
+                domainCollectionNewDomainToAttach = em.getReference(domainCollectionNewDomainToAttach.getClass(), domainCollectionNewDomainToAttach.getIdDomain());
+                attachedDomainCollectionNew.add(domainCollectionNewDomainToAttach);
             }
-            keywordsCollectionNew = attachedKeywordsCollectionNew;
-            category.setKeywordsCollection(keywordsCollectionNew);
+            domainCollectionNew = attachedDomainCollectionNew;
+            category.setDomainCollection(domainCollectionNew);
             category = em.merge(category);
-            for (Keyword keywordsCollectionOldKeyword : keywordsCollectionOld) {
-                if (!keywordsCollectionNew.contains(keywordsCollectionOldKeyword)) {
-                    keywordsCollectionOldKeyword.setIdCategory(null);
-                    keywordsCollectionOldKeyword = em.merge(keywordsCollectionOldKeyword);
+            for (Domain domainCollectionOldDomain : domainCollectionOld) {
+                if (!domainCollectionNew.contains(domainCollectionOldDomain)) {
+                    domainCollectionOldDomain.setIdCategory(null);
+                    domainCollectionOldDomain = em.merge(domainCollectionOldDomain);
                 }
             }
-            for (Keyword keywordsCollectionNewKeyword : keywordsCollectionNew) {
-                if (!keywordsCollectionOld.contains(keywordsCollectionNewKeyword)) {
-                    Category oldIdCategoryOfKeywordsCollectionNewKeyword = keywordsCollectionNewKeyword.getIdCategory();
-                    keywordsCollectionNewKeyword.setIdCategory(category);
-                    keywordsCollectionNewKeyword = em.merge(keywordsCollectionNewKeyword);
-                    if (oldIdCategoryOfKeywordsCollectionNewKeyword != null && !oldIdCategoryOfKeywordsCollectionNewKeyword.equals(category)) {
-                        oldIdCategoryOfKeywordsCollectionNewKeyword.getKeywordsCollection().remove(keywordsCollectionNewKeyword);
-                        oldIdCategoryOfKeywordsCollectionNewKeyword = em.merge(oldIdCategoryOfKeywordsCollectionNewKeyword);
+            for (Domain domainCollectionNewDomain : domainCollectionNew) {
+                if (!domainCollectionOld.contains(domainCollectionNewDomain)) {
+                    Category oldIdCategoryOfDomainCollectionNewDomain = domainCollectionNewDomain.getIdCategory();
+                    domainCollectionNewDomain.setIdCategory(category);
+                    domainCollectionNewDomain = em.merge(domainCollectionNewDomain);
+                    if (oldIdCategoryOfDomainCollectionNewDomain != null && !oldIdCategoryOfDomainCollectionNewDomain.equals(category)) {
+                        oldIdCategoryOfDomainCollectionNewDomain.getDomainCollection().remove(domainCollectionNewDomain);
+                        oldIdCategoryOfDomainCollectionNewDomain = em.merge(oldIdCategoryOfDomainCollectionNewDomain);
                     }
                 }
             }
@@ -133,10 +127,10 @@ public class CategoryJpaController implements Serializable {
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The category with id " + id + " no longer exists.", enfe);
             }
-            Collection<Keyword> keywordsCollection = category.getKeywordsCollection();
-            for (Keyword keywordsCollectionKeyword : keywordsCollection) {
-                keywordsCollectionKeyword.setIdCategory(null);
-                keywordsCollectionKeyword = em.merge(keywordsCollectionKeyword);
+            Collection<Domain> domainCollection = category.getDomainCollection();
+            for (Domain domainCollectionDomain : domainCollection) {
+                domainCollectionDomain.setIdCategory(null);
+                domainCollectionDomain = em.merge(domainCollectionDomain);
             }
             em.remove(category);
             em.getTransaction().commit();
@@ -192,5 +186,16 @@ public class CategoryJpaController implements Serializable {
             em.close();
         }
     }
-    
+
+    public Category findByCategory(String name) {
+        EntityManager em = getEntityManager();
+        Query q = em.createNamedQuery("Category.findByCategory");
+        q.setParameter("category", name);
+
+        try {
+            return (Category) q.getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }
 }

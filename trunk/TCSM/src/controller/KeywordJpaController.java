@@ -14,7 +14,6 @@ import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import model.Category;
 import model.Keyword;
 
 /**
@@ -37,16 +36,7 @@ public class KeywordJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Category idCategory = keyword.getIdCategory();
-            if (idCategory != null) {
-                idCategory = em.getReference(idCategory.getClass(), idCategory.getIdCategory());
-                keyword.setIdCategory(idCategory);
-            }
             em.persist(keyword);
-            if (idCategory != null) {
-                idCategory.getKeywordsCollection().add(keyword);
-                idCategory = em.merge(idCategory);
-            }
             em.getTransaction().commit();
         } catch (Exception ex) {
             if (findKeyword(keyword.getIdKeyword()) != null) {
@@ -65,22 +55,7 @@ public class KeywordJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Keyword persistentKeyword = em.find(Keyword.class, keyword.getIdKeyword());
-            Category idCategoryOld = persistentKeyword.getIdCategory();
-            Category idCategoryNew = keyword.getIdCategory();
-            if (idCategoryNew != null) {
-                idCategoryNew = em.getReference(idCategoryNew.getClass(), idCategoryNew.getIdCategory());
-                keyword.setIdCategory(idCategoryNew);
-            }
             keyword = em.merge(keyword);
-            if (idCategoryOld != null && !idCategoryOld.equals(idCategoryNew)) {
-                idCategoryOld.getKeywordsCollection().remove(keyword);
-                idCategoryOld = em.merge(idCategoryOld);
-            }
-            if (idCategoryNew != null && !idCategoryNew.equals(idCategoryOld)) {
-                idCategoryNew.getKeywordsCollection().add(keyword);
-                idCategoryNew = em.merge(idCategoryNew);
-            }
             em.getTransaction().commit();
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
@@ -109,11 +84,6 @@ public class KeywordJpaController implements Serializable {
                 keyword.getIdKeyword();
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The keyword with id " + id + " no longer exists.", enfe);
-            }
-            Category idCategory = keyword.getIdCategory();
-            if (idCategory != null) {
-                idCategory.getKeywordsCollection().remove(keyword);
-                idCategory = em.merge(idCategory);
             }
             em.remove(keyword);
             em.getTransaction().commit();

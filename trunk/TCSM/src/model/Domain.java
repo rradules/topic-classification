@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author Student
+ * @author Roxana Radulescu <roxana.radulescu07@gmail.com>
  */
 @Entity
 @Table(name = "domain")
@@ -32,7 +32,6 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Domain.findAll", query = "SELECT d FROM Domain d"),
     @NamedQuery(name = "Domain.findByIdDomain", query = "SELECT d FROM Domain d WHERE d.idDomain = :idDomain"),
     @NamedQuery(name = "Domain.findByDomainName", query = "SELECT d FROM Domain d WHERE d.domainName = :domainName"),
-    @NamedQuery(name = "Domain.findByTypeDomain", query = "SELECT d FROM Domain d WHERE d.typeDomain = :typeDomain"),
     @NamedQuery(name = "Domain.findByActivation", query = "SELECT d FROM Domain d WHERE d.activation = :activation"),
     @NamedQuery(name = "Domain.findByRobots", query = "SELECT d FROM Domain d WHERE d.robots = :robots"),
     @NamedQuery(name = "Domain.findByDescription", query = "SELECT d FROM Domain d WHERE d.description = :description")})
@@ -45,8 +44,6 @@ public class Domain implements Serializable {
     private Integer idDomain;
     @Column(name = "DomainName")
     private String domainName;
-    @Column(name = "TypeDomain")
-    private Integer typeDomain;
     @Column(name = "Activation")
     @Temporal(TemporalType.DATE)
     private Date activation;
@@ -57,6 +54,9 @@ public class Domain implements Serializable {
     @JoinColumn(name = "Id_Location", referencedColumnName = "Id_Location")
     @ManyToOne
     private Location idLocation;
+    @JoinColumn(name = "Id_Category", referencedColumnName = "Id_Category")
+    @ManyToOne
+    private Category idCategory;
 
     public Domain() {
     }
@@ -79,14 +79,6 @@ public class Domain implements Serializable {
 
     public void setDomainName(String domainName) {
         this.domainName = domainName;
-    }
-
-    public Integer getTypeDomain() {
-        return typeDomain;
-    }
-
-    public void setTypeDomain(Integer typeDomain) {
-        this.typeDomain = typeDomain;
     }
 
     public Date getActivation() {
@@ -119,6 +111,14 @@ public class Domain implements Serializable {
 
     public void setIdLocation(Location idLocation) {
         this.idLocation = idLocation;
+    }
+
+    public Category getIdCategory() {
+        return idCategory;
+    }
+
+    public void setIdCategory(Category idCategory) {
+        this.idCategory = idCategory;
     }
 
     @Override

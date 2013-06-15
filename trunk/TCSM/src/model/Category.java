@@ -9,6 +9,8 @@ import java.util.Collection;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -31,13 +33,14 @@ import javax.xml.bind.annotation.XmlTransient;
 public class Category implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "Id_Category")
     private Integer idCategory;
     @Column(name = "Category")
     private String category;
     @OneToMany(mappedBy = "idCategory")
-    private Collection<Keyword> keywordsCollection;
+    private Collection<Domain> domainCollection;
 
     public Category() {
     }
@@ -63,12 +66,12 @@ public class Category implements Serializable {
     }
 
     @XmlTransient
-    public Collection<Keyword> getKeywordsCollection() {
-        return keywordsCollection;
+    public Collection<Domain> getDomainCollection() {
+        return domainCollection;
     }
 
-    public void setKeywordsCollection(Collection<Keyword> keywordsCollection) {
-        this.keywordsCollection = keywordsCollection;
+    public void setDomainCollection(Collection<Domain> domainCollection) {
+        this.domainCollection = domainCollection;
     }
 
     @Override
