@@ -34,7 +34,9 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Domain.findByDomainName", query = "SELECT d FROM Domain d WHERE d.domainName = :domainName"),
     @NamedQuery(name = "Domain.findByActivation", query = "SELECT d FROM Domain d WHERE d.activation = :activation"),
     @NamedQuery(name = "Domain.findByRobots", query = "SELECT d FROM Domain d WHERE d.robots = :robots"),
+    @NamedQuery(name = "Domain.findByCategory", query = "SELECT d FROM Domain d WHERE d.idCategory = :idCategory"),
     @NamedQuery(name = "Domain.findByDescription", query = "SELECT d FROM Domain d WHERE d.description = :description")})
+
 public class Domain implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id

@@ -14,6 +14,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import model.Blogpost;
+import model.Domain;
 
 /**
  *
@@ -141,6 +142,18 @@ public class BlogpostJpaController implements Serializable {
 
         try {
             return (Blogpost) q.getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public List<Blogpost> findByDomainCategory(Domain domain) {
+        EntityManager em = getEntityManager();
+        Query q = em.createNamedQuery("Blogpost.findByDomain");
+        q.setParameter("idDomain", domain);
+
+        try {
+            return q.getResultList();
         } catch (Exception e) {
             return null;
         }

@@ -24,11 +24,15 @@ public class FeatureSelection {
         String[] tokens = content.split(" ");
         StringBuilder builder = new StringBuilder();
         for (String w : Arrays.asList(tokens)) {
-            if (MainController.getInstance().findStopwordByStopword(w) == null) {
-                stemmer.setCurrent(w);
+            //remove punctuation
+            String str = w.replaceAll("[^\\p{L}]", "");
+            //parse only if the word is not in the stopwords list
+            if (MainController.getInstance().findStopwordByStopword(str) == null) {
+                stemmer.setCurrent(str);
+                //stem the word
                 stemmer.stem();
+                //recontruct the content
                 builder.append(stemmer.getCurrent()).append(" ");
-
             }
         }
         return builder.toString().trim();

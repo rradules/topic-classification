@@ -7,6 +7,7 @@ package controller;
 import controller.exceptions.NonexistentEntityException;
 import controller.exceptions.PreexistingEntityException;
 import functions.ComputeCRC;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -20,6 +21,7 @@ import model.Domain;
 import model.Location;
 import model.Rawdata;
 import model.Stopword;
+import topicclassification.ml.Document;
 
 /**
  *
@@ -32,7 +34,6 @@ public class MainController {
     private DomainJpaController domainController;
     private BlogrollJpaController blogrollController;
     private BlogpostJpaController blogpostController;
-    private HeaderJpaController headerController;
     private RawdataJpaController rawdataController;
     private EntityManagerFactory emf;
     private StopwordJpaController stopwordController;
@@ -47,7 +48,6 @@ public class MainController {
         domainController = new DomainJpaController(emf);
         blogrollController = new BlogrollJpaController(emf);
         blogpostController = new BlogpostJpaController(emf);
-        headerController = new HeaderJpaController(emf);
         rawdataController = new RawdataJpaController(emf);
         stopwordController = new StopwordJpaController(emf);
         categoryController = new CategoryJpaController(emf);
@@ -125,9 +125,14 @@ public class MainController {
 
 
     }
+
+    public List<Domain> findDomainByCategory(String nameCateg) {
+        Category category = findCategoryByName(nameCateg);
+        return domainController.findByDomainCategory(category);
+    }
+
 //---------------------------------------------------------------------
 //-------------Blogroll related methods-------------------------------- 
-
     public List<Blogroll> findBlogrollByIdDomain(Domain domain) {
         return blogrollController.findByIdDomain(domain);
     }
@@ -189,8 +194,34 @@ public class MainController {
             return bp;
         }
     }
+
+    public List<Blogpost> findBlogpostByDomain(String domName) {
+        Domain domain = findDomainByName(domName);
+        return blogpostController.findByDomainCategory(domain);
+    }
+
+    public String getBlogPost(Blogpost blogpost) {
+        return blogpost.getBlogContent();
+    }
+
+    public ArrayList<String> getDocumentForTopic(String topic) {
+        ArrayList<String> content = new ArrayList<>();
+        List<Blogpost> posts;
+        List<Domain> domains = findDomainByCategory(topic);
+        for (Domain dom : domains) {
+            posts = findBlogpostByDomain(dom.getDomainName());
+            String aux="";
+            for(Blogpost bp:posts){
+                aux+=bp+" ";
+            }
+            content.add(aux.trim());
+        }
+        return content;
+    }
+
 //------------------------------------------------------------------------
 //-------------Rawdata related methods------------------------------------
+    
 
     public Rawdata findRawdataByAddress(String address) {
         return rawdataController.findByPageAddress(address);
@@ -201,8 +232,6 @@ public class MainController {
             String description, Domain domain) {
     }
 //------------------------------------------------------------------------
-//-------------Headers related methods------------------------------------ 
-//------------------------------------------------------------------------
 
 //-------------Stopwords related methods----------------------------------
     public Stopword findStopwordByStopword(String word) {
@@ -210,7 +239,7 @@ public class MainController {
     }
 
     public void addStopword(String word) {
-        
+
         try {
             Stopword stopword = new Stopword();
             stopword.setStopWord(word);
