@@ -37,8 +37,10 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Blogpost.findByProcessed", query = "SELECT b FROM Blogpost b WHERE b.processed = :processed"),
     @NamedQuery(name = "Blogpost.findByCrc", query = "SELECT b FROM Blogpost b WHERE b.crc = :crc"),
     @NamedQuery(name = "Blogpost.findByTitle", query = "SELECT b FROM Blogpost b WHERE b.title = :title"),
+    @NamedQuery(name = "Blogpost.findByDomain", query = "SELECT b FROM Blogpost b WHERE b.idDomain = :idDomain"),
     @NamedQuery(name = "Blogpost.findByDescription", query = "SELECT b FROM Blogpost b WHERE b.description = :description")})
 public class Blogpost implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -167,5 +169,4 @@ public class Blogpost implements Serializable {
     public String toString() {
         return "model.Blogpost[ idBlogPost=" + idBlogPost + " ]";
     }
-    
 }

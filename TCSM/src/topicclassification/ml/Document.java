@@ -10,12 +10,11 @@ import java.util.ArrayList;
  *
  * @author Roxana Radulescu <roxana.radulescu07@gmail.com>
  */
-
 //
 public class Document {
 
     ArrayList<String> documents;
-    String domainName;
+    String topic;
 
     public Document() {
     }
@@ -28,14 +27,19 @@ public class Document {
         this.documents = documents;
     }
 
-    public String getDomainName() {
-        return domainName;
+    public String getTopic() {
+        return topic;
     }
 
-    public void setDomainName(String domainName) {
-        this.domainName = domainName;
+    public void setTopic(String topic) {
+        this.topic = topic;
     }
-    
-    
-    
+
+    public String getContent() {
+        StringBuilder builder = new StringBuilder();
+        for (String s : documents) {
+            builder.append(s).append(" ");
+        }
+        return builder.toString().trim();
+    }
 }

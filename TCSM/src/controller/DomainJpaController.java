@@ -6,6 +6,7 @@ package controller;
 
 import controller.exceptions.NonexistentEntityException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -200,6 +201,18 @@ public class DomainJpaController implements Serializable {
 
         try {
             return (Domain) q.getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public List<Domain> findByDomainCategory(Category categ) {
+        EntityManager em = getEntityManager();
+        Query q = em.createNamedQuery("Domain.findByCategory");
+        q.setParameter("idCategory", categ);
+
+        try {
+            return q.getResultList();
         } catch (Exception e) {
             return null;
         }

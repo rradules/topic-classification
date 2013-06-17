@@ -12,7 +12,7 @@ public class TestFS {
 
     public static void main(String[] args) throws Throwable {
         FeatureSelection fs = new FeatureSelection();
-        String input = "Ana Stefan Maria";
+        String input = "ana are multe mere, pere, fructe? dar! oare.";
         System.out.println(fs.performFeatureSelection(input));
     }
 }
