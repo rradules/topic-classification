@@ -5,7 +5,6 @@
 package controller;
 
 import controller.exceptions.NonexistentEntityException;
-import controller.exceptions.PreexistingEntityException;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -14,6 +13,7 @@ import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import model.Category;
 import model.Keyword;
 
 /**
@@ -31,18 +31,22 @@ public class KeywordJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(Keyword keyword) throws PreexistingEntityException, Exception {
+    public void create(Keyword keyword) {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            em.persist(keyword);
-            em.getTransaction().commit();
-        } catch (Exception ex) {
-            if (findKeyword(keyword.getIdKeyword()) != null) {
-                throw new PreexistingEntityException("Keyword " + keyword + " already exists.", ex);
+            Category idCategory = keyword.getIdCategory();
+            if (idCategory != null) {
+                idCategory = em.getReference(idCategory.getClass(), idCategory.getIdCategory());
+                keyword.setIdCategory(idCategory);
             }
-            throw ex;
+            em.persist(keyword);
+            if (idCategory != null) {
+                idCategory.getKeywordCollection().add(keyword);
+                idCategory = em.merge(idCategory);
+            }
+            em.getTransaction().commit();
         } finally {
             if (em != null) {
                 em.close();
@@ -55,7 +59,22 @@ public class KeywordJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
+            Keyword persistentKeyword = em.find(Keyword.class, keyword.getIdKeyword());
+            Category idCategoryOld = persistentKeyword.getIdCategory();
+            Category idCategoryNew = keyword.getIdCategory();
+            if (idCategoryNew != null) {
+                idCategoryNew = em.getReference(idCategoryNew.getClass(), idCategoryNew.getIdCategory());
+                keyword.setIdCategory(idCategoryNew);
+            }
             keyword = em.merge(keyword);
+            if (idCategoryOld != null && !idCategoryOld.equals(idCategoryNew)) {
+                idCategoryOld.getKeywordCollection().remove(keyword);
+                idCategoryOld = em.merge(idCategoryOld);
+            }
+            if (idCategoryNew != null && !idCategoryNew.equals(idCategoryOld)) {
+                idCategoryNew.getKeywordCollection().add(keyword);
+                idCategoryNew = em.merge(idCategoryNew);
+            }
             em.getTransaction().commit();
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
@@ -84,6 +103,11 @@ public class KeywordJpaController implements Serializable {
                 keyword.getIdKeyword();
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The keyword with id " + id + " no longer exists.", enfe);
+            }
+            Category idCategory = keyword.getIdCategory();
+            if (idCategory != null) {
+                idCategory.getKeywordCollection().remove(keyword);
+                idCategory = em.merge(idCategory);
             }
             em.remove(keyword);
             em.getTransaction().commit();

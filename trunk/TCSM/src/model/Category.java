@@ -31,6 +31,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Category.findByIdCategory", query = "SELECT c FROM Category c WHERE c.idCategory = :idCategory"),
     @NamedQuery(name = "Category.findByCategory", query = "SELECT c FROM Category c WHERE c.category = :category")})
 public class Category implements Serializable {
+    @OneToMany(mappedBy = "idCategory")
+    private Collection<Keyword> keywordCollection;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -97,6 +99,15 @@ public class Category implements Serializable {
     @Override
     public String toString() {
         return "model.Category[ idCategory=" + idCategory + " ]";
+    }
+
+    @XmlTransient
+    public Collection<Keyword> getKeywordCollection() {
+        return keywordCollection;
+    }
+
+    public void setKeywordCollection(Collection<Keyword> keywordCollection) {
+        this.keywordCollection = keywordCollection;
     }
     
 }

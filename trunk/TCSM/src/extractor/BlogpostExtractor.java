@@ -55,6 +55,7 @@ public class BlogpostExtractor extends AbstractExtractor {
                     if (!cont.text().equals("")) {
                         // aux = elliminateAccents(cont.text().toLowerCase());
                         aux = cont.text().toLowerCase();
+
                         if (!contentList.contains(aux)) {
                             contentList.add(aux);
                             builder.append(aux);
@@ -116,28 +117,6 @@ public class BlogpostExtractor extends AbstractExtractor {
                 return date;
             }
         }
-//        } else {
-//            try {
-//                Document doc = Jsoup.connect(url.toString()).get();
-//                Elements metaElem = doc.select("div[class]");
-//                for (Element meta : metaElem) {
-//                    if (meta.attr("class").contains("date") || meta.attr("class").contains("meta")) {
-//                        m = p.matcher(meta.text());
-//                        if (m.find()) {
-//                            String aux = m.group();
-//                            try {
-//                                date = sdf.parse(aux);
-//                            } catch (ParseException ex) {
-//                                Logger.getLogger(BlogpostExtractor.class.getName()).log(Level.SEVERE, null, ex);
-//                            }
-//                            return date;
-//                        }
-//                    }
-//                }
-//            } catch (IOException ex) {
-//                Logger.getLogger(BlogpostExtractor.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//        }
         return null;
     }
 
