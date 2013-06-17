@@ -17,6 +17,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import model.Category;
+import model.Keyword;
 
 /**
  *
@@ -37,6 +38,9 @@ public class CategoryJpaController implements Serializable {
         if (category.getDomainCollection() == null) {
             category.setDomainCollection(new ArrayList<Domain>());
         }
+        if (category.getKeywordCollection() == null) {
+            category.setKeywordCollection(new ArrayList<Keyword>());
+        }
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -47,6 +51,12 @@ public class CategoryJpaController implements Serializable {
                 attachedDomainCollection.add(domainCollectionDomainToAttach);
             }
             category.setDomainCollection(attachedDomainCollection);
+            Collection<Keyword> attachedKeywordCollection = new ArrayList<Keyword>();
+            for (Keyword keywordCollectionKeywordToAttach : category.getKeywordCollection()) {
+                keywordCollectionKeywordToAttach = em.getReference(keywordCollectionKeywordToAttach.getClass(), keywordCollectionKeywordToAttach.getIdKeyword());
+                attachedKeywordCollection.add(keywordCollectionKeywordToAttach);
+            }
+            category.setKeywordCollection(attachedKeywordCollection);
             em.persist(category);
             for (Domain domainCollectionDomain : category.getDomainCollection()) {
                 Category oldIdCategoryOfDomainCollectionDomain = domainCollectionDomain.getIdCategory();
@@ -55,6 +65,15 @@ public class CategoryJpaController implements Serializable {
                 if (oldIdCategoryOfDomainCollectionDomain != null) {
                     oldIdCategoryOfDomainCollectionDomain.getDomainCollection().remove(domainCollectionDomain);
                     oldIdCategoryOfDomainCollectionDomain = em.merge(oldIdCategoryOfDomainCollectionDomain);
+                }
+            }
+            for (Keyword keywordCollectionKeyword : category.getKeywordCollection()) {
+                Category oldIdCategoryOfKeywordCollectionKeyword = keywordCollectionKeyword.getIdCategory();
+                keywordCollectionKeyword.setIdCategory(category);
+                keywordCollectionKeyword = em.merge(keywordCollectionKeyword);
+                if (oldIdCategoryOfKeywordCollectionKeyword != null) {
+                    oldIdCategoryOfKeywordCollectionKeyword.getKeywordCollection().remove(keywordCollectionKeyword);
+                    oldIdCategoryOfKeywordCollectionKeyword = em.merge(oldIdCategoryOfKeywordCollectionKeyword);
                 }
             }
             em.getTransaction().commit();
@@ -73,6 +92,8 @@ public class CategoryJpaController implements Serializable {
             Category persistentCategory = em.find(Category.class, category.getIdCategory());
             Collection<Domain> domainCollectionOld = persistentCategory.getDomainCollection();
             Collection<Domain> domainCollectionNew = category.getDomainCollection();
+            Collection<Keyword> keywordCollectionOld = persistentCategory.getKeywordCollection();
+            Collection<Keyword> keywordCollectionNew = category.getKeywordCollection();
             Collection<Domain> attachedDomainCollectionNew = new ArrayList<Domain>();
             for (Domain domainCollectionNewDomainToAttach : domainCollectionNew) {
                 domainCollectionNewDomainToAttach = em.getReference(domainCollectionNewDomainToAttach.getClass(), domainCollectionNewDomainToAttach.getIdDomain());
@@ -80,6 +101,13 @@ public class CategoryJpaController implements Serializable {
             }
             domainCollectionNew = attachedDomainCollectionNew;
             category.setDomainCollection(domainCollectionNew);
+            Collection<Keyword> attachedKeywordCollectionNew = new ArrayList<Keyword>();
+            for (Keyword keywordCollectionNewKeywordToAttach : keywordCollectionNew) {
+                keywordCollectionNewKeywordToAttach = em.getReference(keywordCollectionNewKeywordToAttach.getClass(), keywordCollectionNewKeywordToAttach.getIdKeyword());
+                attachedKeywordCollectionNew.add(keywordCollectionNewKeywordToAttach);
+            }
+            keywordCollectionNew = attachedKeywordCollectionNew;
+            category.setKeywordCollection(keywordCollectionNew);
             category = em.merge(category);
             for (Domain domainCollectionOldDomain : domainCollectionOld) {
                 if (!domainCollectionNew.contains(domainCollectionOldDomain)) {
@@ -95,6 +123,23 @@ public class CategoryJpaController implements Serializable {
                     if (oldIdCategoryOfDomainCollectionNewDomain != null && !oldIdCategoryOfDomainCollectionNewDomain.equals(category)) {
                         oldIdCategoryOfDomainCollectionNewDomain.getDomainCollection().remove(domainCollectionNewDomain);
                         oldIdCategoryOfDomainCollectionNewDomain = em.merge(oldIdCategoryOfDomainCollectionNewDomain);
+                    }
+                }
+            }
+            for (Keyword keywordCollectionOldKeyword : keywordCollectionOld) {
+                if (!keywordCollectionNew.contains(keywordCollectionOldKeyword)) {
+                    keywordCollectionOldKeyword.setIdCategory(null);
+                    keywordCollectionOldKeyword = em.merge(keywordCollectionOldKeyword);
+                }
+            }
+            for (Keyword keywordCollectionNewKeyword : keywordCollectionNew) {
+                if (!keywordCollectionOld.contains(keywordCollectionNewKeyword)) {
+                    Category oldIdCategoryOfKeywordCollectionNewKeyword = keywordCollectionNewKeyword.getIdCategory();
+                    keywordCollectionNewKeyword.setIdCategory(category);
+                    keywordCollectionNewKeyword = em.merge(keywordCollectionNewKeyword);
+                    if (oldIdCategoryOfKeywordCollectionNewKeyword != null && !oldIdCategoryOfKeywordCollectionNewKeyword.equals(category)) {
+                        oldIdCategoryOfKeywordCollectionNewKeyword.getKeywordCollection().remove(keywordCollectionNewKeyword);
+                        oldIdCategoryOfKeywordCollectionNewKeyword = em.merge(oldIdCategoryOfKeywordCollectionNewKeyword);
                     }
                 }
             }
@@ -131,6 +176,11 @@ public class CategoryJpaController implements Serializable {
             for (Domain domainCollectionDomain : domainCollection) {
                 domainCollectionDomain.setIdCategory(null);
                 domainCollectionDomain = em.merge(domainCollectionDomain);
+            }
+            Collection<Keyword> keywordCollection = category.getKeywordCollection();
+            for (Keyword keywordCollectionKeyword : keywordCollection) {
+                keywordCollectionKeyword.setIdCategory(null);
+                keywordCollectionKeyword = em.merge(keywordCollectionKeyword);
             }
             em.remove(category);
             em.getTransaction().commit();

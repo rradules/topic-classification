@@ -8,6 +8,8 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -26,15 +28,20 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "Keyword.findAll", query = "SELECT k FROM Keyword k"),
     @NamedQuery(name = "Keyword.findByIdKeyword", query = "SELECT k FROM Keyword k WHERE k.idKeyword = :idKeyword"),
-    @NamedQuery(name = "Keyword.findByKeyword", query = "SELECT k FROM Keyword k WHERE k.keyword = :keyword")})
+    @NamedQuery(name = "Keyword.findByKeyword", query = "SELECT k FROM Keyword k WHERE k.keyword = :keyword"),
+    @NamedQuery(name = "Keyword.findByWeight", query = "SELECT k FROM Keyword k WHERE k.weight = :weight")})
 public class Keyword implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "Id_Keyword")
     private Integer idKeyword;
     @Column(name = "Keyword")
     private String keyword;
+    @Basic(optional = false)
+    @Column(name = "Weight")
+    private double weight;
     @JoinColumn(name = "Id_Category", referencedColumnName = "Id_Category")
     @ManyToOne
     private Category idCategory;
@@ -44,6 +51,11 @@ public class Keyword implements Serializable {
 
     public Keyword(Integer idKeyword) {
         this.idKeyword = idKeyword;
+    }
+
+    public Keyword(Integer idKeyword, double weight) {
+        this.idKeyword = idKeyword;
+        this.weight = weight;
     }
 
     public Integer getIdKeyword() {
@@ -60,6 +72,14 @@ public class Keyword implements Serializable {
 
     public void setKeyword(String keyword) {
         this.keyword = keyword;
+    }
+
+    public double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(double weight) {
+        this.weight = weight;
     }
 
     public Category getIdCategory() {

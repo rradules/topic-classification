@@ -24,35 +24,35 @@ public class TCSM {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-
-        BufferedReader br = null;
-        ArrayList<String> links = new ArrayList<>();
-        try {
-            br = new BufferedReader(new FileReader("religie.txt"));
-            String line = br.readLine();
-
-            while (line != null) {
-                links.add(line);
-                String url = "http://" + line;
-                //System.out.println(url);
-                Crawler.getInstance().search(url, 6);
-                line = br.readLine();
-            }
-
-            for (String aux : links) {
-                MainController.getInstance().addDomainCategory(aux, "Religion and spirituality");
-            }
-
-
-        } catch (IOException ex) {
-            Logger.getLogger(TCSM.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                br.close();
-            } catch (IOException ex) {
-                Logger.getLogger(TCSM.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+//
+//        BufferedReader br = null;
+//        ArrayList<String> links = new ArrayList<>();
+//        try {
+//            br = new BufferedReader(new FileReader("religie.txt"));
+//            String line = br.readLine();
+//
+//            while (line != null) {
+//                links.add(line);
+//                String url = "http://" + line;
+//                //System.out.println(url);
+//                Crawler.getInstance().search(url, 6);
+//                line = br.readLine();
+//            }
+//
+//            for (String aux : links) {
+//                MainController.getInstance().addDomainCategory(aux, "Religion and spirituality");
+//            }
+//
+//
+//        } catch (IOException ex) {
+//            Logger.getLogger(TCSM.class.getName()).log(Level.SEVERE, null, ex);
+//        } finally {
+//            try {
+//                br.close();
+//            } catch (IOException ex) {
+//                Logger.getLogger(TCSM.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//        }
         //Crawler.getInstance().search("http://stylediary.wordpress.ro/", 6);
 
 
