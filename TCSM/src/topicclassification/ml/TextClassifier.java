@@ -6,8 +6,6 @@ package topicclassification.ml;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import weka.classifiers.Classifier;
 import weka.core.Attribute;
 import weka.core.Instance;
@@ -22,33 +20,6 @@ import weka.filters.unsupervised.attribute.StringToWordVector;
  */
 public class TextClassifier {
 
-    public static void main(String[] args) {
-        try {
-//            // TextClassifier cl = new TextClassifier(new NaiveBayesMultinomialUpdateable());
-//            TextClassifier cl = new TextClassifier(new IBk());
-//            String[] topics = {"Activism", "Business and finance", "Art", "Travel",
-//                "Gastronomy", "Literature", "Fashion", "Politics", "Religion and spirituality"};
-//
-//            for (String top : topics) {
-//                cl.addCategory(top);
-//            }
-//            cl.setupAfterCategorysAdded();
-//
-//            for (String top : topics) {
-//                cl.addData(top);
-//            }
-
-            //double[] result = cl.classifyMessage("autor carte religie");
-
-
-            //System.out.println("====== RESULT ====== \tCLASSIFIED AS:\t" + topics[cl.getMaxPos(result)]);
-            //System.out.println(Arrays.toString(result));
-
-        } catch (Exception ex) {
-            Logger.getLogger(TextClassifier.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-    }
     private Instances trainingData;
     private StringToWordVector filter;
     private Classifier classifier;
@@ -94,7 +65,7 @@ public class TextClassifier {
     }
 
     /**
-     * Check whether classifier and filter are up to date. Build ifs necessary.
+     * Check whether classifier and filter are up to date. Build if necessary.
      *
      * @throws Exception
      */
@@ -148,5 +119,4 @@ public class TextClassifier {
         trainingData.setClassIndex(trainingData.numAttributes() - 1);
         setup = true;
     }
-
 }
