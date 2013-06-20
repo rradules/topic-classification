@@ -25,11 +25,13 @@ public class ClassifierFactory {
 
     private TextClassifier tc;
     private String classifier;
+    private DocumentConstructor docCons;
     private final String[] topics = {"Activism", "Business and finance", "Art", "Travel",
-        "Gastronomy", "Literature", "Fashion", "Politics", "Religion and spirituality"};
+        "Gastronomy", "Literature", "Fashion", "Personal journal", "Politics", "Religion and spirituality"};
 
     public ClassifierFactory(String classifier) {
         this.classifier = classifier;
+        docCons = new DocumentConstructor();
     }
 
     public void getClassifier() {
@@ -80,10 +82,11 @@ public class ClassifierFactory {
         }
     }
 
-    public String getTopic(String content) {
+    public String getTopic(String domainName) {
         getClassifier();
+        System.out.println("Classifier setup completed");
         try {
-            double[] result = tc.classifyMessage(content);
+            double[] result = tc.classifyMessage(docCons.getDocumentToClassify(domainName).getContent());
 
             int position = -1;
             double max = 0;
