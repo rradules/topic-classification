@@ -14,9 +14,6 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
-import model.Blogpost;
-import model.Domain;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -39,7 +36,7 @@ public class Crawler {
     //link retrieval module
     private LinkRetrieval linkRetrieval;
     //current domain crawling
-    private Domain currentDomain;
+    //private Domain currentDomain;
     private static Crawler singleton = null;
     private DataExtractor dataExtractor = null;
 
@@ -57,14 +54,6 @@ public class Crawler {
 
     public boolean isCrawling() {
         return crawling;
-    }
-
-    public Domain getCurrentDomain() {
-        return currentDomain;
-    }
-
-    public void setCurrentDomain(Domain currentDomain) {
-        this.currentDomain = currentDomain;
     }
 
     public void setCrawling(boolean crawling) {
@@ -89,54 +78,49 @@ public class Crawler {
 
     public void search(final String startUrl, final int maxUrls) {
         // Start the search in a new thread.
-       // Thread thread = new Thread(new Runnable() {
-          //  @Override
-          //  public void run() {
+        // Thread thread = new Thread(new Runnable() {
+        //  @Override
+        //  public void run() {
 
-                // Open matches log file.
-                try {
-                    logFileWriter = new PrintWriter(new FileWriter(logFile));
-                } catch (Exception e) {
-                    showError("Unable to open matches log file.");
-                    return;
-                }
-                try {
-                    String url = linkRetrieval.removeWwwFromUrl(startUrl);
-                    // Convert string url to URL object.
-                    URL verifiedUrl = linkRetrieval.verifyUrl(url);
+        // Open matches log file.
+        try {
+            logFileWriter = new PrintWriter(new FileWriter(logFile));
+        } catch (Exception e) {
+            System.out.println("Unable to open matches log file.");
+            return;
+        }
+        try {
+            String url = linkRetrieval.removeWwwFromUrl(startUrl);
+            // Convert string url to URL object.
+            URL verifiedUrl = linkRetrieval.verifyUrl(url);
 
-                    //add domain in DB and fix current domain
-                    dataExtractor = new DataExtractor("domain", verifiedUrl.toString());
-                    currentDomain = (Domain) dataExtractor.extractData();
-                    //extract the blogroll
-                    dataExtractor = new DataExtractor("blogroll", verifiedUrl.toString());
-                    //System.out.println("Blogroll: " + dataExtractor.extractData());
+            //add domain in DB and fix current domain
+            dataExtractor = new DataExtractor("domain", verifiedUrl.toString());
+            //currentDomain = (Domain) dataExtractor.extractData();
+            //extract the blogroll
+            dataExtractor = new DataExtractor("blogroll", verifiedUrl.toString());
+            //System.out.println("Blogroll: " + dataExtractor.extractData());
 
-                    // Turn crawling flag on.
-                    crawling = true;
-                    // Perform the actual crawling.
-                    crawl(verifiedUrl.toString(), maxUrls, limitToHost);
-                    // Turn crawling flag off.
-                    crawling = false;
-                    // Close matches log file.
-                    try {
-                        logFileWriter.close();
+            // Turn crawling flag on.
+            crawling = true;
+            // Perform the actual crawling.
+            crawl(verifiedUrl.toString(), maxUrls, limitToHost);
+            // Turn crawling flag off.
+            crawling = false;
+            // Close matches log file.
+            try {
+                logFileWriter.close();
 
-                    } catch (Exception e) {
-                        showError("Unable to close matches log file.");
-                    }
+            } catch (Exception e) {
+                System.out.println("Unable to close matches log file.");
+            }
 
-                } catch (Exception ex) {
-                    Logger.getLogger(Crawler.class.getName()).log(Level.SEVERE, null, ex);
-                }
-          //  }
-      //  });
-      //  thread.start();
-    }
-
-    // Show dialog box with error message.
-    private void showError(String message) {
-        JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            Logger.getLogger(Crawler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        //  }
+        //  });
+        //  thread.start();
     }
 
     // Perform the actual crawling, searching for the search string.
@@ -195,7 +179,7 @@ public class Crawler {
                 try {
                     logFileWriter.println(verifiedUrl);
                 } catch (Exception e) {
-                    showError("Unable to log match.");
+                    System.out.println("Unable to log match.");
                 }
                 //add new domain to DB
 
