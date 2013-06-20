@@ -21,7 +21,6 @@ import model.Domain;
 import model.Location;
 import model.Rawdata;
 import model.Stopword;
-import topicclassification.ml.Document;
 
 /**
  *
@@ -210,19 +209,31 @@ public class MainController {
         List<Domain> domains = findDomainByCategory(topic);
         for (Domain dom : domains) {
             posts = findBlogpostByDomain(dom.getDomainName());
-            String aux="";
-            for(Blogpost bp:posts){
-                aux+=bp+" ";
+            String aux = "";
+            for (Blogpost bp : posts) {
+                aux += bp.getBlogContent() + " ";
             }
             content.add(aux.trim());
         }
         return content;
     }
 
+    public ArrayList<String> getDocumentForDomainName(String domName) {
+        ArrayList<String> content = new ArrayList<>();
+        List<Blogpost> posts;
+        Domain domain = findDomainByName(domName);
+        posts = findBlogpostByDomain(domain.getDomainName());
+        String aux = "";
+        for (Blogpost bp : posts) {
+            aux += bp.getBlogContent() + " ";
+        }
+        content.add(aux.trim());
+
+        return content;
+    }
+
 //------------------------------------------------------------------------
 //-------------Rawdata related methods------------------------------------
-    
-
     public Rawdata findRawdataByAddress(String address) {
         return rawdataController.findByPageAddress(address);
     }
