@@ -10,7 +10,7 @@ import java.util.ArrayList;
  *
  * @author Roxana Radulescu <roxana.radulescu07@gmail.com>
  */
-public class MachineLearning {
+public class NNClassifier {
 
     
 }
