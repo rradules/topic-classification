@@ -43,6 +43,14 @@ public class TextClassifier {
         docContructor = new DocumentConstructor();
     }
 
+    public Classifier getClassifier() {
+        return classifier;
+    }
+
+    public void setClassifier(Classifier classifier) {
+        this.classifier = classifier;
+    }
+
     public void addCategory(String category) {
         category = category.toLowerCase();
         // if required, double the capacity.
@@ -53,15 +61,17 @@ public class TextClassifier {
         if (!setup) {
             throw new IllegalStateException("Must use setup first");
         }
-        String post = docContructor.getDocumentForTopic(topic).getContent();
-        topic = topic.toLowerCase();
-        // Make message into instance.
-        Instance instance = makeInstance(post, trainingData);
-        // Set class value for instance.
-        instance.setClassValue(topic);
-        // Add instance to training data.
-        trainingData.add(instance);
-        upToDate = false;
+        if (docContructor.getDocumentForTopic(topic).getDocuments().size() > 0) {
+            String post = docContructor.getDocumentForTopic(topic).getContent();
+            topic = topic.toLowerCase();
+            // Make message into instance.
+            Instance instance = makeInstance(post, trainingData);
+            // Set class value for instance.
+            instance.setClassValue(topic);
+            // Add instance to training data.
+            trainingData.add(instance);
+            upToDate = false;
+        }
     }
 
     /**
@@ -115,7 +125,7 @@ public class TextClassifier {
     public void setupAfterCategorysAdded() {
         attributes.add(new Attribute("Topic", classValues));
         // Create dataset with initial capacity of 100, and set index of class.
-        trainingData = new Instances("TextClassificationProblem", attributes, 1000);
+        trainingData = new Instances("TextClassificationProblem", attributes, 100);
         trainingData.setClassIndex(trainingData.numAttributes() - 1);
         setup = true;
     }

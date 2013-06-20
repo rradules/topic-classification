@@ -4,7 +4,6 @@
  */
 package topicclassification.ml;
 
-import controller.MainController;
 
 /**
  *
@@ -28,7 +27,7 @@ public class ClassifierController {
 //    case "DS": Desicision stump
 //    case "DT": Desicision table
     public String classifyPost(String clsf, String domainName) {
-
+        System.out.println("Classifier Factory created");
         classifier = new ClassifierFactory(clsf);
         return classifier.getTopic(domainName);
     }
