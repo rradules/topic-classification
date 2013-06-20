@@ -4,6 +4,7 @@
  */
 package topicclassification.ml;
 
+import functions.FeatureSelection;
 import java.util.ArrayList;
 
 /**
@@ -15,8 +16,11 @@ public class Document {
 
     ArrayList<String> documents;
     String topic;
+    FeatureSelection featureSelection;
 
     public Document() {
+        documents = new ArrayList<>();
+        featureSelection = new FeatureSelection();
     }
 
     public ArrayList<String> getDocuments() {
@@ -38,7 +42,8 @@ public class Document {
     public String getContent() {
         StringBuilder builder = new StringBuilder();
         for (String s : documents) {
-            builder.append(s).append(" ");
+            String parsed = featureSelection.performFeatureSelection(s);
+            builder.append(parsed).append(" ");
         }
         return builder.toString().trim();
     }
