@@ -34,6 +34,13 @@ public class DocumentConstructor {
         document.setInfo(domainName);
 
         return document;
+    }
 
+    public Document get20Documents(String topic) {
+        ArrayList<String> posts = MainController.getInstance().get20DocumentsForTopic(topic);
+        document.setDocuments(posts);
+        document.setInfo(topic);
+
+        return document;
     }
 }
