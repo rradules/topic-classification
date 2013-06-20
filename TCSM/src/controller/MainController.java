@@ -27,7 +27,7 @@ import model.Stopword;
  * @author Roxana Radulescu <roxana.radulescu07@gmail.com>
  */
 public class MainController {
-    
+
     private static MainController singleton = null;
     private LocationJpaController locationController;
     private DomainJpaController domainController;
@@ -41,7 +41,7 @@ public class MainController {
 
 // private constructer    
     private MainController() {
-        
+
         emf = Persistence.createEntityManagerFactory("Crawler1.0PU");
         locationController = new LocationJpaController(emf);
         domainController = new DomainJpaController(emf);
@@ -50,7 +50,7 @@ public class MainController {
         rawdataController = new RawdataJpaController(emf);
         stopwordController = new StopwordJpaController(emf);
         categoryController = new CategoryJpaController(emf);
-        
+
         computeCRC = new ComputeCRC();
     }
 //singleton pattern
@@ -66,10 +66,10 @@ public class MainController {
     public Location findLocationBySuffix(String suffix) {
         return locationController.findBySuffix(suffix);
     }
-    
+
     public void addLocation(String suffix, String location) throws Exception {
         Location loc = findLocationBySuffix(suffix);
-        
+
         if (loc == null) {
             Location aux = new Location();
             aux.setSuffix(suffix);
@@ -85,11 +85,11 @@ public class MainController {
     public Domain findDomainByName(String name) {
         return domainController.findByDomainName(name);
     }
-    
+
     public Domain addDomain(String name, Location loc, String robots,
             String description, Date activation) throws Exception {
         Domain dom = findDomainByName(name);
-        
+
         if (dom == null) {
             Domain aux = new Domain();
             aux.setDomainName(name);
@@ -98,16 +98,16 @@ public class MainController {
             aux.setDescription(description);
             aux.setActivation(activation);
             domainController.create(aux);
-            
+
             return findDomainByName(name);
-            
+
         } else {
             //throw new Exception("This domain already exists in the database.");
             domainController.edit(dom);
             return dom;
         }
     }
-    
+
     public void addDomainCategory(String name, String categ) {
         Domain domain = findDomainByName(name);
         Category category = findCategoryByName(categ);
@@ -121,10 +121,10 @@ public class MainController {
                 Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
-        
+
+
     }
-    
+
     public List<Domain> findDomainByCategory(String nameCateg) {
         Category category = findCategoryByName(nameCateg);
         return domainController.findByDomainCategory(category);
@@ -135,15 +135,15 @@ public class MainController {
     public List<Blogroll> findBlogrollByIdDomain(Domain domain) {
         return blogrollController.findByIdDomain(domain);
     }
-    
+
     public Blogroll findBlogrollByDomainAndBlog(Domain domain, String blog) {
         return blogrollController.findByDomainAndName(domain, blog);
     }
-    
+
     public Blogroll addBlogroll(Domain domain, String blog, int type, int destination) throws Exception {
-        
+
         Blogroll br = findBlogrollByDomainAndBlog(domain, blog);
-        
+
         if (br == null) {
             Blogroll aux = new Blogroll();
             aux.setBlog(blog);
@@ -152,13 +152,13 @@ public class MainController {
             aux.setIddestination(destination);
             blogrollController.create(aux);
             return findBlogrollByDomainAndBlog(domain, blog);
-            
+
         } else {
             blogrollController.edit(br);
             return br;
             //throw new Exception("This blogroll already exists in the database.");
         }
-        
+
     }
 //---------------------------------------------------------------------
 //-------------Blogpost related methods--------------------------------
@@ -166,15 +166,15 @@ public class MainController {
     public Blogpost findBlogpostByAddress(String address) {
         return blogpostController.findByPageAddress(address);
     }
-    
+
     public Blogpost addBlogpost(String address, Date date,
             String title, String content,
             String description, Domain domain) throws Exception {
-        
+
         Blogpost bp = findBlogpostByAddress(address);
         if (bp == null) {
             long CRC = computeCRC.computeChecksum(content);
-            
+
             Blogpost aux = new Blogpost();
             aux.setPageAddress(address);
             aux.setBlogContent(content);
@@ -184,7 +184,7 @@ public class MainController {
             aux.setTitle(title);
             aux.setDescription(description);
             aux.setIdDomain(domain);
-            
+
             blogpostController.create(aux);
             return findBlogpostByAddress(address);
         } else {
@@ -193,16 +193,16 @@ public class MainController {
             return bp;
         }
     }
-    
+
     public List<Blogpost> findBlogpostByDomain(String domName) {
         Domain domain = findDomainByName(domName);
         return blogpostController.findByDomainCategory(domain);
     }
-    
+
     public String getBlogPost(Blogpost blogpost) {
         return blogpost.getBlogContent();
     }
-    
+
     public ArrayList<String> getDocumentForTopic(String topic) {
         ArrayList<String> content = new ArrayList<>();
         List<Blogpost> posts;
@@ -217,12 +217,14 @@ public class MainController {
         }
         return content;
     }
-    
+
     public ArrayList<String> get20DocumentsForTopic(String topic) {
         ArrayList<String> content = new ArrayList<>();
         List<Blogpost> posts;
         List<Domain> domains = findDomainByCategory(topic);
-        for (int i = 0; i < 20; i++) {
+        System.out.println(topic+ " - "+ domains.size());
+        int min = Math.min(20, domains.size());
+        for (int i = 0; i < min; i++) {
             posts = findBlogpostByDomain(domains.get(i).getDomainName());
             String aux = "";
             for (Blogpost bp : posts) {
@@ -232,11 +234,11 @@ public class MainController {
         }
         return content;
     }
-    
+
     public List<Blogpost> getAllBlogposts() {
         return blogpostController.findBlogpostEntities();
     }
-    
+
     public ArrayList<String> getDocumentForDomainName(String domName) {
         ArrayList<String> content = new ArrayList<>();
         List<Blogpost> posts;
@@ -247,10 +249,10 @@ public class MainController {
             aux += bp.getBlogContent() + " ";
         }
         content.add(aux.trim());
-        
+
         return content;
     }
-    
+
     public ArrayList<String> getAllDocuments() {
         ArrayList<String> content = new ArrayList<>();
         List<Blogpost> posts = getAllBlogposts();
@@ -259,7 +261,7 @@ public class MainController {
             aux += bp.getBlogContent() + " ";
         }
         content.add(aux.trim());
-        
+
         return content;
     }
 
@@ -268,7 +270,7 @@ public class MainController {
     public Rawdata findRawdataByAddress(String address) {
         return rawdataController.findByPageAddress(address);
     }
-    
+
     public void addRawdata(String address, String content,
             int level, String title,
             String description, Domain domain) {
@@ -279,9 +281,9 @@ public class MainController {
     public Stopword findStopwordByStopword(String word) {
         return stopwordController.findByStopword(word);
     }
-    
+
     public void addStopword(String word) {
-        
+
         try {
             Stopword stopword = new Stopword();
             stopword.setStopWord(word);
@@ -291,7 +293,7 @@ public class MainController {
         } catch (Exception ex) {
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }
 //------------------------------------------------------------------------
 //-------------Category related methods-----------------------------------

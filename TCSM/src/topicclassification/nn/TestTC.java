@@ -22,43 +22,43 @@ public class TestTC {
 
 
         DocumentConstructor docCons = new DocumentConstructor();
-        Document document = docCons.get20Documents("Activism");
-        //String content = document.getContent();
+        String[] topics = {"Activism", "Business and finance", "Art", "Travel",
+            "Gastronomy", "Literature", "Fashion", "Personal journal", "Politics", "Religion and spirituality"};
+
+        for (int i = 0; i < topics.length; i++) {
 
 
-        TermFrequency tf = new TermFrequency();
-        tf.setDocument(document);
-        //tf.computeFrequency();
-        //tf.computeAugmentedFrequency();
-        tf.computeTFIDF();
-
-        HashMap<String, Double> test = tf.getTermfrequency();
-
-        PrintWriter writer = new PrintWriter("keywords_key.txt", "UTF-8");
-        PrintWriter writer2 = new PrintWriter("keywords_val.txt", "UTF-8");
+            Document document = docCons.get20Documents(topics[i]);
+            //String content = document.getContent();
 
 
-        Iterator it = test.keySet().iterator();
+            TermFrequency tf = new TermFrequency();
+            tf.setDocument(document);
+            tf.computeFrequency();
+            //tf.computeAugmentedFrequency();
+            //tf.computeTFIDF();
 
-        while (it.hasNext()) {
-            String key = it.next().toString();
+            HashMap<String, Double> test = tf.getTermfrequency();
+
+            PrintWriter writer = new PrintWriter(topics[i] + "_key.txt", "UTF-8");
+            PrintWriter writer2 = new PrintWriter(topics[i] + "_val.txt", "UTF-8");
 
 
-            double val = test.get(key);
-            DecimalFormat twoDForm = new DecimalFormat("#.######");
+            Iterator it = test.keySet().iterator();
+
+            while (it.hasNext()) {
+                String key = it.next().toString();
 
 
-            //System.out.println(key + " - " + val);
-            //System.out.println(key);
-            writer.println(key);
-            writer2.println(Double.valueOf(twoDForm.format(val)));
-            //writer.println(val);
-            //System.out.println(val);
+                double val = test.get(key);
+                DecimalFormat twoDForm = new DecimalFormat("#.######");
+
+                writer.println(key);
+                writer2.println(Double.valueOf(twoDForm.format(val)));
+
+            }
+            writer.close();
+            writer2.close();
         }
-
-
-
-        writer.close();
-        writer2.close();
     }
 }
