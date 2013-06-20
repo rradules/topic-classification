@@ -5,6 +5,7 @@
 package extractor;
 
 import controller.MainController;
+import functions.AccentElim;
 import functions.MetaTag;
 import java.net.URL;
 import java.util.ArrayList;
@@ -27,9 +28,11 @@ import org.jsoup.select.Elements;
 public class BlogpostExtractor extends AbstractExtractor {
 
     private final int MAX_LENGHT = 10000;
+    private AccentElim accentElim;
 
     public BlogpostExtractor(String url) {
         super(url);
+        accentElim = new AccentElim();
     }
 //public Blogpost addBlogpost(String address, Date date,
 //            String title, String content,
@@ -70,8 +73,8 @@ public class BlogpostExtractor extends AbstractExtractor {
                 auxContent = trimToSize(builder.toString());
             }
             content = auxContent;
-            title = elliminateAccents(doc.select("title").text());
-            description = elliminateAccents(new MetaTag().getMetaTag(doc, "description"));
+            title = accentElim.elliminateAccents(doc.select("title").text());
+            description = accentElim.elliminateAccents(new MetaTag().getMetaTag(doc, "description"));
             address = verifiedURL.toString();
             date = getPostDate(verifiedURL);
 

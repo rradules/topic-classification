@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import topicclassification.ml.Document;
 
-
 /**
  *
  * @author Roxana Radulescu <roxana.radulescu07@gmail.com>
@@ -42,17 +41,16 @@ public class TermFrequency {
     }
 
     public void computeFrequency() {
-        ArrayList<String> documents = document.getDocuments();
-        for (String doc : documents) {
-            String[] words = doc.split(" +");
-            for (String w : Arrays.asList(words)) {
-                Integer num = termfrequency.get(w);
-                if (num != null) {
-                    termfrequency.put(w, num + 1);
-                } else {
-                    termfrequency.put(w, 1);
-                }
+        String content = document.getContent();
+        String[] words = content.split(" +");
+        for (String w : Arrays.asList(words)) {
+            Integer num = termfrequency.get(w);
+            if (num != null) {
+                termfrequency.put(w, num + 1);
+            } else {
+                termfrequency.put(w, 1);
             }
+
         }
     }
 }

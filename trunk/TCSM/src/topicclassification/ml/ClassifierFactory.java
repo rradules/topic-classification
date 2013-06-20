@@ -5,6 +5,7 @@
 package topicclassification.ml;
 
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import weka.classifiers.bayes.NaiveBayes;
@@ -96,6 +97,7 @@ public class ClassifierFactory {
                     position = i;
                 }
             }
+            System.out.println("Result array: " + Arrays.toString(result));
             return topics[position];
         } catch (Exception ex) {
             Logger.getLogger(ClassifierFactory.class.getName()).log(Level.SEVERE, null, ex);
