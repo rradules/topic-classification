@@ -81,9 +81,9 @@ public class ClassifierFactory {
     }
 
     public String getTopic(String content) {
+        getClassifier();
         try {
             double[] result = tc.classifyMessage(content);
-
 
             int position = -1;
             double max = 0;
