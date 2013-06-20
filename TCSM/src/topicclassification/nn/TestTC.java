@@ -34,14 +34,14 @@ public class TestTC {
 
             TermFrequency tf = new TermFrequency();
             tf.setDocument(document);
-            tf.computeFrequency();
-            //tf.computeAugmentedFrequency();
+            //tf.computeFrequency();
+            tf.computeAugmentedFrequency();
             //tf.computeTFIDF();
 
             HashMap<String, Double> test = tf.getTermfrequency();
 
-            PrintWriter writer = new PrintWriter(topics[i] + "_key.txt", "UTF-8");
-            PrintWriter writer2 = new PrintWriter(topics[i] + "_val.txt", "UTF-8");
+            //PrintWriter writer = new PrintWriter(topics[i] + "_key.txt", "UTF-8");
+            PrintWriter writer2 = new PrintWriter(topics[i] + "_val_taf.txt", "UTF-8");
 
 
             Iterator it = test.keySet().iterator();
@@ -53,11 +53,11 @@ public class TestTC {
                 double val = test.get(key);
                 DecimalFormat twoDForm = new DecimalFormat("#.######");
 
-                writer.println(key);
+               // writer.println(key);
                 writer2.println(Double.valueOf(twoDForm.format(val)));
 
             }
-            writer.close();
+            //writer.close();
             writer2.close();
         }
     }
