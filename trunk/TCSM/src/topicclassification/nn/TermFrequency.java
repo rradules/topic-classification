@@ -2,11 +2,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package topicclassification.ml;
+package topicclassification.nn;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import topicclassification.ml.Document;
 
 /**
  *

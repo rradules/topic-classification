@@ -6,15 +6,9 @@ package topicclassification.ml;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import weka.classifiers.Classifier;
-import weka.classifiers.bayes.NaiveBayes;
-import weka.classifiers.bayes.NaiveBayesMultinomial;
-import weka.classifiers.lazy.IBk;
-import weka.classifiers.lazy.KStar;
 import weka.core.Attribute;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -30,25 +24,25 @@ public class TextClassifier {
 
     public static void main(String[] args) {
         try {
-            // TextClassifier cl = new TextClassifier(new NaiveBayesMultinomialUpdateable());
-            TextClassifier cl = new TextClassifier(new IBk());
-            String[] topics = {"Activism", "Business and finance", "Art", "Travel",
-                "Gastronomy", "Literature", "Fashion", "Politics", "Religion and spirituality"};
+//            // TextClassifier cl = new TextClassifier(new NaiveBayesMultinomialUpdateable());
+//            TextClassifier cl = new TextClassifier(new IBk());
+//            String[] topics = {"Activism", "Business and finance", "Art", "Travel",
+//                "Gastronomy", "Literature", "Fashion", "Politics", "Religion and spirituality"};
+//
+//            for (String top : topics) {
+//                cl.addCategory(top);
+//            }
+//            cl.setupAfterCategorysAdded();
+//
+//            for (String top : topics) {
+//                cl.addData(top);
+//            }
 
-            for (String top : topics) {
-                cl.addCategory(top);
-            }
-            cl.setupAfterCategorysAdded();
-
-            for (String top : topics) {
-                cl.addData(top);
-            }
-
-            double[] result = cl.classifyMessage("autor carte religie");
+            //double[] result = cl.classifyMessage("autor carte religie");
 
 
-            System.out.println("====== RESULT ====== \tCLASSIFIED AS:\t" + topics[cl.getMaxPos(result)]);
-            System.out.println(Arrays.toString(result));
+            //System.out.println("====== RESULT ====== \tCLASSIFIED AS:\t" + topics[cl.getMaxPos(result)]);
+            //System.out.println(Arrays.toString(result));
 
         } catch (Exception ex) {
             Logger.getLogger(TextClassifier.class.getName()).log(Level.SEVERE, null, ex);
@@ -100,7 +94,7 @@ public class TextClassifier {
     }
 
     /**
-     * Check whether classifier and filter are up to date. Build i necessary.
+     * Check whether classifier and filter are up to date. Build ifs necessary.
      *
      * @throws Exception
      */
@@ -150,20 +144,9 @@ public class TextClassifier {
     public void setupAfterCategorysAdded() {
         attributes.add(new Attribute("Topic", classValues));
         // Create dataset with initial capacity of 100, and set index of class.
-        trainingData = new Instances("TextClassificationProblem", attributes, 100);
+        trainingData = new Instances("TextClassificationProblem", attributes, 1000);
         trainingData.setClassIndex(trainingData.numAttributes() - 1);
         setup = true;
     }
 
-    public int getMaxPos(double[] array) {
-        int position = -1;
-        double max = 0;
-        for (int i = 0; i < array.length; i++) {
-            if (array[i] > max) {
-                max = array[i];
-                position = i;
-            }
-        }
-        return position;
-    }
 }

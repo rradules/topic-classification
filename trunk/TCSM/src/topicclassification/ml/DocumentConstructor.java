@@ -6,8 +6,6 @@ package topicclassification.ml;
 
 import controller.MainController;
 import java.util.ArrayList;
-import model.Blogpost;
-import model.Domain;
 
 /**
  *
