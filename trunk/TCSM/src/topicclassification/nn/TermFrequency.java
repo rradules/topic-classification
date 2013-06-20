@@ -22,10 +22,12 @@ public class TermFrequency {
 
     Document document;
     HashMap<String, Double> termfrequency;
+    DocumentFrequency docFreq;
 
     public TermFrequency() {
         document = new Document();
         termfrequency = new HashMap<>();
+        docFreq = new DocumentFrequency();
     }
 
     public Document getDocument() {
@@ -34,6 +36,7 @@ public class TermFrequency {
 
     public void setDocument(Document document) {
         this.document = document;
+        docFreq.setDocument(document);
     }
 
     public HashMap<String, Double> getTermfrequency() {
@@ -54,7 +57,6 @@ public class TermFrequency {
             } else {
                 termfrequency.put(w, 1.0);
             }
-
         }
     }
 
@@ -73,9 +75,26 @@ public class TermFrequency {
         while (it.hasNext()) {
             String key = it.next().toString();
             double val = termfrequency.get(key);
-            double newVal = 0.4 + ((0.4 * val) / max);
+            double tf = 0.4 + ((0.4 * val) / max);
 
-            termfrequency.put(key, newVal);
+            termfrequency.put(key, tf);
+        }
+    }
+
+    public void computeTFIDF() {
+        computeFrequency();
+        Iterator it = termfrequency.keySet().iterator();
+        double max = maxFrequency();
+
+        while (it.hasNext()) {
+            String key = it.next().toString();
+            double val = termfrequency.get(key);
+            double tf = 0.4 + ((0.4 * val) / max);
+            double idf = docFreq.getIDF(key);
+            
+            //System.out.println(key+ " - "+ tf*idf);
+
+            termfrequency.put(key, tf * idf);
         }
 
     }
