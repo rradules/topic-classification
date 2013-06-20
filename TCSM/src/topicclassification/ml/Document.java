@@ -9,13 +9,11 @@ import java.util.ArrayList;
 
 /**
  *
- * @author Roxana Radulescu <roxana.radulescu07@gmail.com>
+ * @author Student
  */
-//
-public class Document {
+public abstract class Document {
 
     ArrayList<String> documents;
-    String topic;
     FeatureSelection featureSelection;
 
     public Document() {
@@ -23,28 +21,5 @@ public class Document {
         featureSelection = new FeatureSelection();
     }
 
-    public ArrayList<String> getDocuments() {
-        return documents;
-    }
-
-    public void setDocuments(ArrayList<String> documents) {
-        this.documents = documents;
-    }
-
-    public String getTopic() {
-        return topic;
-    }
-
-    public void setTopic(String topic) {
-        this.topic = topic;
-    }
-
-    public String getContent() {
-        StringBuilder builder = new StringBuilder();
-        for (String s : documents) {
-            String parsed = featureSelection.performFeatureSelection(s);
-            builder.append(parsed).append(" ");
-        }
-        return builder.toString().trim();
-    }
+    public abstract String getContent();
 }
