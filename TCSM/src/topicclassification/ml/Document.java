@@ -4,6 +4,7 @@
  */
 package topicclassification.ml;
 
+import functions.AccentElim;
 import functions.FeatureSelection;
 import java.util.ArrayList;
 
@@ -15,6 +16,7 @@ public class Document {
 
     private ArrayList<String> documents;
     private FeatureSelection featureSelection;
+    private AccentElim accentElim;
     // domain name is the document should be classified
     // topic if the document is for train purposes
     private String info;
@@ -22,6 +24,7 @@ public class Document {
     public Document() {
         documents = new ArrayList<>();
         featureSelection = new FeatureSelection();
+        accentElim = new AccentElim();
     }
 
     public ArrayList<String> getDocuments() {
@@ -44,7 +47,7 @@ public class Document {
         StringBuilder builder = new StringBuilder();
         int counter = 0;
         for (String s : documents) {
-            if (counter < 5) {
+            if (counter < 10) {
                 String parsed = featureSelection.performFeatureSelection(s);
                 builder.append(parsed).append(" ");
                 counter++;

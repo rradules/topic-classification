@@ -124,8 +124,8 @@ public class TextClassifier {
 
     public void setupAfterCategorysAdded() {
         attributes.add(new Attribute("Topic", classValues));
-        // Create dataset with initial capacity of 100, and set index of class.
-        trainingData = new Instances("TextClassificationProblem", attributes, 100);
+        // Create dataset with initial capacity of 500, and set index of class.
+        trainingData = new Instances("TextClassificationProblem", attributes, 500);
         trainingData.setClassIndex(trainingData.numAttributes() - 1);
         setup = true;
     }

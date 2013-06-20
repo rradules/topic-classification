@@ -15,9 +15,11 @@ import stemmer.RomanianStemmer;
 public class FeatureSelection {
 
     private RomanianStemmer stemmer;
+    private AccentElim accentElim;
 
     public FeatureSelection() {
         stemmer = new RomanianStemmer();
+        accentElim = new AccentElim();
     }
 
     public String performFeatureSelection(String content) {
@@ -31,8 +33,9 @@ public class FeatureSelection {
                 stemmer.setCurrent(str);
                 //stem the word
                 stemmer.stem();
+                String word = accentElim.elliminateAccents(stemmer.getCurrent());
                 //recontruct the content
-                builder.append(stemmer.getCurrent()).append(" ");
+                builder.append(word).append(" ");
             }
         }
         return builder.toString().trim();
