@@ -87,7 +87,7 @@ public class ClassifierFactory {
         getClassifier();
         System.out.println("Classifier setup completed");
         try {
-            double[] result = tc.classifyMessage(docCons.getDocumentToClassify(domainName).getContent());
+            double[] result = tc.classifyMessage(docCons.getDocumentToClassify(domainName).getParsedContent());
 
             int position = -1;
             double max = 0;

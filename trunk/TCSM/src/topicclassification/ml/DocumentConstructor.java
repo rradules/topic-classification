@@ -27,6 +27,15 @@ public class DocumentConstructor {
 
         return document;
     }
+    
+        public Document getXDocumentsAllTopics(int size) {
+          
+        ArrayList<String> posts = MainController.getInstance().getXDocumentsofEachTopic(size);
+        document.setDocuments(posts);
+        document.setInfo("allTopics");
+
+        return document;
+    }
 
     public Document getDocumentToClassify(String domainName) {
         ArrayList<String> posts = MainController.getInstance().getDocumentForDomainName(domainName);
@@ -36,8 +45,8 @@ public class DocumentConstructor {
         return document;
     }
 
-    public Document get20Documents(String topic) {
-        ArrayList<String> posts = MainController.getInstance().get20DocumentsForTopic(topic);
+    public Document getXDocuments(String topic, int size) {
+        ArrayList<String> posts = MainController.getInstance().getXDocumentsForTopic(topic,size);
         document.setDocuments(posts);
         document.setInfo(topic);
 

@@ -61,8 +61,8 @@ public class TextClassifier {
         if (!setup) {
             throw new IllegalStateException("Must use setup first");
         }
-        if (docContructor.getDocumentForTopic(topic).getDocuments().size() > 0) {
-            String post = docContructor.getDocumentForTopic(topic).getContent();
+        if (docContructor.getDocumentForTopic(topic).getParsedDocuments().size() > 0) {
+            String post = docContructor.getDocumentForTopic(topic).getParsedContent();
             topic = topic.toLowerCase();
             // Make message into instance.
             Instance instance = makeInstance(post, trainingData);
