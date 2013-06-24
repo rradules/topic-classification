@@ -218,12 +218,12 @@ public class MainController {
         return content;
     }
 
-    public ArrayList<String> get20DocumentsForTopic(String topic) {
+    public ArrayList<String> getXDocumentsForTopic(String topic, int size) {
         ArrayList<String> content = new ArrayList<>();
         List<Blogpost> posts;
         List<Domain> domains = findDomainByCategory(topic);
-        System.out.println(topic+ " - "+ domains.size());
-        int min = Math.min(20, domains.size());
+        System.out.println(topic + " - " + domains.size());
+        int min = Math.min(size, domains.size());
         for (int i = 0; i < min; i++) {
             posts = findBlogpostByDomain(domains.get(i).getDomainName());
             String aux = "";
@@ -231,6 +231,25 @@ public class MainController {
                 aux += bp.getBlogContent() + " ";
             }
             content.add(aux.trim());
+        }
+        return content;
+    }
+
+    public ArrayList<String> getXDocumentsofEachTopic(int size) {
+        List<Category> categories = categoryController.findCategoryEntities();
+        ArrayList<String> content = new ArrayList<>();
+        List<Blogpost> posts;
+        for (Category topic : categories) {
+            List<Domain> domains = findDomainByCategory(topic.getCategory());
+            int min = Math.min(size, domains.size());
+            for (int i = 0; i < min; i++) {
+                posts = findBlogpostByDomain(domains.get(i).getDomainName());
+                String aux = "";
+                for (Blogpost bp : posts) {
+                    aux += bp.getBlogContent() + " ";
+                }
+                content.add(aux.trim());
+            }
         }
         return content;
     }

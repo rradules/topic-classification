@@ -4,13 +4,11 @@
  */
 package topicclassification.nn;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import topicclassification.ml.Document;
 
 /**
@@ -27,7 +25,11 @@ public class TermFrequency {
     public TermFrequency() {
         document = new Document();
         termfrequency = new HashMap<>();
-        docFreq = new DocumentFrequency();
+        //docFreq = new DocumentFrequency();
+    }
+
+    public void setDocFreq(DocumentFrequency docFreq) {
+        this.docFreq = docFreq;
     }
 
     public Document getDocument() {
@@ -36,7 +38,6 @@ public class TermFrequency {
 
     public void setDocument(Document document) {
         this.document = document;
-        docFreq.setDocument(document);
     }
 
     public HashMap<String, Double> getTermfrequency() {
@@ -48,8 +49,8 @@ public class TermFrequency {
     }
 
     public void computeFrequency() {
-        String content = document.getContent();
-        String[] words = content.split(" +");
+        String content = document.getParsedContent();
+        String[] words = content.split("\\s+");
         for (String w : Arrays.asList(words)) {
             Double num = termfrequency.get(w);
             if (num != null) {
@@ -67,32 +68,31 @@ public class TermFrequency {
         return max;
     }
 
-    public void computeAugmentedFrequency() {
+    public void computeLogFrequency() {
         computeFrequency();
         Iterator it = termfrequency.keySet().iterator();
-        double max = maxFrequency();
+        //double max = maxFrequency();
 
         while (it.hasNext()) {
             String key = it.next().toString();
             double val = termfrequency.get(key);
-            double tf = 0.4 + ((0.4 * val) / max);
+            // double tf = 0.5 + ((0.5 * val) / max);
+            //double tf = val / max;
+            double tf = Math.log(val + 1);
+            //double tf = 0.4 + ((0.4 * val) / max);
 
             termfrequency.put(key, tf);
         }
     }
 
     public void computeTFIDF() {
-        computeFrequency();
+        computeLogFrequency();
         Iterator it = termfrequency.keySet().iterator();
-        double max = maxFrequency();
 
         while (it.hasNext()) {
             String key = it.next().toString();
-            double val = termfrequency.get(key);
-            double tf = 0.4 + ((0.4 * val) / max);
+            double tf = termfrequency.get(key);
             double idf = docFreq.getIDF(key);
-            
-            //System.out.println(key+ " - "+ tf*idf);
 
             termfrequency.put(key, tf * idf);
         }

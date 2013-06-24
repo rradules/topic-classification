@@ -4,7 +4,6 @@
  */
 package topicclassification.ml;
 
-import functions.AccentElim;
 import functions.FeatureSelection;
 import java.util.ArrayList;
 
@@ -15,24 +14,26 @@ import java.util.ArrayList;
 public class Document {
 
     private ArrayList<String> documents;
+    private ArrayList<String> parsedDocuments;
+    private String parsedContent;
     private FeatureSelection featureSelection;
-    private AccentElim accentElim;
     // domain name is the document should be classified
     // topic if the document is for train purposes
     private String info;
 
     public Document() {
         documents = new ArrayList<>();
+        parsedDocuments = new ArrayList<>();
         featureSelection = new FeatureSelection();
-        accentElim = new AccentElim();
     }
 
-    public ArrayList<String> getDocuments() {
-        return documents;
-    }
-
+//    public ArrayList<String> getDocuments() {
+//        return documents;
+//    }
     public void setDocuments(ArrayList<String> documents) {
         this.documents = documents;
+        parseDocuments();
+        parseContent();
     }
 
     public String getInfo() {
@@ -43,17 +44,28 @@ public class Document {
         this.info = info;
     }
 
-    public String getContent() {
+    public ArrayList<String> getParsedDocuments() {
+        return parsedDocuments;
+    }
+
+    public String getParsedContent() {
+        return parsedContent;
+    }
+
+    public void parseContent() {
         StringBuilder builder = new StringBuilder();
-        int counter = 0;
-        for (String s : documents) {
-            if (counter < 10) {
-                String parsed = featureSelection.performFeatureSelection(s);
-                builder.append(parsed).append(" ");
-                counter++;
-            }
+        for (String s : parsedDocuments) {
+            builder.append(s).append(" ");
         }
-        //System.out.println(builder.toString().trim());
-        return builder.toString().trim();
+
+        parsedContent = builder.toString().trim();
+    }
+
+    public void parseDocuments() {
+        parsedDocuments.clear();
+        for (String s : documents) {
+            String parsed = featureSelection.performFeatureSelection(s);
+            parsedDocuments.add(parsed);
+        }
     }
 }

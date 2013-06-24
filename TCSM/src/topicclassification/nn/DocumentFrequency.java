@@ -13,7 +13,6 @@ import topicclassification.ml.Document;
 //Pupose: compute the number of documents in the collection that contain a term t
 public class DocumentFrequency {
 
-    private final int DOCUMENT_NUMBER = 20;
     private Document document;
 
     public DocumentFrequency() {
@@ -29,18 +28,23 @@ public class DocumentFrequency {
 
     public int getDocumentFrequency(String word) {
         int freq = 0;
-        for (String s : document.getDocuments()) {
-            if (s.contains(word)) {
+        for (String s : document.getParsedDocuments()) {
+            if (s.contains(word.trim())) {
                 freq++;
             }
         }
-
         return freq;
     }
 
     public double getIDF(String word) {
+        int freq = getDocumentFrequency(word);
+        int docNo = document.getParsedDocuments().size();
         double idf;
-        idf = Math.log(DOCUMENT_NUMBER / (1 + getDocumentFrequency(word)));
+        if (freq == docNo) {
+            idf = Math.log(docNo / (docNo - 1));
+        } else {
+            idf = Math.log(docNo / getDocumentFrequency(word));
+        }
 
         return idf;
     }

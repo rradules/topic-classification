@@ -21,27 +21,40 @@ public class TestTC {
 
 
 
+        DocumentConstructor docCons2 = new DocumentConstructor();
+        Document allDocs = docCons2.getXDocumentsAllTopics(15);
+        String[] topics = {"Activism",
+           "Business and finance", "Art", "Travel",
+            "Gastronomy", "Literature", "Fashion", "Politics", "Religion and spirituality"};
+
+
+        DocumentFrequency docFreq = new DocumentFrequency();
+        docFreq.setDocument(allDocs);
         DocumentConstructor docCons = new DocumentConstructor();
-        String[] topics = {"Activism", "Business and finance", "Art", "Travel",
-            "Gastronomy", "Literature", "Fashion", "Personal journal", "Politics", "Religion and spirituality"};
+
+
 
         for (int i = 0; i < topics.length; i++) {
 
 
-            Document document = docCons.get20Documents(topics[i]);
+            Document document = docCons.getXDocuments(topics[i], 15);
+            document.setInfo(topics[i]);
             //String content = document.getContent();
 
 
             TermFrequency tf = new TermFrequency();
             tf.setDocument(document);
+            tf.setDocFreq(docFreq);
             //tf.computeFrequency();
-            tf.computeAugmentedFrequency();
-            //tf.computeTFIDF();
+            //tf.computeLogFrequency();
+            tf.computeTFIDF();
 
             HashMap<String, Double> test = tf.getTermfrequency();
 
-            //PrintWriter writer = new PrintWriter(topics[i] + "_key.txt", "UTF-8");
-            PrintWriter writer2 = new PrintWriter(topics[i] + "_val_taf.txt", "UTF-8");
+            PrintWriter writer = new PrintWriter(topics[i] + "_key.txt", "UTF-8");
+            //PrintWriter writer2 = new PrintWriter(topics[i] + "_val.txt", "UTF-8");
+            //PrintWriter writer2 = new PrintWriter(topics[i] + "_val_lsf.txt", "UTF-8");
+            PrintWriter writer2 = new PrintWriter(topics[i] + "_val_tfidf.txt", "UTF-8");
 
 
             Iterator it = test.keySet().iterator();
@@ -49,15 +62,14 @@ public class TestTC {
             while (it.hasNext()) {
                 String key = it.next().toString();
 
-
                 double val = test.get(key);
                 DecimalFormat twoDForm = new DecimalFormat("#.######");
 
-               // writer.println(key);
+                writer.println(key);
                 writer2.println(Double.valueOf(twoDForm.format(val)));
 
             }
-            //writer.close();
+            writer.close();
             writer2.close();
         }
     }
