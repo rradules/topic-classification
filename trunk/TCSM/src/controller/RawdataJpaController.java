@@ -21,7 +21,7 @@ import model.Rawdata;
 
 /**
  *
- * @author Student
+ * @author Roxana Radulescu <roxana.radulescu07@gmail.com>
  */
 public class RawdataJpaController implements Serializable {
 
