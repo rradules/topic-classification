@@ -30,8 +30,10 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Keyword.findByIdKeyword", query = "SELECT k FROM Keyword k WHERE k.idKeyword = :idKeyword"),
     @NamedQuery(name = "Keyword.findByKeyword", query = "SELECT k FROM Keyword k WHERE k.keyword = :keyword"),
     @NamedQuery(name = "Keyword.findByWeight", query = "SELECT k FROM Keyword k WHERE k.weight = :weight"),
+    @NamedQuery(name = "Keyword.findByCategory", query = "SELECT k FROM Keyword k WHERE k.idCategory = :idCategory"),
     @NamedQuery(name = "Keyword.findByFrequency", query = "SELECT k FROM Keyword k WHERE k.frequency = :frequency")})
 public class Keyword implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -127,5 +129,4 @@ public class Keyword implements Serializable {
     public String toString() {
         return "model.Keyword[ idKeyword=" + idKeyword + " ]";
     }
-    
 }

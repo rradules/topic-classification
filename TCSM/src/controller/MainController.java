@@ -335,5 +335,25 @@ public class MainController {
         keyword.setIdCategory(cat);
         keywordController.create(keyword);
     }
+
+    public List<Keyword> findKeywordsByKeyword(String key) {
+        return keywordController.findByKeyword(key);
+    }
+
+    public List<Keyword> findKeywordByCategory(String categ) {
+        Category category = findCategoryByName(categ);
+        return keywordController.findByCategory(category);
+
+    }
+
+    public ArrayList<String> getKeywordsByCategory(String categ) {
+        ArrayList<String> keywords = new ArrayList<>();
+        Category category = findCategoryByName(categ);
+        List<Keyword> keyList = keywordController.findByCategory(category);
+        for (Keyword k : keyList) {
+            keywords.add(k.getKeyword());
+        }
+        return keywords;
+    }
 //------------------------------------------------------------------------
 }
