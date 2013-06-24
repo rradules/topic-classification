@@ -4,7 +4,7 @@
  */
 package main;
 
-import topicclassification.nn.NNClassifier;
+import topicclassification.NNClassifier;
 
 /**
  *

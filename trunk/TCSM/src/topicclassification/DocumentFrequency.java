@@ -2,9 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package topicclassification.nn;
-
-import topicclassification.ml.Document;
+package topicclassification;
 
 /**
  *
