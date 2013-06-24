@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author Student
+ * @author Roxana Radulescu <roxana.radulescu07@gmail.com>
  */
 @Entity
 @Table(name = "blogpost")

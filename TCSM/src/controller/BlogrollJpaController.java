@@ -19,7 +19,7 @@ import model.Domain;
 
 /**
  *
- * @author Student
+ * @author Roxana Radulescu <roxana.radulescu07@gmail.com>
  */
 public class BlogrollJpaController implements Serializable {
 
