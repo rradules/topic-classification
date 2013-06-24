@@ -29,7 +29,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Keyword.findAll", query = "SELECT k FROM Keyword k"),
     @NamedQuery(name = "Keyword.findByIdKeyword", query = "SELECT k FROM Keyword k WHERE k.idKeyword = :idKeyword"),
     @NamedQuery(name = "Keyword.findByKeyword", query = "SELECT k FROM Keyword k WHERE k.keyword = :keyword"),
-    @NamedQuery(name = "Keyword.findByWeight", query = "SELECT k FROM Keyword k WHERE k.weight = :weight")})
+    @NamedQuery(name = "Keyword.findByWeight", query = "SELECT k FROM Keyword k WHERE k.weight = :weight"),
+    @NamedQuery(name = "Keyword.findByFrequency", query = "SELECT k FROM Keyword k WHERE k.frequency = :frequency")})
 public class Keyword implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -42,6 +43,9 @@ public class Keyword implements Serializable {
     @Basic(optional = false)
     @Column(name = "Weight")
     private double weight;
+    @Basic(optional = false)
+    @Column(name = "Frequency")
+    private int frequency;
     @JoinColumn(name = "Id_Category", referencedColumnName = "Id_Category")
     @ManyToOne
     private Category idCategory;
@@ -53,9 +57,10 @@ public class Keyword implements Serializable {
         this.idKeyword = idKeyword;
     }
 
-    public Keyword(Integer idKeyword, double weight) {
+    public Keyword(Integer idKeyword, double weight, int frequency) {
         this.idKeyword = idKeyword;
         this.weight = weight;
+        this.frequency = frequency;
     }
 
     public Integer getIdKeyword() {
@@ -80,6 +85,14 @@ public class Keyword implements Serializable {
 
     public void setWeight(double weight) {
         this.weight = weight;
+    }
+
+    public int getFrequency() {
+        return frequency;
+    }
+
+    public void setFrequency(int frequency) {
+        this.frequency = frequency;
     }
 
     public Category getIdCategory() {

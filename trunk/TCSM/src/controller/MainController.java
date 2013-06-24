@@ -18,6 +18,7 @@ import model.Blogpost;
 import model.Blogroll;
 import model.Category;
 import model.Domain;
+import model.Keyword;
 import model.Location;
 import model.Rawdata;
 import model.Stopword;
@@ -37,6 +38,7 @@ public class MainController {
     private EntityManagerFactory emf;
     private StopwordJpaController stopwordController;
     private CategoryJpaController categoryController;
+    private KeywordJpaController keywordController;
     private ComputeCRC computeCRC;
 
 // private constructer    
@@ -50,6 +52,7 @@ public class MainController {
         rawdataController = new RawdataJpaController(emf);
         stopwordController = new StopwordJpaController(emf);
         categoryController = new CategoryJpaController(emf);
+        keywordController = new KeywordJpaController(emf);
 
         computeCRC = new ComputeCRC();
     }
@@ -319,6 +322,18 @@ public class MainController {
 
     public Category findCategoryByName(String name) {
         return categoryController.findByCategory(name);
+    }
+//------------------------------------------------------------------------
+//-------------Keyword related methods------------------------------------
+
+    public void addKeyword(String word, double weight, int frequency, String category) {
+        Category cat = findCategoryByName(category);
+        Keyword keyword = new Keyword();
+        keyword.setKeyword(word);
+        keyword.setWeight(weight);
+        keyword.setFrequency(frequency);
+        keyword.setIdCategory(cat);
+        keywordController.create(keyword);
     }
 //------------------------------------------------------------------------
 }
