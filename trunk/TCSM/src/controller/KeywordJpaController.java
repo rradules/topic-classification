@@ -163,5 +163,28 @@ public class KeywordJpaController implements Serializable {
             em.close();
         }
     }
-    
+
+    public List<Keyword> findByKeyword(String keyword) {
+        EntityManager em = getEntityManager();
+        Query q = em.createNamedQuery("Keyword.findByKeyword");
+        q.setParameter("keyword", keyword);
+
+        try {
+            return q.getResultList();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public List<Keyword> findByCategory(Category categ) {
+        EntityManager em = getEntityManager();
+        Query q = em.createNamedQuery("Keyword.findByCategory");
+        q.setParameter("idCategory", categ);
+
+        try {
+            return q.getResultList();
+        } catch (Exception e) {
+            return null;
+        }
+    }
 }

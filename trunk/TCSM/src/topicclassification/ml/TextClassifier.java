@@ -4,6 +4,7 @@
  */
 package topicclassification.ml;
 
+import controller.MainController;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import weka.classifiers.Classifier;
@@ -61,15 +62,17 @@ public class TextClassifier {
         if (!setup) {
             throw new IllegalStateException("Must use setup first");
         }
-        if (docContructor.getDocumentForTopic(topic).getParsedDocuments().size() > 0) {
-            String post = docContructor.getDocumentForTopic(topic).getParsedContent();
-            topic = topic.toLowerCase();
-            // Make message into instance.
-            Instance instance = makeInstance(post, trainingData);
-            // Set class value for instance.
-            instance.setClassValue(topic);
-            // Add instance to training data.
-            trainingData.add(instance);
+        ArrayList<String> trainSet = MainController.getInstance().getKeywordsByCategory(topic);
+        topic = topic.toLowerCase();
+        if (trainSet.size() > 0) {
+            for (String keyword : trainSet) {
+                // Make message into instance.
+                Instance instance = makeInstance(keyword, trainingData);
+                // Set class value for instance.
+                instance.setClassValue(topic);
+                // Add instance to training data.
+                trainingData.add(instance);
+            }
             upToDate = false;
         }
     }
