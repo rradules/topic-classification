@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package topicclassification.ml;
+package topicclassification;
 
 import controller.MainController;
 import java.io.FileNotFoundException;
@@ -29,7 +29,6 @@ public class TextClassifier {
     private ArrayList<Attribute> attributes;
     private boolean setup;
     private Instances filteredData;
-    private DocumentConstructor docContructor;
 
     public TextClassifier(Classifier classifier) throws FileNotFoundException {
         filter = new StringToWordVector();
@@ -41,7 +40,6 @@ public class TextClassifier {
         // Add class attribute.
         classValues = new ArrayList<>();
         setup = false;
-        docContructor = new DocumentConstructor();
     }
 
     public Classifier getClassifier() {
