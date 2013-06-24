@@ -323,6 +323,10 @@ public class MainController {
     public Category findCategoryByName(String name) {
         return categoryController.findByCategory(name);
     }
+
+    public Category findCategoryById(int id) {
+        return categoryController.findCategory(id);
+    }
 //------------------------------------------------------------------------
 //-------------Keyword related methods------------------------------------
 
