@@ -20,7 +20,6 @@ import model.Category;
 import model.Domain;
 import model.Keyword;
 import model.Location;
-import model.Rawdata;
 import model.Stopword;
 
 /**
@@ -34,7 +33,6 @@ public class MainController {
     private DomainJpaController domainController;
     private BlogrollJpaController blogrollController;
     private BlogpostJpaController blogpostController;
-    private RawdataJpaController rawdataController;
     private EntityManagerFactory emf;
     private StopwordJpaController stopwordController;
     private CategoryJpaController categoryController;
@@ -49,7 +47,6 @@ public class MainController {
         domainController = new DomainJpaController(emf);
         blogrollController = new BlogrollJpaController(emf);
         blogpostController = new BlogpostJpaController(emf);
-        rawdataController = new RawdataJpaController(emf);
         stopwordController = new StopwordJpaController(emf);
         categoryController = new CategoryJpaController(emf);
         keywordController = new KeywordJpaController(emf);
@@ -288,17 +285,6 @@ public class MainController {
     }
 
 //------------------------------------------------------------------------
-//-------------Rawdata related methods------------------------------------
-    public Rawdata findRawdataByAddress(String address) {
-        return rawdataController.findByPageAddress(address);
-    }
-
-    public void addRawdata(String address, String content,
-            int level, String title,
-            String description, Domain domain) {
-    }
-//------------------------------------------------------------------------
-
 //-------------Stopwords related methods----------------------------------
     public Stopword findStopwordByStopword(String word) {
         return stopwordController.findByStopword(word);
