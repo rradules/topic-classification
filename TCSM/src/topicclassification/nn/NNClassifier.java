@@ -57,6 +57,7 @@ public class NNClassifier {
                 Document document = docConstructor.getDocumentToClassify(domName);
                 String content = document.getParsedContent();
                 String[] tokens = content.split("\\s+");
+                System.out.println("Tokens: " + tokens.length);
                 HashMap<Integer, Double> scores = scoreCalc.getScore(tokens);
                 printScores(scores);
 
@@ -76,7 +77,7 @@ public class NNClassifier {
             double val = scores.get(categ);
             String categName = MainController.getInstance().findCategoryById(categ).getCategory();
 
-            System.out.println(categName + val);
+            System.out.println(categName + " - " + val);
         }
     }
 }
