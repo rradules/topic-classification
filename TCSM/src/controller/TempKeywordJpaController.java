@@ -4,6 +4,7 @@
  */
 package controller;
 
+import com.mysql.jdbc.PreparedStatement;
 import controller.exceptions.NonexistentEntityException;
 import java.io.Serializable;
 import java.util.List;
@@ -11,6 +12,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import model.Category;
@@ -163,5 +165,53 @@ public class TempKeywordJpaController implements Serializable {
             em.close();
         }
     }
-    
+
+    public List<TempKeyword> findByCategory(Category categ) {
+        EntityManager em = getEntityManager();
+        Query q = em.createNamedQuery("TempKeyword.findByCategory");
+        q.setParameter("idCategory", categ);
+
+        try {
+            return q.getResultList();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public List<TempKeyword> findByKeyword(String keyword) {
+        EntityManager em = getEntityManager();
+        Query q = em.createNamedQuery("TempKeyword.findByKeyword");
+        q.setParameter("keyword", keyword);
+
+        try {
+            return q.getResultList();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public List<TempKeyword> getXOrderedKeywords(int size) {
+        EntityManager em = getEntityManager();
+        Query q = em.createNamedQuery("TempKeyword.findAll");
+        q.setMaxResults(size);
+
+        try {
+            return q.getResultList();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public void resetAutoIncrement() {
+        EntityManager em = getEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.createNativeQuery("ALTER TABLE temp_keyword AUTO_INCREMENT = 1").executeUpdate();
+            em.getTransaction().commit();
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
+    }
 }
