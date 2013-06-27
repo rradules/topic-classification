@@ -96,7 +96,8 @@ public class Crawler {
 
             //add domain in DB and fix current domain
             dataExtractor = new DataExtractor("domain", verifiedUrl.toString());
-            //currentDomain = (Domain) dataExtractor.extractData();
+            //currentDomain = (Domain) 
+            dataExtractor.extractData();
             //extract the blogroll
             dataExtractor = new DataExtractor("blogroll", verifiedUrl.toString());
             //System.out.println("Blogroll: " + dataExtractor.extractData());
@@ -148,6 +149,7 @@ public class Crawler {
 
             // Remove URL from the to crawl list.
             toCrawlList.remove(url);
+            //System.out.println("URL: " + url);
             url = linkRetrieval.removeWwwFromUrl(url);
 
             // Convert string url to URL object.
@@ -156,9 +158,9 @@ public class Crawler {
             //extract the Blogpost for each crawled page except the starting one
             if (!verifiedUrl.toString().equals(startUrl)) {
                 dataExtractor = new DataExtractor("blogpost", verifiedUrl.toString());
-                //  System.out.println("Blogpost: " + 
-                dataExtractor.extractData();
-                //     );
+               // System.out.println("Blogpost: " + 
+                        dataExtractor.extractData();
+                        //);
             }
 
             // Skip URL if robots are not allowed to access it.
@@ -181,7 +183,6 @@ public class Crawler {
                 } catch (Exception e) {
                     System.out.println("Unable to log match.");
                 }
-                //add new domain to DB
 
                 // Retrieve list of valid links from page.
                 ArrayList<String> links = linkRetrieval.retrieveLinks(doc, verifiedUrl, crawledList, limitHost);

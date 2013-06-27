@@ -9,12 +9,11 @@ package functions;
  * @author Roxana Radulescu <roxana.radulescu07@gmail.com>
  */
 public class InputSetBuilder {
-    
-        public void constructInput(String content){
+
+    public void constructInput(String content) {
         String[] tokens = content.split("\\s+");
-        for(int i=0;i<tokens.length;i++){
+        for (int i = 0; i < tokens.length; i++) {
             
         }
     }
-    
 }

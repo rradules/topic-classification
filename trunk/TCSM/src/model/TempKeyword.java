@@ -23,14 +23,14 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Roxana Radulescu <roxana.radulescu07@gmail.com>
  */
 @Entity
-@Table(name = "temp_keywords")
+@Table(name = "temp_keyword")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "TempKeywords.findAll", query = "SELECT t FROM TempKeywords t"),
-    @NamedQuery(name = "TempKeywords.findByIdTempKeyword", query = "SELECT t FROM TempKeywords t WHERE t.idTempKeyword = :idTempKeyword"),
-    @NamedQuery(name = "TempKeywords.findByKeyword", query = "SELECT t FROM TempKeywords t WHERE t.keyword = :keyword"),
-    @NamedQuery(name = "TempKeywords.findByWeight", query = "SELECT t FROM TempKeywords t WHERE t.weight = :weight")})
-public class TempKeywords implements Serializable {
+    @NamedQuery(name = "TempKeyword.findAll", query = "SELECT t FROM TempKeyword t"),
+    @NamedQuery(name = "TempKeyword.findByIdTempKeyword", query = "SELECT t FROM TempKeyword t WHERE t.idTempKeyword = :idTempKeyword"),
+    @NamedQuery(name = "TempKeyword.findByKeyword", query = "SELECT t FROM TempKeyword t WHERE t.keyword = :keyword"),
+    @NamedQuery(name = "TempKeyword.findByWeight", query = "SELECT t FROM TempKeyword t WHERE t.weight = :weight")})
+public class TempKeyword implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,14 +47,14 @@ public class TempKeywords implements Serializable {
     @ManyToOne(optional = false)
     private Category idCategory;
 
-    public TempKeywords() {
+    public TempKeyword() {
     }
 
-    public TempKeywords(Integer idTempKeyword) {
+    public TempKeyword(Integer idTempKeyword) {
         this.idTempKeyword = idTempKeyword;
     }
 
-    public TempKeywords(Integer idTempKeyword, String keyword, double weight) {
+    public TempKeyword(Integer idTempKeyword, String keyword, double weight) {
         this.idTempKeyword = idTempKeyword;
         this.keyword = keyword;
         this.weight = weight;
@@ -102,10 +102,10 @@ public class TempKeywords implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof TempKeywords)) {
+        if (!(object instanceof TempKeyword)) {
             return false;
         }
-        TempKeywords other = (TempKeywords) object;
+        TempKeyword other = (TempKeyword) object;
         if ((this.idTempKeyword == null && other.idTempKeyword != null) || (this.idTempKeyword != null && !this.idTempKeyword.equals(other.idTempKeyword))) {
             return false;
         }
@@ -114,7 +114,7 @@ public class TempKeywords implements Serializable {
 
     @Override
     public String toString() {
-        return "model.TempKeywords[ idTempKeyword=" + idTempKeyword + " ]";
+        return "model.TempKeyword[ idTempKeyword=" + idTempKeyword + " ]";
     }
     
 }

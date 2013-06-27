@@ -21,6 +21,7 @@ import model.Domain;
 import model.Keyword;
 import model.Location;
 import model.Stopword;
+import model.TempKeyword;
 
 /**
  *
@@ -37,6 +38,7 @@ public class MainController {
     private StopwordJpaController stopwordController;
     private CategoryJpaController categoryController;
     private KeywordJpaController keywordController;
+    private TempKeywordJpaController tempController;
     private ComputeCRC computeCRC;
 
 // private constructer    
@@ -50,6 +52,7 @@ public class MainController {
         stopwordController = new StopwordJpaController(emf);
         categoryController = new CategoryJpaController(emf);
         keywordController = new KeywordJpaController(emf);
+        tempController = new TempKeywordJpaController(emf);
 
         computeCRC = new ComputeCRC();
     }
@@ -344,6 +347,22 @@ public class MainController {
             keywords.add(k.getKeyword());
         }
         return keywords;
+    }
+//------------------------------------------------------------------------
+
+//-------------Temp_Keywords related methods------------------------------
+    public void emptyTempTable() {
+        ArrayList<Integer> ids = new ArrayList<>();
+        for (TempKeyword tk : tempController.findTempKeywordEntities()) {
+            ids.add(tk.getIdTempKeyword());
+        }
+        for (Integer i : ids) {
+            try {
+                tempController.destroy(i);
+            } catch (NonexistentEntityException ex) {
+                Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 //------------------------------------------------------------------------
 }
