@@ -16,7 +16,7 @@ import model.TempKeyword;
  */
 public class NNController {
 
-    private final int MAX_WORDS = 500;
+    private final int MAX_WORDS = 250;
 
     public NNController() {
     }
