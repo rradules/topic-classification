@@ -23,7 +23,7 @@ import topicclassification.Document;
 public class TrainingLayer {
 
     private InputSetBuilder isb;
-    private HashMap<String, List<Blogpost>> final_posts;
+    private HashMap<String, String> final_posts;
     private DocumentFrequency docFreq;
     private TermFrequency tf;
     private NNController nnController;
@@ -43,24 +43,24 @@ public class TrainingLayer {
     public void trainNetwork() {
         isb.buildInput();
 
-//        Document allDocs = new Document();
-//        allDocs.setDocuments(isb.getAllContent());
-//        allDocs.setInfo("allDocs");
-//
-//        docFreq.setDocument(allDocs);
-//        tf.setDocFreq(docFreq);
+        Document allDocs = new Document();
+        allDocs.setDocuments(isb.getAllPosts());
+        allDocs.setInfo("allDocs");
+
+        docFreq.setDocument(allDocs);
+        tf.setDocFreq(docFreq);
 
         final_posts = isb.getFinal_posts();
         Iterator it = final_posts.keySet().iterator();
 
-        //   while (it.hasNext()) {
-        String key = it.next().toString();
-        List<Blogpost> posts = final_posts.get(key);
-        for (Blogpost bp : posts) {
-            // List<TempKeyword> temp = buildTempKeywords(bp.getBlogContent(), key);
-            // applyTrainingAlgorithm(temp);
+        while (it.hasNext()) {
+            String key = it.next().toString();
+            System.out.println(key);
+            String content = final_posts.get(key);
+            List<TempKeyword> temp = buildTempKeywords(content, key);
+            applyTrainingAlgorithm(temp);
+
         }
-        //   }
     }
 
     public List<TempKeyword> buildTempKeywords(String post, String topic) {
@@ -79,7 +79,7 @@ public class TrainingLayer {
     }
 
     public void applyTrainingAlgorithm(List<TempKeyword> temp) {
-        boolean added = false;
+
         for (TempKeyword tk : temp) {
             //Case 1 word not in learning table - insert keyword
             if (MainController.getInstance().findKeywordsByKeyword(tk.getKeyword()).isEmpty()) {
@@ -89,18 +89,28 @@ public class TrainingLayer {
                 for (Keyword k : existent) {
                     //Case 2 the word is in the learning table under the same category - update weight
                     if (k.getIdCategory().getIdCategory() == tk.getIdCategory().getIdCategory()) {
-                        added = true;
+
                         MainController.getInstance().updateKeywordWeight(k, tk.getWeight());
+                    } else {
+                        //Case 3 the word is in the learning table under another category - update weights and
+                        MainController.getInstance().updateKeyword(k, tk);
                     }
-                }
-                for (Keyword k : existent) {
-                    //Case 3 the word is in the learning table under another category - update weights and
-                    MainController.getInstance().updateKeyword(k, tk);
-                    if (!added) {
+                    if (!containsCategory(existent, tk.getIdCategory().getIdCategory())) {
                         MainController.getInstance().addKeyword(tk);
                     }
+
                 }
             }
         }
+    }
+
+    public boolean containsCategory(List<Keyword> words, int idCat) {
+        for (Keyword k : words) {
+            if (k.getIdCategory().getIdCategory() == idCat) {
+                return true;
+            }
+        }
+        return false;
+
     }
 }
