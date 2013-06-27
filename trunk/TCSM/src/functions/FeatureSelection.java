@@ -30,14 +30,26 @@ public class FeatureSelection {
             String str = w.replaceAll("[^\\p{L}]", "");
             //parse only if the word is not in the stopwords list
             if (MainController.getInstance().findStopwordByStopword(str) == null) {
-                stemmer.setCurrent(str);
-                //stem the word
-                stemmer.stem();
-                String word = accentElim.elliminateAccents(stemmer.getCurrent());
-                //recontruct the content
-                builder.append(word).append(" ");
+                if (approveWord(str)) {
+                    stemmer.setCurrent(str);
+                    //stem the word
+                    stemmer.stem();
+                    String word = accentElim.elliminateAccents(stemmer.getCurrent());
+                    //recontruct the content
+                    builder.append(word).append(" ");
+                }
             }
         }
         return builder.toString().trim();
+    }
+
+    private boolean approveWord(String word) {
+        String[] dis = {"facebook", "twitter", "http", "www", "yahoo", "gmail", "skype"};
+        for (String w : dis) {
+            if (word.contains(w)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

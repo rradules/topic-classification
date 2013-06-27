@@ -26,9 +26,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "temp_keyword")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "TempKeyword.findAll", query = "SELECT t FROM TempKeyword t"),
+    @NamedQuery(name = "TempKeyword.findAll", query = "SELECT t FROM TempKeyword t ORDER BY t.weight DESC"),
     @NamedQuery(name = "TempKeyword.findByIdTempKeyword", query = "SELECT t FROM TempKeyword t WHERE t.idTempKeyword = :idTempKeyword"),
     @NamedQuery(name = "TempKeyword.findByKeyword", query = "SELECT t FROM TempKeyword t WHERE t.keyword = :keyword"),
+    @NamedQuery(name = "TempKeyword.findByCategory", query = "SELECT t FROM TempKeyword t WHERE t.idCategory = :idCategory"),
     @NamedQuery(name = "TempKeyword.findByWeight", query = "SELECT t FROM TempKeyword t WHERE t.weight = :weight")})
 public class TempKeyword implements Serializable {
     private static final long serialVersionUID = 1L;

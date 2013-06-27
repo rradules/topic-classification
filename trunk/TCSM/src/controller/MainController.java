@@ -89,6 +89,11 @@ public class MainController {
         return domainController.findByDomainName(name);
     }
 
+    public List<Domain> findDomainByCategory(String cat) {
+        Category category = findCategoryByName(cat);
+        return domainController.findByDomainCategory(category);
+    }
+
     public Domain addDomain(String name, Location loc, String robots,
             String description, Date activation) throws Exception {
         Domain dom = findDomainByName(name);
@@ -124,12 +129,9 @@ public class MainController {
                 Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-
-
     }
 
-    public List<Domain> findDomainByCategory(String nameCateg) {
-        Category category = findCategoryByName(nameCateg);
+    public List<Domain> findDomainByCategory(Category category) {
         return domainController.findByDomainCategory(category);
     }
 
@@ -199,6 +201,10 @@ public class MainController {
 
     public List<Blogpost> findBlogpostByDomain(String domName) {
         Domain domain = findDomainByName(domName);
+        return blogpostController.findByDomainCategory(domain);
+    }
+
+    public List<Blogpost> findBlogpostByDomain(Domain domain) {
         return blogpostController.findByDomainCategory(domain);
     }
 
@@ -316,6 +322,10 @@ public class MainController {
     public Category findCategoryById(int id) {
         return categoryController.findCategory(id);
     }
+
+    public List<Category> getAllCategories() {
+        return categoryController.findCategoryEntities();
+    }
 //------------------------------------------------------------------------
 //-------------Keyword related methods------------------------------------
 
@@ -327,6 +337,27 @@ public class MainController {
         keyword.setFrequency(frequency);
         keyword.setIdCategory(cat);
         keywordController.create(keyword);
+    }
+
+    public void addKeyword(TempKeyword tk) {
+        Category cat = tk.getIdCategory();
+        Keyword keyword = new Keyword();
+        keyword.setKeyword(tk.getKeyword());
+        keyword.setWeight(tk.getWeight());
+        keyword.setFrequency(1);
+        keyword.setIdCategory(cat);
+        keywordController.create(keyword);
+    }
+
+    public void updateKeyword(Keyword k, TempKeyword tk) {
+        double delta = Math.abs(k.getWeight() - tk.getWeight()) / 2;
+        double w1;
+        if (k.getWeight() > tk.getWeight()) {
+            w1 = k.getWeight() + delta;
+        } else {
+            w1 = Math.abs(k.getWeight() - delta);
+        }
+        updateKeywordWeight(k, w1);
     }
 
     public List<Keyword> findKeywordsByKeyword(String key) {
@@ -348,9 +379,36 @@ public class MainController {
         }
         return keywords;
     }
+
+    public void updateKeywordWeight(Keyword k, double w) {
+        double w_k = k.getWeight();
+        if (w_k < w) {
+            k.setWeight(w);
+            try {
+                keywordController.edit(k);
+            } catch (NonexistentEntityException ex) {
+                Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (Exception ex) {
+                Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+    }
 //------------------------------------------------------------------------
 
 //-------------Temp_Keywords related methods------------------------------
+    public void addTempKeyword(String word, double weight, String category) {
+        Category cat = findCategoryByName(category);
+
+        TempKeyword keyword = new TempKeyword();
+        keyword.setKeyword(word);
+        keyword.setWeight(weight);
+        keyword.setIdCategory(cat);
+
+        tempController.create(keyword);
+
+    }
+
     public void emptyTempTable() {
         ArrayList<Integer> ids = new ArrayList<>();
         for (TempKeyword tk : tempController.findTempKeywordEntities()) {
@@ -363,6 +421,20 @@ public class MainController {
                 Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        tempController.resetAutoIncrement();
+    }
+
+    public List<TempKeyword> findTempKeywordbyKeyword(String word) {
+        return tempController.findByKeyword(word);
+    }
+
+    public List<TempKeyword> findTempKeywordbyCategory(String categ) {
+        Category category = findCategoryByName(categ);
+        return tempController.findByCategory(category);
+    }
+
+    public List<TempKeyword> getXOrderedTempKeywordb(int size) {
+        return tempController.getXOrderedKeywords(size);
     }
 //------------------------------------------------------------------------
 }
