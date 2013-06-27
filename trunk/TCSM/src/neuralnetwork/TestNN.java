@@ -20,10 +20,10 @@ public class TestNN {
 //        System.out.println("docNo: " + isb.getDocNo());
 //        System.out.println("Input set size: " + isb.getFinal_posts().size());
 
-        TrainingLayer tl = new TrainingLayer();
-        tl.trainNetwork();
-        //  MainController.getInstance().emptyTempTable();
-   
+       TrainingLayer tl = new TrainingLayer();
+       tl.trainNetwork();
+        // MainController.getInstance().emptyTempTable();
+
 
     }
 }

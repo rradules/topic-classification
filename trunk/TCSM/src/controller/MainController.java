@@ -410,18 +410,7 @@ public class MainController {
     }
 
     public void emptyTempTable() {
-        ArrayList<Integer> ids = new ArrayList<>();
-        for (TempKeyword tk : tempController.findTempKeywordEntities()) {
-            ids.add(tk.getIdTempKeyword());
-        }
-        for (Integer i : ids) {
-            try {
-                tempController.destroy(i);
-            } catch (NonexistentEntityException ex) {
-                Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        tempController.resetAutoIncrement();
+        tempController.emptyTable();
     }
 
     public List<TempKeyword> findTempKeywordbyKeyword(String word) {

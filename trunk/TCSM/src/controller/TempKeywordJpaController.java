@@ -202,10 +202,11 @@ public class TempKeywordJpaController implements Serializable {
         }
     }
 
-    public void resetAutoIncrement() {
+    public void emptyTable() {
         EntityManager em = getEntityManager();
         try {
             em.getTransaction().begin();
+            em.createNativeQuery("TRUNCATE TABLE temp_keyword").executeUpdate();
             em.createNativeQuery("ALTER TABLE temp_keyword AUTO_INCREMENT = 1").executeUpdate();
             em.getTransaction().commit();
         } finally {
