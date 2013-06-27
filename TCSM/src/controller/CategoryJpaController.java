@@ -4,6 +4,7 @@
  */
 package controller;
 
+import controller.exceptions.IllegalOrphanException;
 import controller.exceptions.NonexistentEntityException;
 import java.io.Serializable;
 import javax.persistence.Query;
@@ -18,6 +19,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import model.Category;
 import model.Keyword;
+import model.TempKeywords;
 
 /**
  *
@@ -41,6 +43,9 @@ public class CategoryJpaController implements Serializable {
         if (category.getKeywordCollection() == null) {
             category.setKeywordCollection(new ArrayList<Keyword>());
         }
+        if (category.getTempKeywordsCollection() == null) {
+            category.setTempKeywordsCollection(new ArrayList<TempKeywords>());
+        }
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -57,6 +62,12 @@ public class CategoryJpaController implements Serializable {
                 attachedKeywordCollection.add(keywordCollectionKeywordToAttach);
             }
             category.setKeywordCollection(attachedKeywordCollection);
+            Collection<TempKeywords> attachedTempKeywordsCollection = new ArrayList<TempKeywords>();
+            for (TempKeywords tempKeywordsCollectionTempKeywordsToAttach : category.getTempKeywordsCollection()) {
+                tempKeywordsCollectionTempKeywordsToAttach = em.getReference(tempKeywordsCollectionTempKeywordsToAttach.getClass(), tempKeywordsCollectionTempKeywordsToAttach.getIdTempKeyword());
+                attachedTempKeywordsCollection.add(tempKeywordsCollectionTempKeywordsToAttach);
+            }
+            category.setTempKeywordsCollection(attachedTempKeywordsCollection);
             em.persist(category);
             for (Domain domainCollectionDomain : category.getDomainCollection()) {
                 Category oldIdCategoryOfDomainCollectionDomain = domainCollectionDomain.getIdCategory();
@@ -76,6 +87,15 @@ public class CategoryJpaController implements Serializable {
                     oldIdCategoryOfKeywordCollectionKeyword = em.merge(oldIdCategoryOfKeywordCollectionKeyword);
                 }
             }
+            for (TempKeywords tempKeywordsCollectionTempKeywords : category.getTempKeywordsCollection()) {
+                Category oldIdCategoryOfTempKeywordsCollectionTempKeywords = tempKeywordsCollectionTempKeywords.getIdCategory();
+                tempKeywordsCollectionTempKeywords.setIdCategory(category);
+                tempKeywordsCollectionTempKeywords = em.merge(tempKeywordsCollectionTempKeywords);
+                if (oldIdCategoryOfTempKeywordsCollectionTempKeywords != null) {
+                    oldIdCategoryOfTempKeywordsCollectionTempKeywords.getTempKeywordsCollection().remove(tempKeywordsCollectionTempKeywords);
+                    oldIdCategoryOfTempKeywordsCollectionTempKeywords = em.merge(oldIdCategoryOfTempKeywordsCollectionTempKeywords);
+                }
+            }
             em.getTransaction().commit();
         } finally {
             if (em != null) {
@@ -84,7 +104,7 @@ public class CategoryJpaController implements Serializable {
         }
     }
 
-    public void edit(Category category) throws NonexistentEntityException, Exception {
+    public void edit(Category category) throws IllegalOrphanException, NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -94,6 +114,20 @@ public class CategoryJpaController implements Serializable {
             Collection<Domain> domainCollectionNew = category.getDomainCollection();
             Collection<Keyword> keywordCollectionOld = persistentCategory.getKeywordCollection();
             Collection<Keyword> keywordCollectionNew = category.getKeywordCollection();
+            Collection<TempKeywords> tempKeywordsCollectionOld = persistentCategory.getTempKeywordsCollection();
+            Collection<TempKeywords> tempKeywordsCollectionNew = category.getTempKeywordsCollection();
+            List<String> illegalOrphanMessages = null;
+            for (TempKeywords tempKeywordsCollectionOldTempKeywords : tempKeywordsCollectionOld) {
+                if (!tempKeywordsCollectionNew.contains(tempKeywordsCollectionOldTempKeywords)) {
+                    if (illegalOrphanMessages == null) {
+                        illegalOrphanMessages = new ArrayList<String>();
+                    }
+                    illegalOrphanMessages.add("You must retain TempKeywords " + tempKeywordsCollectionOldTempKeywords + " since its idCategory field is not nullable.");
+                }
+            }
+            if (illegalOrphanMessages != null) {
+                throw new IllegalOrphanException(illegalOrphanMessages);
+            }
             Collection<Domain> attachedDomainCollectionNew = new ArrayList<Domain>();
             for (Domain domainCollectionNewDomainToAttach : domainCollectionNew) {
                 domainCollectionNewDomainToAttach = em.getReference(domainCollectionNewDomainToAttach.getClass(), domainCollectionNewDomainToAttach.getIdDomain());
@@ -108,6 +142,13 @@ public class CategoryJpaController implements Serializable {
             }
             keywordCollectionNew = attachedKeywordCollectionNew;
             category.setKeywordCollection(keywordCollectionNew);
+            Collection<TempKeywords> attachedTempKeywordsCollectionNew = new ArrayList<TempKeywords>();
+            for (TempKeywords tempKeywordsCollectionNewTempKeywordsToAttach : tempKeywordsCollectionNew) {
+                tempKeywordsCollectionNewTempKeywordsToAttach = em.getReference(tempKeywordsCollectionNewTempKeywordsToAttach.getClass(), tempKeywordsCollectionNewTempKeywordsToAttach.getIdTempKeyword());
+                attachedTempKeywordsCollectionNew.add(tempKeywordsCollectionNewTempKeywordsToAttach);
+            }
+            tempKeywordsCollectionNew = attachedTempKeywordsCollectionNew;
+            category.setTempKeywordsCollection(tempKeywordsCollectionNew);
             category = em.merge(category);
             for (Domain domainCollectionOldDomain : domainCollectionOld) {
                 if (!domainCollectionNew.contains(domainCollectionOldDomain)) {
@@ -143,6 +184,17 @@ public class CategoryJpaController implements Serializable {
                     }
                 }
             }
+            for (TempKeywords tempKeywordsCollectionNewTempKeywords : tempKeywordsCollectionNew) {
+                if (!tempKeywordsCollectionOld.contains(tempKeywordsCollectionNewTempKeywords)) {
+                    Category oldIdCategoryOfTempKeywordsCollectionNewTempKeywords = tempKeywordsCollectionNewTempKeywords.getIdCategory();
+                    tempKeywordsCollectionNewTempKeywords.setIdCategory(category);
+                    tempKeywordsCollectionNewTempKeywords = em.merge(tempKeywordsCollectionNewTempKeywords);
+                    if (oldIdCategoryOfTempKeywordsCollectionNewTempKeywords != null && !oldIdCategoryOfTempKeywordsCollectionNewTempKeywords.equals(category)) {
+                        oldIdCategoryOfTempKeywordsCollectionNewTempKeywords.getTempKeywordsCollection().remove(tempKeywordsCollectionNewTempKeywords);
+                        oldIdCategoryOfTempKeywordsCollectionNewTempKeywords = em.merge(oldIdCategoryOfTempKeywordsCollectionNewTempKeywords);
+                    }
+                }
+            }
             em.getTransaction().commit();
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
@@ -160,7 +212,7 @@ public class CategoryJpaController implements Serializable {
         }
     }
 
-    public void destroy(Integer id) throws NonexistentEntityException {
+    public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -171,6 +223,17 @@ public class CategoryJpaController implements Serializable {
                 category.getIdCategory();
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The category with id " + id + " no longer exists.", enfe);
+            }
+            List<String> illegalOrphanMessages = null;
+            Collection<TempKeywords> tempKeywordsCollectionOrphanCheck = category.getTempKeywordsCollection();
+            for (TempKeywords tempKeywordsCollectionOrphanCheckTempKeywords : tempKeywordsCollectionOrphanCheck) {
+                if (illegalOrphanMessages == null) {
+                    illegalOrphanMessages = new ArrayList<String>();
+                }
+                illegalOrphanMessages.add("This Category (" + category + ") cannot be destroyed since the TempKeywords " + tempKeywordsCollectionOrphanCheckTempKeywords + " in its tempKeywordsCollection field has a non-nullable idCategory field.");
+            }
+            if (illegalOrphanMessages != null) {
+                throw new IllegalOrphanException(illegalOrphanMessages);
             }
             Collection<Domain> domainCollection = category.getDomainCollection();
             for (Domain domainCollectionDomain : domainCollection) {

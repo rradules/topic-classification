@@ -7,6 +7,7 @@ package model;
 import java.io.Serializable;
 import java.util.Collection;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -31,6 +32,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Category.findByIdCategory", query = "SELECT c FROM Category c WHERE c.idCategory = :idCategory"),
     @NamedQuery(name = "Category.findByCategory", query = "SELECT c FROM Category c WHERE c.category = :category")})
 public class Category implements Serializable {
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idCategory")
+    private Collection<TempKeywords> tempKeywordsCollection;
     @OneToMany(mappedBy = "idCategory")
     private Collection<Keyword> keywordCollection;
     private static final long serialVersionUID = 1L;
@@ -108,6 +111,15 @@ public class Category implements Serializable {
 
     public void setKeywordCollection(Collection<Keyword> keywordCollection) {
         this.keywordCollection = keywordCollection;
+    }
+
+    @XmlTransient
+    public Collection<TempKeywords> getTempKeywordsCollection() {
+        return tempKeywordsCollection;
+    }
+
+    public void setTempKeywordsCollection(Collection<TempKeywords> tempKeywordsCollection) {
+        this.tempKeywordsCollection = tempKeywordsCollection;
     }
     
 }
