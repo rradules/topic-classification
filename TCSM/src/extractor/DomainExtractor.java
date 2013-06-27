@@ -46,6 +46,7 @@ public class DomainExtractor extends AbstractExtractor {
             String description = metaTag.getMetaTag(doc, "description");
             String robots = metaTag.getMetaTag(doc, "robots");
             String name = verifiedURL.getHost();
+            System.out.println(name);
             Location loc = (Location) new LocationExtractor(url).getData();
             Date activation = getActivationDate(doc);
 

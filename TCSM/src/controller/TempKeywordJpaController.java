@@ -14,15 +14,15 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import model.Category;
-import model.TempKeywords;
+import model.TempKeyword;
 
 /**
  *
  * @author Roxana Radulescu <roxana.radulescu07@gmail.com>
  */
-public class TempKeywordsJpaController implements Serializable {
+public class TempKeywordJpaController implements Serializable {
 
-    public TempKeywordsJpaController(EntityManagerFactory emf) {
+    public TempKeywordJpaController(EntityManagerFactory emf) {
         this.emf = emf;
     }
     private EntityManagerFactory emf = null;
@@ -31,19 +31,19 @@ public class TempKeywordsJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(TempKeywords tempKeywords) {
+    public void create(TempKeyword tempKeyword) {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Category idCategory = tempKeywords.getIdCategory();
+            Category idCategory = tempKeyword.getIdCategory();
             if (idCategory != null) {
                 idCategory = em.getReference(idCategory.getClass(), idCategory.getIdCategory());
-                tempKeywords.setIdCategory(idCategory);
+                tempKeyword.setIdCategory(idCategory);
             }
-            em.persist(tempKeywords);
+            em.persist(tempKeyword);
             if (idCategory != null) {
-                idCategory.getTempKeywordsCollection().add(tempKeywords);
+                idCategory.getTempKeywordsCollection().add(tempKeyword);
                 idCategory = em.merge(idCategory);
             }
             em.getTransaction().commit();
@@ -54,34 +54,34 @@ public class TempKeywordsJpaController implements Serializable {
         }
     }
 
-    public void edit(TempKeywords tempKeywords) throws NonexistentEntityException, Exception {
+    public void edit(TempKeyword tempKeyword) throws NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            TempKeywords persistentTempKeywords = em.find(TempKeywords.class, tempKeywords.getIdTempKeyword());
-            Category idCategoryOld = persistentTempKeywords.getIdCategory();
-            Category idCategoryNew = tempKeywords.getIdCategory();
+            TempKeyword persistentTempKeyword = em.find(TempKeyword.class, tempKeyword.getIdTempKeyword());
+            Category idCategoryOld = persistentTempKeyword.getIdCategory();
+            Category idCategoryNew = tempKeyword.getIdCategory();
             if (idCategoryNew != null) {
                 idCategoryNew = em.getReference(idCategoryNew.getClass(), idCategoryNew.getIdCategory());
-                tempKeywords.setIdCategory(idCategoryNew);
+                tempKeyword.setIdCategory(idCategoryNew);
             }
-            tempKeywords = em.merge(tempKeywords);
+            tempKeyword = em.merge(tempKeyword);
             if (idCategoryOld != null && !idCategoryOld.equals(idCategoryNew)) {
-                idCategoryOld.getTempKeywordsCollection().remove(tempKeywords);
+                idCategoryOld.getTempKeywordsCollection().remove(tempKeyword);
                 idCategoryOld = em.merge(idCategoryOld);
             }
             if (idCategoryNew != null && !idCategoryNew.equals(idCategoryOld)) {
-                idCategoryNew.getTempKeywordsCollection().add(tempKeywords);
+                idCategoryNew.getTempKeywordsCollection().add(tempKeyword);
                 idCategoryNew = em.merge(idCategoryNew);
             }
             em.getTransaction().commit();
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                Integer id = tempKeywords.getIdTempKeyword();
-                if (findTempKeywords(id) == null) {
-                    throw new NonexistentEntityException("The tempKeywords with id " + id + " no longer exists.");
+                Integer id = tempKeyword.getIdTempKeyword();
+                if (findTempKeyword(id) == null) {
+                    throw new NonexistentEntityException("The tempKeyword with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -97,19 +97,19 @@ public class TempKeywordsJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            TempKeywords tempKeywords;
+            TempKeyword tempKeyword;
             try {
-                tempKeywords = em.getReference(TempKeywords.class, id);
-                tempKeywords.getIdTempKeyword();
+                tempKeyword = em.getReference(TempKeyword.class, id);
+                tempKeyword.getIdTempKeyword();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The tempKeywords with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The tempKeyword with id " + id + " no longer exists.", enfe);
             }
-            Category idCategory = tempKeywords.getIdCategory();
+            Category idCategory = tempKeyword.getIdCategory();
             if (idCategory != null) {
-                idCategory.getTempKeywordsCollection().remove(tempKeywords);
+                idCategory.getTempKeywordsCollection().remove(tempKeyword);
                 idCategory = em.merge(idCategory);
             }
-            em.remove(tempKeywords);
+            em.remove(tempKeyword);
             em.getTransaction().commit();
         } finally {
             if (em != null) {
@@ -118,19 +118,19 @@ public class TempKeywordsJpaController implements Serializable {
         }
     }
 
-    public List<TempKeywords> findTempKeywordsEntities() {
-        return findTempKeywordsEntities(true, -1, -1);
+    public List<TempKeyword> findTempKeywordEntities() {
+        return findTempKeywordEntities(true, -1, -1);
     }
 
-    public List<TempKeywords> findTempKeywordsEntities(int maxResults, int firstResult) {
-        return findTempKeywordsEntities(false, maxResults, firstResult);
+    public List<TempKeyword> findTempKeywordEntities(int maxResults, int firstResult) {
+        return findTempKeywordEntities(false, maxResults, firstResult);
     }
 
-    private List<TempKeywords> findTempKeywordsEntities(boolean all, int maxResults, int firstResult) {
+    private List<TempKeyword> findTempKeywordEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            cq.select(cq.from(TempKeywords.class));
+            cq.select(cq.from(TempKeyword.class));
             Query q = em.createQuery(cq);
             if (!all) {
                 q.setMaxResults(maxResults);
@@ -142,20 +142,20 @@ public class TempKeywordsJpaController implements Serializable {
         }
     }
 
-    public TempKeywords findTempKeywords(Integer id) {
+    public TempKeyword findTempKeyword(Integer id) {
         EntityManager em = getEntityManager();
         try {
-            return em.find(TempKeywords.class, id);
+            return em.find(TempKeyword.class, id);
         } finally {
             em.close();
         }
     }
 
-    public int getTempKeywordsCount() {
+    public int getTempKeywordCount() {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            Root<TempKeywords> rt = cq.from(TempKeywords.class);
+            Root<TempKeyword> rt = cq.from(TempKeyword.class);
             cq.select(em.getCriteriaBuilder().count(rt));
             Query q = em.createQuery(cq);
             return ((Long) q.getSingleResult()).intValue();

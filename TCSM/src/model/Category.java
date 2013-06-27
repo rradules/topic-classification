@@ -33,7 +33,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Category.findByCategory", query = "SELECT c FROM Category c WHERE c.category = :category")})
 public class Category implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idCategory")
-    private Collection<TempKeywords> tempKeywordsCollection;
+    private Collection<TempKeyword> tempKeywordsCollection;
     @OneToMany(mappedBy = "idCategory")
     private Collection<Keyword> keywordCollection;
     private static final long serialVersionUID = 1L;
@@ -114,12 +114,12 @@ public class Category implements Serializable {
     }
 
     @XmlTransient
-    public Collection<TempKeywords> getTempKeywordsCollection() {
+    public Collection<TempKeyword> getTempKeywordsCollection() {
         return tempKeywordsCollection;
     }
 
-    public void setTempKeywordsCollection(Collection<TempKeywords> tempKeywordsCollection) {
+    public void setTempKeywordsCollection(Collection<TempKeyword> tempKeywordsCollection) {
         this.tempKeywordsCollection = tempKeywordsCollection;
     }
-    
+   
 }

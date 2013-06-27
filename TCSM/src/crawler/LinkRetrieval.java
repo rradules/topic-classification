@@ -110,13 +110,13 @@ public class LinkRetrieval {
             }
 
             // Skip link if it has already been crawled.
-            if (crawledList.contains(link)) {
+            if (crawledList.contains(verifiedLink.toString())) {
                 continue;
             }
 
             // System.out.println(link);
             // Add link to list.
-            links.add(link);
+            links.add(verifiedLink.toString());
 
         }
 

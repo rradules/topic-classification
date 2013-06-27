@@ -79,8 +79,10 @@ public class BlogpostExtractor extends AbstractExtractor {
             date = getPostDate(verifiedURL);
 
             //System.out.println("Length: " + content.length());
-
-            return MainController.getInstance().addBlogpost(address, date, title, content, description, domain);
+            //System.out.println("Address: "+ address);
+            if (domain != null) {
+                return MainController.getInstance().addBlogpost(address, date, title, content, description, domain);
+            }
 
         } catch (Exception ex) {
             Logger.getLogger(BlogpostExtractor.class.getName()).log(Level.SEVERE, null, ex);
