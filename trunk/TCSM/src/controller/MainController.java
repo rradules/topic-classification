@@ -19,6 +19,7 @@ import model.Blogroll;
 import model.Category;
 import model.Domain;
 import model.Keyword;
+import model.LearningTable;
 import model.Location;
 import model.Stopword;
 import model.TempKeyword;
@@ -39,6 +40,7 @@ public class MainController {
     private CategoryJpaController categoryController;
     private KeywordJpaController keywordController;
     private TempKeywordJpaController tempController;
+    private LearningTableJpaController learningController;
     private ComputeCRC computeCRC;
 
 // private constructer    
@@ -53,6 +55,7 @@ public class MainController {
         categoryController = new CategoryJpaController(emf);
         keywordController = new KeywordJpaController(emf);
         tempController = new TempKeywordJpaController(emf);
+        learningController = new LearningTableJpaController(emf);
 
         computeCRC = new ComputeCRC();
     }
@@ -396,7 +399,72 @@ public class MainController {
     }
 //------------------------------------------------------------------------
 
-//-------------Temp_Keywords related methods------------------------------
+//-------------Learning_Table related methods------------------------------
+    public void addLearningTable(String word, double weight, String category) {
+        Category cat = findCategoryByName(category);
+        LearningTable keyword = new LearningTable();
+        keyword.setKeyword(word);
+        keyword.setWeight(weight);
+        keyword.setIdCategory(cat);
+        learningController.create(keyword);
+    }
+
+    public void addLearningTable(TempKeyword tk) {
+        Category cat = tk.getIdCategory();
+        LearningTable keyword = new LearningTable();
+        keyword.setKeyword(tk.getKeyword());
+        keyword.setWeight(tk.getWeight());
+        keyword.setIdCategory(cat);
+        learningController.create(keyword);
+    }
+
+    public void updateLearningTable(LearningTable k, TempKeyword tk) {
+        double delta = Math.abs(k.getWeight() - tk.getWeight()) / 2;
+        double w1;
+        if (k.getWeight() > tk.getWeight()) {
+            w1 = k.getWeight() + delta;
+        } else {
+            w1 = Math.abs(k.getWeight() - delta);
+        }
+        updateLearningTableWeight(k, w1);
+    }
+
+    public List<LearningTable> findLearningTableByKeyword(String key) {
+        return learningController.findByKeyword(key);
+    }
+
+    public List<LearningTable> findLearningTableByCategory(String categ) {
+        Category category = findCategoryByName(categ);
+        return learningController.findByCategory(category);
+
+    }
+
+    public ArrayList<String> getLearnigTableByCategory(String categ) {
+        ArrayList<String> keywords = new ArrayList<>();
+        Category category = findCategoryByName(categ);
+        List<LearningTable> keyList = learningController.findByCategory(category);
+        for (LearningTable k : keyList) {
+            keywords.add(k.getKeyword());
+        }
+        return keywords;
+    }
+
+    public void updateLearningTableWeight(LearningTable k, double w) {
+        double w_k = k.getWeight();
+        if (w_k < w) {
+            k.setWeight(w);
+            try {
+                learningController.edit(k);
+            } catch (NonexistentEntityException ex) {
+                Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (Exception ex) {
+                Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+//-------------------------------------------------------------------------
+//-------------Temp_Keyword related methods-------------------------------
     public void addTempKeyword(String word, double weight, String category) {
         Category cat = findCategoryByName(category);
 

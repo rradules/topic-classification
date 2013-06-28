@@ -20,6 +20,7 @@ import javax.persistence.EntityManagerFactory;
 import model.Category;
 import model.Keyword;
 import model.TempKeyword;
+import model.LearningTable;
 
 /**
  *
@@ -46,6 +47,9 @@ public class CategoryJpaController implements Serializable {
         if (category.getTempKeywordsCollection() == null) {
             category.setTempKeywordsCollection(new ArrayList<TempKeyword>());
         }
+        if (category.getLearningTableCollection() == null) {
+            category.setLearningTableCollection(new ArrayList<LearningTable>());
+        }
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -68,6 +72,12 @@ public class CategoryJpaController implements Serializable {
                 attachedTempKeywordsCollection.add(tempKeywordsCollectionTempKeywordToAttach);
             }
             category.setTempKeywordsCollection(attachedTempKeywordsCollection);
+            Collection<LearningTable> attachedLearningTableCollection = new ArrayList<LearningTable>();
+            for (LearningTable learningTableCollectionLearningTableToAttach : category.getLearningTableCollection()) {
+                learningTableCollectionLearningTableToAttach = em.getReference(learningTableCollectionLearningTableToAttach.getClass(), learningTableCollectionLearningTableToAttach.getIdLearnTable());
+                attachedLearningTableCollection.add(learningTableCollectionLearningTableToAttach);
+            }
+            category.setLearningTableCollection(attachedLearningTableCollection);
             em.persist(category);
             for (Domain domainCollectionDomain : category.getDomainCollection()) {
                 Category oldIdCategoryOfDomainCollectionDomain = domainCollectionDomain.getIdCategory();
@@ -96,6 +106,15 @@ public class CategoryJpaController implements Serializable {
                     oldIdCategoryOfTempKeywordsCollectionTempKeyword = em.merge(oldIdCategoryOfTempKeywordsCollectionTempKeyword);
                 }
             }
+            for (LearningTable learningTableCollectionLearningTable : category.getLearningTableCollection()) {
+                Category oldIdCategoryOfLearningTableCollectionLearningTable = learningTableCollectionLearningTable.getIdCategory();
+                learningTableCollectionLearningTable.setIdCategory(category);
+                learningTableCollectionLearningTable = em.merge(learningTableCollectionLearningTable);
+                if (oldIdCategoryOfLearningTableCollectionLearningTable != null) {
+                    oldIdCategoryOfLearningTableCollectionLearningTable.getLearningTableCollection().remove(learningTableCollectionLearningTable);
+                    oldIdCategoryOfLearningTableCollectionLearningTable = em.merge(oldIdCategoryOfLearningTableCollectionLearningTable);
+                }
+            }
             em.getTransaction().commit();
         } finally {
             if (em != null) {
@@ -116,6 +135,8 @@ public class CategoryJpaController implements Serializable {
             Collection<Keyword> keywordCollectionNew = category.getKeywordCollection();
             Collection<TempKeyword> tempKeywordsCollectionOld = persistentCategory.getTempKeywordsCollection();
             Collection<TempKeyword> tempKeywordsCollectionNew = category.getTempKeywordsCollection();
+            Collection<LearningTable> learningTableCollectionOld = persistentCategory.getLearningTableCollection();
+            Collection<LearningTable> learningTableCollectionNew = category.getLearningTableCollection();
             List<String> illegalOrphanMessages = null;
             for (TempKeyword tempKeywordsCollectionOldTempKeyword : tempKeywordsCollectionOld) {
                 if (!tempKeywordsCollectionNew.contains(tempKeywordsCollectionOldTempKeyword)) {
@@ -123,6 +144,14 @@ public class CategoryJpaController implements Serializable {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
                     illegalOrphanMessages.add("You must retain TempKeyword " + tempKeywordsCollectionOldTempKeyword + " since its idCategory field is not nullable.");
+                }
+            }
+            for (LearningTable learningTableCollectionOldLearningTable : learningTableCollectionOld) {
+                if (!learningTableCollectionNew.contains(learningTableCollectionOldLearningTable)) {
+                    if (illegalOrphanMessages == null) {
+                        illegalOrphanMessages = new ArrayList<String>();
+                    }
+                    illegalOrphanMessages.add("You must retain LearningTable " + learningTableCollectionOldLearningTable + " since its idCategory field is not nullable.");
                 }
             }
             if (illegalOrphanMessages != null) {
@@ -149,6 +178,13 @@ public class CategoryJpaController implements Serializable {
             }
             tempKeywordsCollectionNew = attachedTempKeywordsCollectionNew;
             category.setTempKeywordsCollection(tempKeywordsCollectionNew);
+            Collection<LearningTable> attachedLearningTableCollectionNew = new ArrayList<LearningTable>();
+            for (LearningTable learningTableCollectionNewLearningTableToAttach : learningTableCollectionNew) {
+                learningTableCollectionNewLearningTableToAttach = em.getReference(learningTableCollectionNewLearningTableToAttach.getClass(), learningTableCollectionNewLearningTableToAttach.getIdLearnTable());
+                attachedLearningTableCollectionNew.add(learningTableCollectionNewLearningTableToAttach);
+            }
+            learningTableCollectionNew = attachedLearningTableCollectionNew;
+            category.setLearningTableCollection(learningTableCollectionNew);
             category = em.merge(category);
             for (Domain domainCollectionOldDomain : domainCollectionOld) {
                 if (!domainCollectionNew.contains(domainCollectionOldDomain)) {
@@ -195,6 +231,17 @@ public class CategoryJpaController implements Serializable {
                     }
                 }
             }
+            for (LearningTable learningTableCollectionNewLearningTable : learningTableCollectionNew) {
+                if (!learningTableCollectionOld.contains(learningTableCollectionNewLearningTable)) {
+                    Category oldIdCategoryOfLearningTableCollectionNewLearningTable = learningTableCollectionNewLearningTable.getIdCategory();
+                    learningTableCollectionNewLearningTable.setIdCategory(category);
+                    learningTableCollectionNewLearningTable = em.merge(learningTableCollectionNewLearningTable);
+                    if (oldIdCategoryOfLearningTableCollectionNewLearningTable != null && !oldIdCategoryOfLearningTableCollectionNewLearningTable.equals(category)) {
+                        oldIdCategoryOfLearningTableCollectionNewLearningTable.getLearningTableCollection().remove(learningTableCollectionNewLearningTable);
+                        oldIdCategoryOfLearningTableCollectionNewLearningTable = em.merge(oldIdCategoryOfLearningTableCollectionNewLearningTable);
+                    }
+                }
+            }
             em.getTransaction().commit();
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
@@ -231,6 +278,13 @@ public class CategoryJpaController implements Serializable {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
                 illegalOrphanMessages.add("This Category (" + category + ") cannot be destroyed since the TempKeyword " + tempKeywordsCollectionOrphanCheckTempKeyword + " in its tempKeywordsCollection field has a non-nullable idCategory field.");
+            }
+            Collection<LearningTable> learningTableCollectionOrphanCheck = category.getLearningTableCollection();
+            for (LearningTable learningTableCollectionOrphanCheckLearningTable : learningTableCollectionOrphanCheck) {
+                if (illegalOrphanMessages == null) {
+                    illegalOrphanMessages = new ArrayList<String>();
+                }
+                illegalOrphanMessages.add("This Category (" + category + ") cannot be destroyed since the LearningTable " + learningTableCollectionOrphanCheckLearningTable + " in its learningTableCollection field has a non-nullable idCategory field.");
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
