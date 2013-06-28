@@ -5,8 +5,13 @@
 package topicclassification;
 
 import controller.MainController;
+import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import weka.classifiers.Classifier;
 import weka.core.Attribute;
 import weka.core.Instance;
@@ -129,5 +134,23 @@ public class TextClassifier {
         trainingData = new Instances("TextClassificationProblem", attributes, 500);
         trainingData.setClassIndex(trainingData.numAttributes() - 1);
         setup = true;
+    }
+
+    public void buildFile() {
+        BufferedWriter writer = null;
+        try {
+            writer = new BufferedWriter(new FileWriter("trainingSet.arff"));
+            writer.write(trainingData.toString());
+            writer.flush();
+            writer.close();
+        } catch (IOException ex) {
+            Logger.getLogger(TextClassifier.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                writer.close();
+            } catch (IOException ex) {
+                Logger.getLogger(TextClassifier.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 }

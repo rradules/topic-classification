@@ -78,6 +78,7 @@ public class ClassifierFactory {
             for (String top : topics) {
                 tc.addData(top);
             }
+            tc.buildFile();
         } catch (FileNotFoundException | IllegalStateException ex) {
             Logger.getLogger(ClassifierFactory.class.getName()).log(Level.SEVERE, null, ex);
         }

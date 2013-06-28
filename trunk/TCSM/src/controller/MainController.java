@@ -397,8 +397,15 @@ public class MainController {
         }
 
     }
-//------------------------------------------------------------------------
 
+    public void transferWords() {
+        List<Keyword> allKeywords = keywordController.findKeywordEntities();
+        for (Keyword k : allKeywords) {
+            addLearningTable(k.getKeyword(), k.getWeight(), k.getIdCategory().getCategory());
+        }
+    }
+
+//------------------------------------------------------------------------
 //-------------Learning_Table related methods------------------------------
     public void addLearningTable(String word, double weight, String category) {
         Category cat = findCategoryByName(category);
