@@ -1,7 +1,7 @@
 @relation TextClassificationProblem
 
 @attribute text string
-@attribute class {activism,'business and finance',art,travel,gastronomy,literature,fashion,'personal journal',politics,'religion and spirituality'}
+@attribute topic {activism,'business and finance',art,travel,gastronomy,literature,fashion,'personal journal',politics,'religion and spirituality'}
 
 @data
 {},{23.460452}

@@ -11,7 +11,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Domain;
 import topicclassification.ClassifierController;
-import topicclassification.NNClassifier;
 
 /**
  *
@@ -36,7 +35,7 @@ public class TCSM {
                     //Crawler.getInstance().search(verifiedURL.toString(), 6);
                 }
                 ClassifierController classController = new ClassifierController();
-                System.out.println(classController.classifyPost("NB", domName));
+                System.out.println(classController.classifyPost("SMO", domName));
 
             } catch (MalformedURLException ex) {
                 Logger.getLogger(TCSM.class.getName()).log(Level.SEVERE, null, ex);

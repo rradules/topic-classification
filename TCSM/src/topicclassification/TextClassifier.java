@@ -5,9 +5,11 @@
 package topicclassification;
 
 import controller.MainController;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -45,7 +47,7 @@ public class TextClassifier {
         // Create vector of attributes.
         attributes = new ArrayList<>();
         // Add attribute for holding texts.
-       attributes.add(new Attribute("text", (ArrayList) null));
+        attributes.add(new Attribute("text", (ArrayList) null));
         // Add class attribute.
         classValues = new ArrayList<>();
         setup = false;
@@ -117,16 +119,13 @@ public class TextClassifier {
         }
     }
 
-    public double[] classifyMessage(String message, boolean dt) throws Exception {
+    public double[] classifyMessage(String message) throws Exception {
         message = message.toLowerCase();
 
         buildIfNeeded();
         Instances testset = trainingData.stringFreeStructure();
         Instance testInstance = makeInstance(message, testset);
-        if (dt) {
-            StringToWordVector filter = new StringToWordVector();
-            filter.setInputFormat(trainingData);
-        }
+
         // Filter instance.
         filter.input(testInstance);
         Instance filteredInstance = filter.output();
@@ -146,9 +145,8 @@ public class TextClassifier {
     }
 
     public void setupAfterCategorysAdded() {
-        attributes.add(new Attribute("class", classValues));
+        attributes.add(new Attribute("topic", classValues));
         // Create dataset with initial capacity of 500, and set index of class.
-
         trainingData = new Instances("TextClassificationProblem", attributes, 5000);
         trainingData.setClassIndex(trainingData.numAttributes() - 1);
         setup = true;

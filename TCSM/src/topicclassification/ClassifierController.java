@@ -17,15 +17,11 @@ public class ClassifierController {
 
     //possible classifiers:
 //    case "NB": Naive Bayes
-//    case "NBS": Naive Bayes Simple!!! nu merge
 //    case "NBU": Naive Bayes Updatable 
-//    case "NBM": Naive Bayes Multinomial !! rezultate eronate
-//    case "NBMU": Naive Bayes Multinomial Updatable !! rezultate eronate
 //    case "KNN": K Nearest Neighbor
-//    case "KStar": K Star  !! rezultate eronate
-//    case "DS": Desicision stump !! rezultate eronate
-//    case "DT": Desicision table || Cannot handle string attributes!
+//    case "CNB": Complement Naive Bayes
 //    case "DecTree": Desicision tree J48
+//    case "SMO": Support Vector Machines using Sequential Minimal Optimization    
 // default MLP
     
     public String classifyPost(String clsf, String domainName) {
