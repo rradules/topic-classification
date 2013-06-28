@@ -6,17 +6,21 @@ package topicclassification;
 
 import controller.MainController;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Keyword;
 import weka.classifiers.Classifier;
 import weka.core.Attribute;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.SparseInstance;
+import weka.core.converters.ArffLoader;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.StringToWordVector;
 
@@ -35,13 +39,13 @@ public class TextClassifier {
     private boolean setup;
     private Instances filteredData;
 
-    public TextClassifier(Classifier classifier) throws FileNotFoundException {
+    public TextClassifier() throws FileNotFoundException {
         filter = new StringToWordVector();
-        this.classifier = classifier;
+        //  this.classifier = classifier;
         // Create vector of attributes.
         attributes = new ArrayList<>();
         // Add attribute for holding texts.
-        attributes.add(new Attribute("text", (ArrayList) null));
+       attributes.add(new Attribute("text", (ArrayList) null));
         // Add class attribute.
         classValues = new ArrayList<>();
         setup = false;
@@ -61,16 +65,31 @@ public class TextClassifier {
         classValues.add(category);
     }
 
+    public void trainNetwork() {
+        try {
+            ArffLoader loader = new ArffLoader();
+            loader.setFile(new File("trainingSet.arff"));
+            trainingData = loader.getDataSet();
+
+            // setting class attribute
+            trainingData.setClassIndex(trainingData.numAttributes() - 1);
+        } catch (IOException ex) {
+            Logger.getLogger(TextClassifier.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        upToDate = false;
+    }
+
     public void addData(String topic) throws IllegalStateException {
         if (!setup) {
             throw new IllegalStateException("Must use setup first");
         }
-        ArrayList<String> trainSet = MainController.getInstance().getKeywordsByCategory(topic);
+        List<Keyword> trainSet = MainController.getInstance().findKeywordByCategory(topic);
         topic = topic.toLowerCase();
         if (trainSet.size() > 0) {
-            for (String keyword : trainSet) {
+            for (Keyword keyword : trainSet) {
                 // Make message into instance.
-                Instance instance = makeInstance(keyword, trainingData);
+                Instance instance = makeInstance(keyword.getKeyword(), trainingData);
+                instance.setWeight(keyword.getWeight());
                 // Set class value for instance.
                 instance.setClassValue(topic);
                 // Add instance to training data.
@@ -86,6 +105,7 @@ public class TextClassifier {
      * @throws Exception
      */
     private void buildIfNeeded() throws Exception {
+        trainNetwork();
         if (!upToDate) {
             // Initialize filter and tell it about the input format.
             filter.setInputFormat(trainingData);
@@ -97,19 +117,16 @@ public class TextClassifier {
         }
     }
 
-    public double[] classifyMessage(String message) throws Exception {
+    public double[] classifyMessage(String message, boolean dt) throws Exception {
         message = message.toLowerCase();
-        if (!setup) {
-            throw new Exception("Must use setup first");
-        }
-        // Check whether classifier has been built.
-        if (trainingData.numInstances() == 0) {
-            throw new Exception("No classifier available.");
-        }
+
         buildIfNeeded();
         Instances testset = trainingData.stringFreeStructure();
         Instance testInstance = makeInstance(message, testset);
-
+        if (dt) {
+            StringToWordVector filter = new StringToWordVector();
+            filter.setInputFormat(trainingData);
+        }
         // Filter instance.
         filter.input(testInstance);
         Instance filteredInstance = filter.output();
@@ -129,9 +146,10 @@ public class TextClassifier {
     }
 
     public void setupAfterCategorysAdded() {
-        attributes.add(new Attribute("Topic", classValues));
+        attributes.add(new Attribute("class", classValues));
         // Create dataset with initial capacity of 500, and set index of class.
-        trainingData = new Instances("TextClassificationProblem", attributes, 500);
+
+        trainingData = new Instances("TextClassificationProblem", attributes, 5000);
         trainingData.setClassIndex(trainingData.numAttributes() - 1);
         setup = true;
     }
