@@ -4,7 +4,6 @@ comisar
 portraits
 sindril
 proofreading
-hajekhalk
 released
 bistro
 carmel
@@ -19,7 +18,6 @@ schiulest
 paredes
 pigeon
 maaik
-herer
 sartr
 loung
 selection
@@ -50,12 +48,9 @@ photographer
 capodop
 architect
 petedeculoar
-york
 anotimpur
 eminescu
 fantan
-filed
-loading
 interioar
 materials
 artistiroman
@@ -125,15 +120,11 @@ wall
 collection
 polon
 pauper
-entry
 librar
-rss
-weblog
 photograph
 agres
 expoz
 desen
-paul
 pierz
 polic
 donat
@@ -142,7 +133,6 @@ loves
 tricour
 piatr
 design
-under
 soven
 dobrogean
 jewelry
@@ -157,16 +147,13 @@ gilbert
 uelsmann
 cristoph
 acryl
-account
 leav
 peisaj
 doro
 mik
 finaliz
 intretin
-using
 trackback
-was
 great
 visin
 flower
@@ -186,7 +173,6 @@ dulceat
 lunic
 dobr
 pauz
-dian
 rustic
 tipur
 architectur
@@ -249,7 +235,6 @@ kitty
 praf
 raft
 electron
-shar
 point
 pictur
 adres
@@ -259,9 +244,6 @@ contemporan
 prezentar
 bizantin
 proiect
-own
-this
-from
 ads
 david
 anotimp
@@ -269,7 +251,6 @@ ston
 galer
 amintir
 georg
-arh
 animation
 notiun
 postmodern
@@ -290,13 +271,11 @@ postavar
 ezitat
 privir
 numesc
-august
-handmad
 respon
+handmad
 jurnalist
 cartier
 luniacum
-new
 incarcsh
 anunţam
 completeaz
@@ -307,8 +286,8 @@ raspuns
 natural
 comentar
 romaneasc
-cultural
 interpret
+cultural
 industrial
 somn
 lunip
@@ -328,10 +307,9 @@ renov
 ghicit
 mincu
 purced
-xxi
 necesar
-connecting
 arte
+connecting
 cancel
 follow
 deven
@@ -345,7 +323,6 @@ address
 artist
 mutat
 craciun
-mormint
 short
 stiinte
 scriet
@@ -358,11 +335,11 @@ feel
 strad
 frumoas
 anul
+arta
 experiment
 cristin
 strain
 romanest
-arta
 news
 ziun
 noutat
@@ -380,6 +357,7 @@ interior
 ţar
 luni
 stil
+fotograf
 volum
 expozit
 amazing
@@ -390,7 +368,6 @@ miros
 tshirt
 panz
 shirt
-fotograf
 portal
 vod
 cafen
