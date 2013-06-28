@@ -44,7 +44,9 @@ public class FeatureSelection {
     }
 
     private boolean approveWord(String word) {
-        String[] dis = {"facebook", "twitter", "http", "www", "yahoo", "gmail", "skype"};
+        String[] dis = {"facebook", "twitter", "http", "www", "yahoo", "gmail", "skype",
+        "subscrib", "october", "november", "september", "december", "july", "january", "february",
+        "may", "follow", "comment"};
         for (String w : dis) {
             if (word.contains(w)) {
                 return false;

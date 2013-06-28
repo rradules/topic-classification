@@ -5,14 +5,13 @@
 package neuralnetwork;
 
 import controller.MainController;
-import functions.DocumentFrequency;
-import functions.TermFrequency;
+import topicclassification.DocumentFrequency;
+import topicclassification.TermFrequency;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import model.Blogpost;
-import model.Keyword;
+import model.LearningTable;
 import model.TempKeyword;
 import topicclassification.Document;
 
@@ -28,9 +27,10 @@ public class TrainingLayer {
     private TermFrequency tf;
     private NNController nnController;
     private static String[] topics = {"Activism",
-        "Business and finance", "Art", "Travel", "Photography",
+        "Business and finance", "Art", "Travel",
         "Gastronomy", "Personal journal", "Literature", "Fashion",
         "Politics", "Religion and spirituality"};
+    private List<LearningTable> existent;
 
     public TrainingLayer() {
         isb = new InputSetBuilder();
@@ -51,18 +51,19 @@ public class TrainingLayer {
         tf.setDocFreq(docFreq);
 
         final_posts = isb.getFinal_posts();
-        Iterator it = final_posts.keySet().iterator();
+       // Iterator it = final_posts.keySet().iterator();
 
         // while (it.hasNext()) {
 
         //  String key = it.next().toString();
-        String key = topics[1];
-        System.out.println(key);
-        String content = final_posts.get(key);
-        List<TempKeyword> temp = buildTempKeywords(content, key);
-        applyTrainingAlgorithm(temp);
+      //  for (int i = 1; i < 2; i++) {
+            String key = topics[9];
+            System.out.println(key);
+            String content = final_posts.get(key);
+            List<TempKeyword> temp = buildTempKeywords(content, key);
+            applyTrainingAlgorithm(temp);
 
-        //}
+      //  }
     }
 
     public List<TempKeyword> buildTempKeywords(String post, String topic) {
@@ -84,21 +85,21 @@ public class TrainingLayer {
 
         for (TempKeyword tk : temp) {
             //Case 1 word not in learning table - insert keyword
-            if (MainController.getInstance().findKeywordsByKeyword(tk.getKeyword()).isEmpty()) {
-                MainController.getInstance().addKeyword(tk);
+            if (MainController.getInstance().findLearningTableByKeyword(tk.getKeyword()).isEmpty()) {
+                MainController.getInstance().addLearningTable(tk);
             } else {
-                List<Keyword> existent = MainController.getInstance().findKeywordsByKeyword(tk.getKeyword());
-                for (Keyword k : existent) {
+                existent = MainController.getInstance().findLearningTableByKeyword(tk.getKeyword());
+                for (LearningTable k : existent) {
                     //Case 2 the word is in the learning table under the same category - update weight
                     if (k.getIdCategory().getIdCategory() == tk.getIdCategory().getIdCategory()) {
 
-                        MainController.getInstance().updateKeywordWeight(k, tk.getWeight());
+                        MainController.getInstance().updateLearningTableWeight(k, tk.getWeight());
                     } else {
                         //Case 3 the word is in the learning table under another category - update weights and
-                        MainController.getInstance().updateKeyword(k, tk);
+                        MainController.getInstance().updateLearningTable(k, tk);
                     }
                     if (!containsCategory(existent, tk.getIdCategory().getIdCategory())) {
-                        MainController.getInstance().addKeyword(tk);
+                        MainController.getInstance().addLearningTable(tk);
                     }
 
                 }
@@ -106,8 +107,8 @@ public class TrainingLayer {
         }
     }
 
-    public boolean containsCategory(List<Keyword> words, int idCat) {
-        for (Keyword k : words) {
+    public boolean containsCategory(List<LearningTable> words, int idCat) {
+        for (LearningTable k : words) {
             if (k.getIdCategory().getIdCategory() == idCat) {
                 return true;
             }
