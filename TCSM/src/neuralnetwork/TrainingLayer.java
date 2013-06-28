@@ -27,11 +27,11 @@ public class TrainingLayer {
     private DocumentFrequency docFreq;
     private TermFrequency tf;
     private NNController nnController;
+    private static String[] topics = {"Activism",
+        "Business and finance", "Art", "Travel", "Photography",
+        "Gastronomy", "Personal journal", "Literature", "Fashion",
+        "Politics", "Religion and spirituality"};
 
-//    private static String[] topics = {"Activism",
-//        "Business and finance", "Art", "Travel", "Photography",
-//        "Gastronomy", "Personal journal", "Literature", "Fashion",
-//        "Politics", "Religion and spirituality"};
     public TrainingLayer() {
         isb = new InputSetBuilder();
         final_posts = new HashMap<>();
@@ -53,14 +53,16 @@ public class TrainingLayer {
         final_posts = isb.getFinal_posts();
         Iterator it = final_posts.keySet().iterator();
 
-        while (it.hasNext()) {
-            String key = it.next().toString();
-            System.out.println(key);
-            String content = final_posts.get(key);
-            List<TempKeyword> temp = buildTempKeywords(content, key);
-            applyTrainingAlgorithm(temp);
+        // while (it.hasNext()) {
 
-        }
+        //  String key = it.next().toString();
+        String key = topics[1];
+        System.out.println(key);
+        String content = final_posts.get(key);
+        List<TempKeyword> temp = buildTempKeywords(content, key);
+        applyTrainingAlgorithm(temp);
+
+        //}
     }
 
     public List<TempKeyword> buildTempKeywords(String post, String topic) {

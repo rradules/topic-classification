@@ -16,7 +16,7 @@ import model.TempKeyword;
  */
 public class NNController {
 
-    private final int MAX_WORDS = 250;
+    private final int MAX_WORDS = 300;
 
     public NNController() {
     }
@@ -28,9 +28,10 @@ public class NNController {
         while (it.hasNext()) {
             String word = it.next().toString();
             double weight = wordset.get(word);
-            MainController.getInstance().addTempKeyword(word, weight, category);
+            if (weight > 1) {
+                MainController.getInstance().addTempKeyword(word, weight, category);
+            }
         }
-
 
         List<TempKeyword> tempKeywords = MainController.getInstance().getXOrderedTempKeywordb(MAX_WORDS);
 //        System.out.println("Category: " + category);
