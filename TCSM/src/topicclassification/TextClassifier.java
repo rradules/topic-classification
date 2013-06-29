@@ -5,13 +5,15 @@
 package topicclassification;
 
 import controller.MainController;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -70,9 +72,8 @@ public class TextClassifier {
     public void trainNetwork() {
         try {
             ArffLoader loader = new ArffLoader();
-            loader.setFile(new File("trainingSet.arff"));
+            loader.setFile(new File("trainingSet3.arff"));
             trainingData = loader.getDataSet();
-
             // setting class attribute
             trainingData.setClassIndex(trainingData.numAttributes() - 1);
         } catch (IOException ex) {
@@ -115,6 +116,7 @@ public class TextClassifier {
             filteredData = Filter.useFilter(trainingData, filter);
             // Rebuild classifier.
             classifier.buildClassifier(filteredData);
+          //  saveModel(classifier, "MLP.txt");
             upToDate = true;
         }
     }
@@ -123,13 +125,17 @@ public class TextClassifier {
         message = message.toLowerCase();
 
         buildIfNeeded();
+        System.out.println("Classifier finished bulding.");
+        //get a copy of the instance structure.
         Instances testset = trainingData.stringFreeStructure();
         Instance testInstance = makeInstance(message, testset);
-
         // Filter instance.
         filter.input(testInstance);
+        filter.batchFinished();
         Instance filteredInstance = filter.output();
-        return classifier.distributionForInstance(filteredInstance);
+
+      return classifier.distributionForInstance(filteredInstance);
+       // return null;
 
     }
 
@@ -152,11 +158,11 @@ public class TextClassifier {
         setup = true;
     }
 
-    public void buildFile() {
+    public void buildFile(Instance instance, String filename) {
         BufferedWriter writer = null;
         try {
-            writer = new BufferedWriter(new FileWriter("trainingSet.arff"));
-            writer.write(trainingData.toString());
+            writer = new BufferedWriter(new FileWriter(filename));
+            writer.write(instance.toString());
             writer.flush();
             writer.close();
         } catch (IOException ex) {
@@ -167,6 +173,27 @@ public class TextClassifier {
             } catch (IOException ex) {
                 Logger.getLogger(TextClassifier.class.getName()).log(Level.SEVERE, null, ex);
             }
+        }
+    }
+
+    public void saveModel(Classifier classifier, String fileName) {
+        try {
+            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName));
+            out.writeObject(classifier);
+            out.close();
+        } catch (Exception e) {
+            System.out.println("Error when writing the classifier");
+        }
+    }
+
+    public Object loadModel(String fileName) {
+        try {
+            ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName));
+            Object tmp = in.readObject();
+            in.close();
+            return tmp;
+        } catch (IOException | ClassNotFoundException e) {
+            return null;
         }
     }
 }
