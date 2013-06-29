@@ -23,11 +23,10 @@ public class ClassifierController {
 //    case "DecTree": Desicision tree J48
 //    case "SMO": Support Vector Machines using Sequential Minimal Optimization    
 // default MLP
-    
     public String classifyPost(String clsf, String domainName) {
         System.out.println("Classifier Factory created");
         classifier = new ClassifierFactory(clsf);
-            classifier.getClassifier();
+        classifier.getClassifier();
 
         return classifier.getTopic(domainName);
     }

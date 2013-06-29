@@ -14,32 +14,14 @@ import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import weka.classifiers.Classifier;
-import weka.classifiers.MultipleClassifiersCombiner;
 import weka.classifiers.bayes.ComplementNaiveBayes;
 import weka.classifiers.bayes.NaiveBayes;
-import weka.classifiers.bayes.NaiveBayesMultinomial;
-import weka.classifiers.bayes.NaiveBayesMultinomialUpdateable;
-import weka.classifiers.bayes.NaiveBayesSimple;
 import weka.classifiers.bayes.NaiveBayesUpdateable;
 import weka.classifiers.functions.MultilayerPerceptron;
 import weka.classifiers.functions.SMO;
-import weka.classifiers.functions.SimpleLinearRegression;
-import weka.classifiers.functions.VotedPerceptron;
-import weka.classifiers.functions.supportVector.RBFKernel;
 import weka.classifiers.lazy.IBk;
-import weka.classifiers.lazy.KStar;
-import weka.classifiers.rules.DecisionTable;
-import weka.classifiers.rules.PART;
-import weka.classifiers.rules.ZeroR;
-import weka.classifiers.trees.DecisionStump;
-import weka.classifiers.trees.Id3;
 import weka.classifiers.trees.J48;
-import weka.classifiers.trees.REPTree;
-import weka.classifiers.trees.j48.NBTreeClassifierTree;
-import weka.classifiers.trees.j48.NBTreeModelSelection;
-import weka.classifiers.trees.m5.RuleNode;
-import weka.core.Instances;
-import weka.core.Option;
+import weka.classifiers.trees.LMT;
 
 /**
  *
@@ -84,14 +66,17 @@ public class ClassifierFactory {
             case "SMO":
                 classifier = new SMO();
                 break;
+            case "LMT":
+                classifier = new LMT();
+                break;
             case "DecTree":
                 j48 = new J48();
                 j48.setUnpruned(true);
                 break;
             case "MLP":
                 mlp = new MultilayerPerceptron();
-                mlp.setHiddenLayers("5, 5");
-                mlp.setTrainingTime(100);
+                // mlp.setHiddenLayers("5, 5");
+                //  mlp.setTrainingTime(100);
                 mlp.setMomentum(0.7);
                 mlp.setLearningRate(0.2);
                 break;
@@ -118,27 +103,6 @@ public class ClassifierFactory {
             }
         }
 
-    }
-
-    public void saveModel(Classifier classifier, String fileName) {
-        try {
-            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName));
-            out.writeObject(classifier);
-            out.close();
-        } catch (IOException e) {
-            System.out.println("Error when writing the classifier");
-        }
-    }
-
-    public Object loadModel(String fileName) {
-        try {
-            ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName));
-            Object tmp = in.readObject();
-            in.close();
-            return tmp;
-        } catch (IOException | ClassNotFoundException e) {
-            return null;
-        }
     }
 
     public String getTopic(String domainName) {
