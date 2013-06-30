@@ -155,18 +155,20 @@ public class Crawler {
             // Convert string url to URL object.
             URL verifiedUrl = linkRetrieval.verifyUrl(url);
 
-            //extract the Blogpost for each crawled page except the starting one
-            if (!verifiedUrl.toString().equals(startUrl)) {
-                dataExtractor = new DataExtractor("blogpost", verifiedUrl.toString());
-               // System.out.println("Blogpost: " + 
-                        dataExtractor.extractData();
-                        //);
-            }
 
             // Skip URL if robots are not allowed to access it.
             if (!roboParser.isRobotAllowed(verifiedUrl)) {
                 continue;
             }
+
+            //extract the Blogpost for each crawled page except the starting one
+            if (!verifiedUrl.toString().equals(startUrl)) {
+                dataExtractor = new DataExtractor("blogpost", verifiedUrl.toString());
+                // System.out.println("Blogpost: " + 
+                dataExtractor.extractData();
+                //);
+            }
+
             // Add page to the crawled list.
             crawledList.add(url);
 
