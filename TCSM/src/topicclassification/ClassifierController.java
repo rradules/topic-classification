@@ -18,15 +18,15 @@ public class ClassifierController {
     //possible classifiers:
 //    case "NB": Naive Bayes
 //    case "NBU": Naive Bayes Updatable 
-//    case "KNN": K Nearest Neighbor
 //    case "CNB": Complement Naive Bayes
-//    case "DecTree": Desicision tree J48
+//    case "KNN": K Nearest Neighbor
+//    case "J48": Decision tree J48
 //    case "SMO": Support Vector Machines using Sequential Minimal Optimization    
-// default MLP
+//    case  "MLP" MultiLayer Perceptron
     public String classifyPost(String clsf, String domainName) {
         System.out.println("Classifier Factory created");
         classifier = new ClassifierFactory(clsf);
-        classifier.getClassifier();
+        //classifier.getClassifier();
 
         return classifier.getTopic(domainName);
     }

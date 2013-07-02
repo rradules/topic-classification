@@ -72,7 +72,7 @@ public class TextClassifier {
     public void trainNetwork() {
         try {
             ArffLoader loader = new ArffLoader();
-            loader.setFile(new File("trainingSet3.arff"));
+            loader.setFile(new File("trainingSet2.arff"));
             trainingData = loader.getDataSet();
             // setting class attribute
             trainingData.setClassIndex(trainingData.numAttributes() - 1);
@@ -180,7 +180,10 @@ public class TextClassifier {
         try {
             ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName));
             out.writeObject(classifier);
+            out.flush();
             out.close();
+            //FileWriter fw = new FileWriter(fileName);
+           // fw.
         } catch (Exception e) {
             System.out.println("Error when writing the classifier");
         }

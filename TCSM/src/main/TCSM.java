@@ -35,7 +35,7 @@ public class TCSM {
                     //Crawler.getInstance().search(verifiedURL.toString(), 6);
                 }
                 ClassifierController classController = new ClassifierController();
-                System.out.println(classController.classifyPost("MLP", domName));
+                System.out.println(classController.classifyPost("J48", domName));
 
             } catch (MalformedURLException ex) {
                 Logger.getLogger(TCSM.class.getName()).log(Level.SEVERE, null, ex);
