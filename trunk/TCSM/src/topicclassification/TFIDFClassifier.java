@@ -18,14 +18,14 @@ import model.Domain;
  *
  * @author Roxana Radulescu <roxana.radulescu07@gmail.com>
  */
-public class NNClassifier {
+public class TFIDFClassifier {
 
     private String givenURL;
     private URL verifiedURL;
     private DocumentConstructor docConstructor;
     private ScoreCalculator scoreCalc;
 
-    public NNClassifier() {
+    public TFIDFClassifier() {
         docConstructor = new DocumentConstructor();
         scoreCalc = new ScoreCalculator();
     }
@@ -60,7 +60,7 @@ public class NNClassifier {
                 printScores(scores);
 
             } catch (MalformedURLException ex) {
-                Logger.getLogger(NNClassifier.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(TFIDFClassifier.class.getName()).log(Level.SEVERE, null, ex);
             }
 
         }

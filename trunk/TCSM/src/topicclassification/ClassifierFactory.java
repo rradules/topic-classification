@@ -69,7 +69,7 @@ public class ClassifierFactory {
             case "LMT":
                 classifier = new LMT();
                 break;
-            case "DecTree":
+            case "J48":
                 j48 = new J48();
                 j48.setUnpruned(true);
                 break;
@@ -96,7 +96,7 @@ public class ClassifierFactory {
         if (classS.equals("MLP")) {
             tc.setClassifier(mlp);
         } else {
-            if (classS.equals("DecTree")) {
+            if (classS.equals("J48")) {
                 tc.setClassifier(j48);
             } else {
                 tc.setClassifier(classifier);
