@@ -158,4 +158,16 @@ public class BlogpostJpaController implements Serializable {
             return null;
         }
     }
+
+    public List<Blogpost> findByProcessed(int proc) {
+        EntityManager em = getEntityManager();
+        Query q = em.createNamedQuery("Blogpost.findByProcessed");
+        q.setParameter("processed", proc);
+
+        try {
+            return q.getResultList();
+        } catch (Exception e) {
+            return null;
+        }
+    }
 }

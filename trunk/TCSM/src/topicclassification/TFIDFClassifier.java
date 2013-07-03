@@ -67,6 +67,25 @@ public class TFIDFClassifier {
 
     }
 
+    public String classifyBlog(Domain domain) {
+
+        if (domain == null) {
+            System.out.println("Adding new domain in the DB");
+            //Crawler.getInstance().search(verifiedURL.toString(), 6);
+            //domain = MainController.getInstance().findDomainByName(domName);
+        }
+
+        Document document = docConstructor.getDocumentToClassify(domain.getDomainName());
+        String content = document.getParsedContent();
+        String[] tokens = content.split("\\s+");
+        //System.out.println("Tokens: " + tokens.length);
+        //System.out.println("Domain: "+domain.getDomainName());
+        HashMap<Integer, Double> scores = scoreCalc.getScore(tokens);
+
+        return getMaxScore(scores);
+
+    }
+
     public void printScores(HashMap<Integer, Double> scores) {
         Iterator it = scores.keySet().iterator();
 
@@ -77,5 +96,27 @@ public class TFIDFClassifier {
 
             System.out.println(categName + " - " + val);
         }
+    }
+
+    public String getMaxScore(HashMap<Integer, Double> scores) {
+        Iterator it = scores.keySet().iterator();
+        String category = "";
+        int c = -1;
+        double max = 0;
+
+        while (it.hasNext()) {
+            int categ = (Integer) it.next();
+            double val = scores.get(categ);
+            if (val > max) {
+                max = val;
+                c = categ;
+            }
+        }
+        //System.out.println("Id: "+c);
+        if(c!=-1) {
+            category = MainController.getInstance().findCategoryById(c).getCategory();
+        }
+        return category;
+
     }
 }
