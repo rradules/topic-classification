@@ -104,7 +104,7 @@ public class ClassifierFactory {
 
     public String getTopic(String domainName) {
         getClassifier();
-        System.out.println("Classifier setup completed");
+        //  System.out.println("Classifier setup completed");
         double[] result;
         try {
             result = tc.classifyMessage(docCons.getDocumentToClassify(domainName).getParsedContent());
@@ -117,7 +117,7 @@ public class ClassifierFactory {
                     position = i;
                 }
             }
-            System.out.println("Result array: " + Arrays.toString(result));
+            // System.out.println("Result array: " + Arrays.toString(result));
             return topics[position];
         } catch (Exception ex) {
             Logger.getLogger(ClassifierFactory.class.getName()).log(Level.SEVERE, null, ex);

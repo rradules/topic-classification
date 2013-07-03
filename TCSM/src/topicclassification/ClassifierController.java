@@ -24,7 +24,7 @@ public class ClassifierController {
 //    case "SMO": Support Vector Machines using Sequential Minimal Optimization    
 //    case "MLP" MultiLayer Perceptron
     public String classifyPost(String clsf, String domainName) {
-        System.out.println("Classifier Factory created");
+      //  System.out.println("Classifier Factory created");
         classifier = new ClassifierFactory(clsf);
 
         return classifier.getTopic(domainName);
