@@ -4,12 +4,7 @@
  */
 package topicclassification;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,8 +12,14 @@ import weka.classifiers.Classifier;
 import weka.classifiers.bayes.ComplementNaiveBayes;
 import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.bayes.NaiveBayesUpdateable;
+import weka.classifiers.functions.LinearRegression;
+import weka.classifiers.functions.Logistic;
 import weka.classifiers.functions.MultilayerPerceptron;
 import weka.classifiers.functions.SMO;
+import weka.classifiers.functions.SMOreg;
+import weka.classifiers.functions.SimpleLinearRegression;
+import weka.classifiers.functions.SimpleLogistic;
+import weka.classifiers.functions.VotedPerceptron;
 import weka.classifiers.lazy.IBk;
 import weka.classifiers.trees.J48;
 import weka.classifiers.trees.LMT;
@@ -75,7 +76,7 @@ public class ClassifierFactory {
                 break;
             case "MLP":
                 mlp = new MultilayerPerceptron();
-                // mlp.setHiddenLayers("5, 5");
+                mlp.setHiddenLayers("1");
                 //  mlp.setTrainingTime(100);
                 mlp.setMomentum(0.7);
                 mlp.setLearningRate(0.2);
@@ -84,6 +85,7 @@ public class ClassifierFactory {
                 classifier = new NaiveBayes();
                 break;
         }
+        //train the text classifier
         //            for (String top : topics) {
         //                tc.addCategory(top);
         //            }
@@ -93,6 +95,7 @@ public class ClassifierFactory {
         //                tc.addData(top);
         //            }
         //            tc.buildFile();
+
         if (classS.equals("MLP")) {
             tc.setClassifier(mlp);
         } else {
@@ -111,8 +114,6 @@ public class ClassifierFactory {
         double[] result;
         try {
             result = tc.classifyMessage(docCons.getDocumentToClassify(domainName).getParsedContent());
-
-            //System.out.println("\n\nClassifier model:\n\n" + tc.getClassifier());
 
             int position = -1;
             double max = 0;

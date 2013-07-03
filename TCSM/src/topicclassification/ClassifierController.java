@@ -22,11 +22,10 @@ public class ClassifierController {
 //    case "KNN": K Nearest Neighbor
 //    case "J48": Decision tree J48
 //    case "SMO": Support Vector Machines using Sequential Minimal Optimization    
-//    case  "MLP" MultiLayer Perceptron
+//    case "MLP" MultiLayer Perceptron
     public String classifyPost(String clsf, String domainName) {
         System.out.println("Classifier Factory created");
         classifier = new ClassifierFactory(clsf);
-        //classifier.getClassifier();
 
         return classifier.getTopic(domainName);
     }
