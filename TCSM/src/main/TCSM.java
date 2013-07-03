@@ -24,8 +24,8 @@ public class TCSM {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        
-        String url = "http://lumea-bibliei.blogspot.ro/";
+
+//        String url = "http://innerspacejournal.wordpress.com/";
 //        if (!url.equals("")) {
 //            try {
 //                URL verifiedURL = new URL(url);
@@ -36,14 +36,13 @@ public class TCSM {
 //                    //Crawler.getInstance().search(verifiedURL.toString(), 6);
 //                }
 //                ClassifierController classController = new ClassifierController();
-//                System.out.println(classController.classifyPost("J48", domName));
+//                System.out.println(classController.classifyPost("NB", domName));
 //
 //            } catch (MalformedURLException ex) {
 //                Logger.getLogger(TCSM.class.getName()).log(Level.SEVERE, null, ex);
 //            }
-//
 //        }
-        TFIDFClassifier classifier = new TFIDFClassifier();
-        classifier.classifyBlog(url);
+        //      TFIDFClassifier classifier = new TFIDFClassifier();
+        //      classifier.classifyBlog(url);
     }
 }

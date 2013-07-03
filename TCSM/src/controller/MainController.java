@@ -228,6 +228,21 @@ public class MainController {
         }
     }
 
+    public ArrayList<Blogpost> getProcessesBlogpostsByCateg(int proc, String categ) {
+        List<Blogpost> posts = blogpostController.findByProcessed(proc);
+        ArrayList<Blogpost> posts_final = new ArrayList<>();
+        if (categ.equals("all")) {
+            posts_final.addAll(posts);
+        } else {
+            for (Blogpost bp : posts) {
+                if (bp.getIdDomain().getIdCategory().getCategory().equals(categ)) {
+                    posts_final.add(bp);
+                }
+            }
+        }
+        return posts_final;
+    }
+
     public ArrayList<String> getDocumentForTopic(String topic) {
         ArrayList<String> content = new ArrayList<>();
         List<Blogpost> posts;
