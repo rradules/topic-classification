@@ -20,6 +20,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Keyword;
 import weka.classifiers.Classifier;
+import weka.classifiers.functions.MultilayerPerceptron;
+import weka.classifiers.trees.J48;
 import weka.core.Attribute;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -72,7 +74,16 @@ public class TextClassifier {
     public void trainNetwork() {
         try {
             ArffLoader loader = new ArffLoader();
-            loader.setFile(new File("trainingSet2.arff"));
+            if (classifier.getClass().equals(J48.class)) {
+                loader.setFile(new File("trainingSet2.arff"));
+                System.out.println("J48 classifier");
+            } else if (classifier.getClass().equals(MultilayerPerceptron.class)) {
+                loader.setFile(new File("trainingSet4.arff"));
+                System.out.println("MLP classifier");
+            } else {
+                loader.setFile(new File("trainingSet.arff"));
+                 System.out.println("General classifier");
+            }
             trainingData = loader.getDataSet();
             // setting class attribute
             trainingData.setClassIndex(trainingData.numAttributes() - 1);
@@ -116,7 +127,7 @@ public class TextClassifier {
             filteredData = Filter.useFilter(trainingData, filter);
             // Rebuild classifier.
             classifier.buildClassifier(filteredData);
-          //  saveModel(classifier, "MLP.txt");
+            //  saveModel(classifier, "MLP.txt");
             upToDate = true;
         }
     }
@@ -134,8 +145,8 @@ public class TextClassifier {
         filter.batchFinished();
         Instance filteredInstance = filter.output();
 
-      return classifier.distributionForInstance(filteredInstance);
-       // return null;
+        return classifier.distributionForInstance(filteredInstance);
+        // return null;
 
     }
 
@@ -183,7 +194,7 @@ public class TextClassifier {
             out.flush();
             out.close();
             //FileWriter fw = new FileWriter(fileName);
-           // fw.
+            // fw.
         } catch (Exception e) {
             System.out.println("Error when writing the classifier");
         }

@@ -215,6 +215,19 @@ public class MainController {
         return blogpost.getBlogContent();
     }
 
+    public void addBlogpostProcessState(Blogpost blogpost) {
+        if (blogpost != null) {
+            blogpost.setProcessed(1);
+            try {
+                blogpostController.edit(blogpost);
+            } catch (NonexistentEntityException ex) {
+                Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (Exception ex) {
+                Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
     public ArrayList<String> getDocumentForTopic(String topic) {
         ArrayList<String> content = new ArrayList<>();
         List<Blogpost> posts;
@@ -258,7 +271,10 @@ public class MainController {
                 posts = findBlogpostByDomain(domains.get(i).getDomainName());
                 String aux = "";
                 for (Blogpost bp : posts) {
+                    //get conetnt
                     aux += bp.getBlogContent() + " ";
+                    //mark as processes
+                    addBlogpostProcessState(bp);
                 }
                 content.add(aux.trim());
             }

@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Domain;
 import topicclassification.ClassifierController;
+import topicclassification.TFIDFClassifier;
 
 /**
  *
@@ -25,25 +26,24 @@ public class TCSM {
         // TODO code application logic here
         
         String url = "http://lumea-bibliei.blogspot.ro/";
-        if (!url.equals("")) {
-            try {
-                URL verifiedURL = new URL(url);
-                String domName = verifiedURL.getHost();
-                Domain domain = MainController.getInstance().findDomainByName(domName);
-                if (domain == null) {
-                    System.out.println("Adding new domain in the DB");
-                    //Crawler.getInstance().search(verifiedURL.toString(), 6);
-                }
-                ClassifierController classController = new ClassifierController();
-                System.out.println(classController.classifyPost("J48", domName));
-
-            } catch (MalformedURLException ex) {
-                Logger.getLogger(TCSM.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-        }
-
-//        NNClassifier classifier = new NNClassifier();
-//        classifier.classifyBlog(url);
+//        if (!url.equals("")) {
+//            try {
+//                URL verifiedURL = new URL(url);
+//                String domName = verifiedURL.getHost();
+//                Domain domain = MainController.getInstance().findDomainByName(domName);
+//                if (domain == null) {
+//                    System.out.println("Adding new domain in the DB");
+//                    //Crawler.getInstance().search(verifiedURL.toString(), 6);
+//                }
+//                ClassifierController classController = new ClassifierController();
+//                System.out.println(classController.classifyPost("J48", domName));
+//
+//            } catch (MalformedURLException ex) {
+//                Logger.getLogger(TCSM.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//
+//        }
+        TFIDFClassifier classifier = new TFIDFClassifier();
+        classifier.classifyBlog(url);
     }
 }
