@@ -5,6 +5,7 @@
 package main;
 
 import controller.MainController;
+import crawler.Crawler;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Level;
@@ -25,15 +26,16 @@ public class TCSM {
     public static void main(String[] args) {
         // TODO code application logic here
 
-        String url = "http://eusimuntele.blogspot.ro/";
+        String url = "http://buhnici.ro";
         if (!url.equals("")) {
             try {
                 URL verifiedURL = new URL(url);
                 String domName = verifiedURL.getHost();
+                System.out.println(domName);
                 Domain domain = MainController.getInstance().findDomainByName(domName);
                 if (domain == null) {
                     System.out.println("Adding new domain in the DB");
-                    //Crawler.getInstance().search(verifiedURL.toString(), 6);
+                   // Crawler.getInstance().search(verifiedURL.toString(), 6);
                 }
                 ClassifierController classController = new ClassifierController();
                 System.out.println(classController.classifyPost("SMO", domName));
@@ -42,7 +44,7 @@ public class TCSM {
                 Logger.getLogger(TCSM.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        //      TFIDFClassifier classifier = new TFIDFClassifier();
-        //      classifier.classifyBlog(url);
+             // TFIDFClassifier classifier = new TFIDFClassifier();
+             // classifier.classifyBlog(url);
     }
 }

@@ -70,7 +70,7 @@ public class ClassifierFactory {
                 break;
             case "MLP":
                 mlp = new MultilayerPerceptron();
-                mlp.setHiddenLayers("1");
+                mlp.setHiddenLayers("5, 5, 5");
                 //  mlp.setTrainingTime(100);
                 mlp.setMomentum(0.7);
                 mlp.setLearningRate(0.2);
