@@ -64,6 +64,7 @@ public class TextClassifier {
 
     public void setClassifier(Classifier classifier) {
         this.classifier = classifier;
+        uploadTrainingInstances();
     }
 
     public void addCategory(String category) {
@@ -72,14 +73,14 @@ public class TextClassifier {
         classValues.add(category);
     }
 
-    public void trainNetwork() {
+    public void uploadTrainingInstances() {
         try {
             ArffLoader loader = new ArffLoader();
             if (classifier.getClass().equals(J48.class)) {
                 loader.setFile(new File("trainingSet2.arff"));
                 //System.out.println("J48 classifier");
             } else if (classifier.getClass().equals(MultilayerPerceptron.class)) {
-                loader.setFile(new File("trainingSet4.arff"));
+                loader.setFile(new File("trainingSet2.arff"));
                 // System.out.println("MLP classifier");
             } else {
                 loader.setFile(new File("trainingSet.arff"));
@@ -115,7 +116,7 @@ public class TextClassifier {
     }
 
     private void buildIfNeeded() throws Exception {
-        trainNetwork();
+
         if (!upToDate) {
             // Initialize filter and tell it about the input format.
             filter.setInputFormat(trainingData);
