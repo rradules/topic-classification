@@ -38,7 +38,7 @@ public class TFIDFClassifier {
         this.givenURL = givenURL;
     }
 
-    public void classifyBlog(String url) {
+    public String classifyBlog(String url) {
         givenURL = url;
         if (!url.equals("")) {
             try {
@@ -58,12 +58,15 @@ public class TFIDFClassifier {
                 System.out.println("Tokens: " + tokens.length);
                 HashMap<Integer, Double> scores = scoreCalc.getScore(tokens);
                 printScores(scores);
+                
+                return getMaxScore(scores);
 
             } catch (MalformedURLException ex) {
                 Logger.getLogger(TFIDFClassifier.class.getName()).log(Level.SEVERE, null, ex);
             }
 
         }
+        return null;
 
     }
 
