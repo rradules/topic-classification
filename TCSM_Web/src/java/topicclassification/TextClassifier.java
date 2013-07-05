@@ -5,6 +5,7 @@
 package topicclassification;
 
 import controller.MainController;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,6 +13,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
@@ -19,6 +21,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.ServletContext;
 import model.Keyword;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
@@ -75,18 +78,19 @@ public class TextClassifier {
 
     public void uploadTrainingInstances() {
         try {
-            ArffLoader loader = new ArffLoader();
+            BufferedReader br;
+            String filename;
+
             if (classifier.getClass().equals(J48.class)) {
-                loader.setFile(new File("trainingSet2.arff"));
-                //System.out.println("J48 classifier");
+                filename = "trainingSet2.arff";
             } else if (classifier.getClass().equals(MultilayerPerceptron.class)) {
-                loader.setFile(new File("trainingSet2.arff"));
-                // System.out.println("MLP classifier");
+                filename = "trainingSet2.arff";
             } else {
-                loader.setFile(new File("trainingSet.arff"));
-                //  System.out.println("General classifier");
+                filename = "trainingSet.arff";
             }
-            trainingData = loader.getDataSet();
+            br = new BufferedReader(new InputStreamReader(
+                    this.getClass().getClassLoader().getResourceAsStream("resources/" + filename), "UTF-8"));
+            trainingData = new Instances(br);
             // setting class attribute
             trainingData.setClassIndex(trainingData.numAttributes() - 1);
         } catch (IOException ex) {
@@ -223,7 +227,8 @@ public class TextClassifier {
 
     public Object loadModel(String fileName) {
         try {
-            ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName));
+            ObjectInputStream in = new ObjectInputStream(
+                    this.getClass().getClassLoader().getResourceAsStream("resources/" + fileName));
             Object tmp = in.readObject();
             in.close();
             return tmp;

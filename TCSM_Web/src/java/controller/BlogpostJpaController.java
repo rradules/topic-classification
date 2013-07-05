@@ -5,6 +5,7 @@
 package controller;
 
 import controller.exceptions.NonexistentEntityException;
+import controller.exceptions.RollbackFailureException;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -13,6 +14,7 @@ import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import javax.transaction.UserTransaction;
 import model.Blogpost;
 import model.Domain;
 
@@ -22,22 +24,31 @@ import model.Domain;
  */
 public class BlogpostJpaController implements Serializable {
 
-    public BlogpostJpaController(EntityManagerFactory emf) {
+    public BlogpostJpaController(UserTransaction utx, EntityManagerFactory emf) {
+        this.utx = utx;
         this.emf = emf;
     }
+    private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
 
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
 
-    public void create(Blogpost blogpost) {
+    public void create(Blogpost blogpost) throws RollbackFailureException, Exception {
         EntityManager em = null;
         try {
+            utx.begin();
             em = getEntityManager();
-            em.getTransaction().begin();
             em.persist(blogpost);
-            em.getTransaction().commit();
+            utx.commit();
+        } catch (Exception ex) {
+            try {
+                utx.rollback();
+            } catch (Exception re) {
+                throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
+            }
+            throw ex;
         } finally {
             if (em != null) {
                 em.close();
@@ -45,14 +56,19 @@ public class BlogpostJpaController implements Serializable {
         }
     }
 
-    public void edit(Blogpost blogpost) throws NonexistentEntityException, Exception {
+    public void edit(Blogpost blogpost) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
+            utx.begin();
             em = getEntityManager();
-            em.getTransaction().begin();
             blogpost = em.merge(blogpost);
-            em.getTransaction().commit();
+            utx.commit();
         } catch (Exception ex) {
+            try {
+                utx.rollback();
+            } catch (Exception re) {
+                throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
+            }
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
                 Integer id = blogpost.getIdBlogPost();
@@ -68,11 +84,11 @@ public class BlogpostJpaController implements Serializable {
         }
     }
 
-    public void destroy(Integer id) throws NonexistentEntityException {
+    public void destroy(Integer id) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
+            utx.begin();
             em = getEntityManager();
-            em.getTransaction().begin();
             Blogpost blogpost;
             try {
                 blogpost = em.getReference(Blogpost.class, id);
@@ -81,7 +97,14 @@ public class BlogpostJpaController implements Serializable {
                 throw new NonexistentEntityException("The blogpost with id " + id + " no longer exists.", enfe);
             }
             em.remove(blogpost);
-            em.getTransaction().commit();
+            utx.commit();
+        } catch (Exception ex) {
+            try {
+                utx.rollback();
+            } catch (Exception re) {
+                throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
+            }
+            throw ex;
         } finally {
             if (em != null) {
                 em.close();

@@ -58,6 +58,7 @@ public class TFIDFClassifier {
                 System.out.println("Tokens: " + tokens.length);
                 HashMap<Integer, Double> scores = scoreCalc.getScore(tokens);
                 printScores(scores);
+                MainController.getInstance().addDomainCategory(domName, getMaxScore(scores));
                 return getMaxScore(scores);
 
 

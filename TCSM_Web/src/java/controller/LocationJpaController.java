@@ -5,6 +5,7 @@
 package controller;
 
 import controller.exceptions.NonexistentEntityException;
+import controller.exceptions.RollbackFailureException;
 import java.io.Serializable;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
@@ -16,6 +17,7 @@ import java.util.Collection;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.transaction.UserTransaction;
 import model.Location;
 
 /**
@@ -24,23 +26,25 @@ import model.Location;
  */
 public class LocationJpaController implements Serializable {
 
-    public LocationJpaController(EntityManagerFactory emf) {
+    public LocationJpaController(UserTransaction utx, EntityManagerFactory emf) {
+        this.utx = utx;
         this.emf = emf;
     }
+    private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
 
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
 
-    public void create(Location location) {
+    public void create(Location location) throws RollbackFailureException, Exception {
         if (location.getDomainCollection() == null) {
             location.setDomainCollection(new ArrayList<Domain>());
         }
         EntityManager em = null;
         try {
+            utx.begin();
             em = getEntityManager();
-            em.getTransaction().begin();
             Collection<Domain> attachedDomainCollection = new ArrayList<Domain>();
             for (Domain domainCollectionDomainToAttach : location.getDomainCollection()) {
                 domainCollectionDomainToAttach = em.getReference(domainCollectionDomainToAttach.getClass(), domainCollectionDomainToAttach.getIdDomain());
@@ -57,7 +61,14 @@ public class LocationJpaController implements Serializable {
                     oldIdLocationOfDomainCollectionDomain = em.merge(oldIdLocationOfDomainCollectionDomain);
                 }
             }
-            em.getTransaction().commit();
+            utx.commit();
+        } catch (Exception ex) {
+            try {
+                utx.rollback();
+            } catch (Exception re) {
+                throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
+            }
+            throw ex;
         } finally {
             if (em != null) {
                 em.close();
@@ -65,11 +76,11 @@ public class LocationJpaController implements Serializable {
         }
     }
 
-    public void edit(Location location) throws NonexistentEntityException, Exception {
+    public void edit(Location location) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
+            utx.begin();
             em = getEntityManager();
-            em.getTransaction().begin();
             Location persistentLocation = em.find(Location.class, location.getIdLocation());
             Collection<Domain> domainCollectionOld = persistentLocation.getDomainCollection();
             Collection<Domain> domainCollectionNew = location.getDomainCollection();
@@ -98,8 +109,13 @@ public class LocationJpaController implements Serializable {
                     }
                 }
             }
-            em.getTransaction().commit();
+            utx.commit();
         } catch (Exception ex) {
+            try {
+                utx.rollback();
+            } catch (Exception re) {
+                throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
+            }
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
                 Integer id = location.getIdLocation();
@@ -115,11 +131,11 @@ public class LocationJpaController implements Serializable {
         }
     }
 
-    public void destroy(Integer id) throws NonexistentEntityException {
+    public void destroy(Integer id) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
+            utx.begin();
             em = getEntityManager();
-            em.getTransaction().begin();
             Location location;
             try {
                 location = em.getReference(Location.class, id);
@@ -133,7 +149,14 @@ public class LocationJpaController implements Serializable {
                 domainCollectionDomain = em.merge(domainCollectionDomain);
             }
             em.remove(location);
-            em.getTransaction().commit();
+            utx.commit();
+        } catch (Exception ex) {
+            try {
+                utx.rollback();
+            } catch (Exception re) {
+                throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
+            }
+            throw ex;
         } finally {
             if (em != null) {
                 em.close();

@@ -5,6 +5,7 @@
 package controller;
 
 import controller.exceptions.NonexistentEntityException;
+import controller.exceptions.RollbackFailureException;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -13,6 +14,7 @@ import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import javax.transaction.UserTransaction;
 import model.Category;
 import model.Keyword;
 
@@ -22,20 +24,22 @@ import model.Keyword;
  */
 public class KeywordJpaController implements Serializable {
 
-    public KeywordJpaController(EntityManagerFactory emf) {
+    public KeywordJpaController(UserTransaction utx, EntityManagerFactory emf) {
+        this.utx = utx;
         this.emf = emf;
     }
+    private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
 
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
 
-    public void create(Keyword keyword) {
+    public void create(Keyword keyword) throws RollbackFailureException, Exception {
         EntityManager em = null;
         try {
+            utx.begin();
             em = getEntityManager();
-            em.getTransaction().begin();
             Category idCategory = keyword.getIdCategory();
             if (idCategory != null) {
                 idCategory = em.getReference(idCategory.getClass(), idCategory.getIdCategory());
@@ -46,7 +50,14 @@ public class KeywordJpaController implements Serializable {
                 idCategory.getKeywordCollection().add(keyword);
                 idCategory = em.merge(idCategory);
             }
-            em.getTransaction().commit();
+            utx.commit();
+        } catch (Exception ex) {
+            try {
+                utx.rollback();
+            } catch (Exception re) {
+                throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
+            }
+            throw ex;
         } finally {
             if (em != null) {
                 em.close();
@@ -54,11 +65,11 @@ public class KeywordJpaController implements Serializable {
         }
     }
 
-    public void edit(Keyword keyword) throws NonexistentEntityException, Exception {
+    public void edit(Keyword keyword) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
+            utx.begin();
             em = getEntityManager();
-            em.getTransaction().begin();
             Keyword persistentKeyword = em.find(Keyword.class, keyword.getIdKeyword());
             Category idCategoryOld = persistentKeyword.getIdCategory();
             Category idCategoryNew = keyword.getIdCategory();
@@ -75,8 +86,13 @@ public class KeywordJpaController implements Serializable {
                 idCategoryNew.getKeywordCollection().add(keyword);
                 idCategoryNew = em.merge(idCategoryNew);
             }
-            em.getTransaction().commit();
+            utx.commit();
         } catch (Exception ex) {
+            try {
+                utx.rollback();
+            } catch (Exception re) {
+                throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
+            }
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
                 Integer id = keyword.getIdKeyword();
@@ -92,11 +108,11 @@ public class KeywordJpaController implements Serializable {
         }
     }
 
-    public void destroy(Integer id) throws NonexistentEntityException {
+    public void destroy(Integer id) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
+            utx.begin();
             em = getEntityManager();
-            em.getTransaction().begin();
             Keyword keyword;
             try {
                 keyword = em.getReference(Keyword.class, id);
@@ -110,7 +126,14 @@ public class KeywordJpaController implements Serializable {
                 idCategory = em.merge(idCategory);
             }
             em.remove(keyword);
-            em.getTransaction().commit();
+            utx.commit();
+        } catch (Exception ex) {
+            try {
+                utx.rollback();
+            } catch (Exception re) {
+                throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
+            }
+            throw ex;
         } finally {
             if (em != null) {
                 em.close();

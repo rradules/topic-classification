@@ -6,6 +6,7 @@ package controller;
 
 import controller.exceptions.IllegalOrphanException;
 import controller.exceptions.NonexistentEntityException;
+import controller.exceptions.RollbackFailureException;
 import java.io.Serializable;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
@@ -17,6 +18,7 @@ import java.util.Collection;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.transaction.UserTransaction;
 import model.Category;
 import model.Keyword;
 import model.TempKeyword;
@@ -28,16 +30,18 @@ import model.LearningTable;
  */
 public class CategoryJpaController implements Serializable {
 
-    public CategoryJpaController(EntityManagerFactory emf) {
+    public CategoryJpaController(UserTransaction utx, EntityManagerFactory emf) {
+        this.utx = utx;
         this.emf = emf;
     }
+    private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
 
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
 
-    public void create(Category category) {
+    public void create(Category category) throws RollbackFailureException, Exception {
         if (category.getDomainCollection() == null) {
             category.setDomainCollection(new ArrayList<Domain>());
         }
@@ -52,8 +56,8 @@ public class CategoryJpaController implements Serializable {
         }
         EntityManager em = null;
         try {
+            utx.begin();
             em = getEntityManager();
-            em.getTransaction().begin();
             Collection<Domain> attachedDomainCollection = new ArrayList<Domain>();
             for (Domain domainCollectionDomainToAttach : category.getDomainCollection()) {
                 domainCollectionDomainToAttach = em.getReference(domainCollectionDomainToAttach.getClass(), domainCollectionDomainToAttach.getIdDomain());
@@ -115,7 +119,14 @@ public class CategoryJpaController implements Serializable {
                     oldIdCategoryOfLearningTableCollectionLearningTable = em.merge(oldIdCategoryOfLearningTableCollectionLearningTable);
                 }
             }
-            em.getTransaction().commit();
+            utx.commit();
+        } catch (Exception ex) {
+            try {
+                utx.rollback();
+            } catch (Exception re) {
+                throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
+            }
+            throw ex;
         } finally {
             if (em != null) {
                 em.close();
@@ -123,11 +134,11 @@ public class CategoryJpaController implements Serializable {
         }
     }
 
-    public void edit(Category category) throws IllegalOrphanException, NonexistentEntityException, Exception {
+    public void edit(Category category) throws IllegalOrphanException, NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
+            utx.begin();
             em = getEntityManager();
-            em.getTransaction().begin();
             Category persistentCategory = em.find(Category.class, category.getIdCategory());
             Collection<Domain> domainCollectionOld = persistentCategory.getDomainCollection();
             Collection<Domain> domainCollectionNew = category.getDomainCollection();
@@ -242,8 +253,13 @@ public class CategoryJpaController implements Serializable {
                     }
                 }
             }
-            em.getTransaction().commit();
+            utx.commit();
         } catch (Exception ex) {
+            try {
+                utx.rollback();
+            } catch (Exception re) {
+                throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
+            }
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
                 Integer id = category.getIdCategory();
@@ -259,11 +275,11 @@ public class CategoryJpaController implements Serializable {
         }
     }
 
-    public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException {
+    public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
+            utx.begin();
             em = getEntityManager();
-            em.getTransaction().begin();
             Category category;
             try {
                 category = em.getReference(Category.class, id);
@@ -300,7 +316,14 @@ public class CategoryJpaController implements Serializable {
                 keywordCollectionKeyword = em.merge(keywordCollectionKeyword);
             }
             em.remove(category);
-            em.getTransaction().commit();
+            utx.commit();
+        } catch (Exception ex) {
+            try {
+                utx.rollback();
+            } catch (Exception re) {
+                throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
+            }
+            throw ex;
         } finally {
             if (em != null) {
                 em.close();
@@ -353,8 +376,7 @@ public class CategoryJpaController implements Serializable {
             em.close();
         }
     }
-
-    public Category findByCategory(String name) {
+        public Category findByCategory(String name) {
         EntityManager em = getEntityManager();
         Query q = em.createNamedQuery("Category.findByCategory");
         q.setParameter("category", name);
@@ -365,4 +387,5 @@ public class CategoryJpaController implements Serializable {
             return null;
         }
     }
+    
 }

@@ -6,14 +6,19 @@ package controller;
 
 import controller.exceptions.NonexistentEntityException;
 import controller.exceptions.PreexistingEntityException;
+import controller.exceptions.RollbackFailureException;
 import functions.ComputeCRC;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import javax.transaction.UserTransaction;
 import model.Blogpost;
 import model.Blogroll;
 import model.Category;
@@ -30,34 +35,40 @@ import model.TempKeyword;
  */
 public class MainController {
 
+    private Context ctx;
+    private EntityManager em;
+    private UserTransaction utx;
+    private EntityManagerFactory emf;
     private static MainController singleton = null;
     private LocationJpaController locationController;
     private DomainJpaController domainController;
     private BlogrollJpaController blogrollController;
     private BlogpostJpaController blogpostController;
-    private EntityManagerFactory emf;
     private StopwordJpaController stopwordController;
     private CategoryJpaController categoryController;
     private KeywordJpaController keywordController;
-    private TempKeywordJpaController tempController;
-    private LearningTableJpaController learningController;
     private ComputeCRC computeCRC;
 
 // private constructer    
     private MainController() {
+        try {
+            ctx = new InitialContext();
+            utx = (UserTransaction) ctx.lookup("java:comp/env/UserTransaction");
+            em = (EntityManager) ctx.lookup("java:comp/env/persistence/LogicalName");
+            emf = em.getEntityManagerFactory();
 
-        emf = Persistence.createEntityManagerFactory("TCSM_WebPU");
-        locationController = new LocationJpaController(emf);
-        domainController = new DomainJpaController(emf);
-        blogrollController = new BlogrollJpaController(emf);
-        blogpostController = new BlogpostJpaController(emf);
-        stopwordController = new StopwordJpaController(emf);
-        categoryController = new CategoryJpaController(emf);
-        keywordController = new KeywordJpaController(emf);
-        tempController = new TempKeywordJpaController(emf);
-        learningController = new LearningTableJpaController(emf);
+            locationController = new LocationJpaController(utx, emf);
+            domainController = new DomainJpaController(utx, emf);
+            blogrollController = new BlogrollJpaController(utx, emf);
+            blogpostController = new BlogpostJpaController(utx, emf);
+            stopwordController = new StopwordJpaController(utx, emf);
+            categoryController = new CategoryJpaController(utx, emf);
+            keywordController = new KeywordJpaController(utx, emf);
 
-        computeCRC = new ComputeCRC();
+            computeCRC = new ComputeCRC();
+        } catch (NamingException ex) {
+            Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 //singleton pattern
 
@@ -305,6 +316,7 @@ public class MainController {
         ArrayList<String> content = new ArrayList<>();
         List<Blogpost> posts;
         Domain domain = findDomainByName(domName);
+        System.out.println(domName);
         posts = findBlogpostByDomain(domain.getDomainName());
         String aux = "";
         for (Blogpost bp : posts) {
@@ -370,7 +382,13 @@ public class MainController {
         keyword.setWeight(weight);
         keyword.setFrequency(frequency);
         keyword.setIdCategory(cat);
-        keywordController.create(keyword);
+        try {
+            keywordController.create(keyword);
+        } catch (RollbackFailureException ex) {
+            Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void addKeyword(TempKeyword tk) {
@@ -380,7 +398,13 @@ public class MainController {
         keyword.setWeight(tk.getWeight());
         keyword.setFrequency(1);
         keyword.setIdCategory(cat);
-        keywordController.create(keyword);
+        try {
+            keywordController.create(keyword);
+        } catch (RollbackFailureException ex) {
+            Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void updateKeyword(Keyword k, TempKeyword tk) {
@@ -429,110 +453,6 @@ public class MainController {
 
     }
 
-    public void transferWords() {
-        List<Keyword> allKeywords = keywordController.findKeywordEntities();
-        for (Keyword k : allKeywords) {
-            addLearningTable(k.getKeyword(), k.getWeight(), k.getIdCategory().getCategory());
-        }
-    }
-
-//------------------------------------------------------------------------
-//-------------Learning_Table related methods------------------------------
-    public void addLearningTable(String word, double weight, String category) {
-        Category cat = findCategoryByName(category);
-        LearningTable keyword = new LearningTable();
-        keyword.setKeyword(word);
-        keyword.setWeight(weight);
-        keyword.setIdCategory(cat);
-        learningController.create(keyword);
-    }
-
-    public void addLearningTable(TempKeyword tk) {
-        Category cat = tk.getIdCategory();
-        LearningTable keyword = new LearningTable();
-        keyword.setKeyword(tk.getKeyword());
-        keyword.setWeight(tk.getWeight());
-        keyword.setIdCategory(cat);
-        learningController.create(keyword);
-    }
-
-    public void updateLearningTable(LearningTable k, TempKeyword tk) {
-        double delta = Math.abs(k.getWeight() - tk.getWeight()) / 2;
-        double w1;
-        if (k.getWeight() > tk.getWeight()) {
-            w1 = k.getWeight() + delta;
-        } else {
-            w1 = Math.abs(k.getWeight() - delta);
-        }
-        updateLearningTableWeight(k, w1);
-    }
-
-    public List<LearningTable> findLearningTableByKeyword(String key) {
-        return learningController.findByKeyword(key);
-    }
-
-    public List<LearningTable> findLearningTableByCategory(String categ) {
-        Category category = findCategoryByName(categ);
-        return learningController.findByCategory(category);
-
-    }
-
-    public ArrayList<String> getLearnigTableByCategory(String categ) {
-        ArrayList<String> keywords = new ArrayList<>();
-        Category category = findCategoryByName(categ);
-        List<LearningTable> keyList = learningController.findByCategory(category);
-        for (LearningTable k : keyList) {
-            keywords.add(k.getKeyword());
-        }
-        return keywords;
-    }
-
-    public void updateLearningTableWeight(LearningTable k, double w) {
-        double w_k = k.getWeight();
-        if (w_k < w) {
-            k.setWeight(w);
-            try {
-                learningController.edit(k);
-            } catch (NonexistentEntityException ex) {
-                Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (Exception ex) {
-                Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }
-
-//-------------------------------------------------------------------------
-//-------------Temp_Keyword related methods-------------------------------
-    public void addTempKeyword(String word, double weight, String category) {
-        Category cat = findCategoryByName(category);
-
-        TempKeyword keyword = new TempKeyword();
-        keyword.setKeyword(word);
-        keyword.setWeight(weight);
-        keyword.setIdCategory(cat);
-
-        tempController.create(keyword);
-
-    }
-
-    public void emptyTempTable() {
-        tempController.emptyTable();
-    }
-
-    public List<TempKeyword> findTempKeywordbyKeyword(String word) {
-        return tempController.findByKeyword(word);
-    }
-
-    public List<TempKeyword> findTempKeywordbyCategory(String categ) {
-        Category category = findCategoryByName(categ);
-        return tempController.findByCategory(category);
-    }
-
-    public List<TempKeyword> getXOrderedTempKeywordb(int size) {
-        return tempController.getXOrderedKeywords(size);
-    }
 //------------------------------------------------------------------------
 
-        
-     
 }

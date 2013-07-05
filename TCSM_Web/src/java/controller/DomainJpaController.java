@@ -5,8 +5,8 @@
 package controller;
 
 import controller.exceptions.NonexistentEntityException;
+import controller.exceptions.RollbackFailureException;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -14,6 +14,7 @@ import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import javax.transaction.UserTransaction;
 import model.Location;
 import model.Category;
 import model.Domain;
@@ -24,20 +25,22 @@ import model.Domain;
  */
 public class DomainJpaController implements Serializable {
 
-    public DomainJpaController(EntityManagerFactory emf) {
+    public DomainJpaController(UserTransaction utx, EntityManagerFactory emf) {
+        this.utx = utx;
         this.emf = emf;
     }
+    private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
 
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
 
-    public void create(Domain domain) {
+    public void create(Domain domain) throws RollbackFailureException, Exception {
         EntityManager em = null;
         try {
+            utx.begin();
             em = getEntityManager();
-            em.getTransaction().begin();
             Location idLocation = domain.getIdLocation();
             if (idLocation != null) {
                 idLocation = em.getReference(idLocation.getClass(), idLocation.getIdLocation());
@@ -57,7 +60,14 @@ public class DomainJpaController implements Serializable {
                 idCategory.getDomainCollection().add(domain);
                 idCategory = em.merge(idCategory);
             }
-            em.getTransaction().commit();
+            utx.commit();
+        } catch (Exception ex) {
+            try {
+                utx.rollback();
+            } catch (Exception re) {
+                throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
+            }
+            throw ex;
         } finally {
             if (em != null) {
                 em.close();
@@ -65,11 +75,11 @@ public class DomainJpaController implements Serializable {
         }
     }
 
-    public void edit(Domain domain) throws NonexistentEntityException, Exception {
+    public void edit(Domain domain) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
+            utx.begin();
             em = getEntityManager();
-            em.getTransaction().begin();
             Domain persistentDomain = em.find(Domain.class, domain.getIdDomain());
             Location idLocationOld = persistentDomain.getIdLocation();
             Location idLocationNew = domain.getIdLocation();
@@ -100,8 +110,13 @@ public class DomainJpaController implements Serializable {
                 idCategoryNew.getDomainCollection().add(domain);
                 idCategoryNew = em.merge(idCategoryNew);
             }
-            em.getTransaction().commit();
+            utx.commit();
         } catch (Exception ex) {
+            try {
+                utx.rollback();
+            } catch (Exception re) {
+                throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
+            }
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
                 Integer id = domain.getIdDomain();
@@ -117,11 +132,11 @@ public class DomainJpaController implements Serializable {
         }
     }
 
-    public void destroy(Integer id) throws NonexistentEntityException {
+    public void destroy(Integer id) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
+            utx.begin();
             em = getEntityManager();
-            em.getTransaction().begin();
             Domain domain;
             try {
                 domain = em.getReference(Domain.class, id);
@@ -140,7 +155,14 @@ public class DomainJpaController implements Serializable {
                 idCategory = em.merge(idCategory);
             }
             em.remove(domain);
-            em.getTransaction().commit();
+            utx.commit();
+        } catch (Exception ex) {
+            try {
+                utx.rollback();
+            } catch (Exception re) {
+                throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
+            }
+            throw ex;
         } finally {
             if (em != null) {
                 em.close();
@@ -193,8 +215,7 @@ public class DomainJpaController implements Serializable {
             em.close();
         }
     }
-
-    public Domain findByDomainName(String name) {
+        public Domain findByDomainName(String name) {
         EntityManager em = getEntityManager();
         Query q = em.createNamedQuery("Domain.findByDomainName");
         q.setParameter("domainName", name);
@@ -217,4 +238,5 @@ public class DomainJpaController implements Serializable {
             return null;
         }
     }
+    
 }

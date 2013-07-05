@@ -6,6 +6,7 @@ package controller;
 
 import controller.exceptions.NonexistentEntityException;
 import controller.exceptions.PreexistingEntityException;
+import controller.exceptions.RollbackFailureException;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -14,6 +15,7 @@ import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import javax.transaction.UserTransaction;
 import model.Stopword;
 
 /**
@@ -22,23 +24,30 @@ import model.Stopword;
  */
 public class StopwordJpaController implements Serializable {
 
-    public StopwordJpaController(EntityManagerFactory emf) {
+    public StopwordJpaController(UserTransaction utx, EntityManagerFactory emf) {
+        this.utx = utx;
         this.emf = emf;
     }
+    private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
 
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
 
-    public void create(Stopword stopword) throws PreexistingEntityException, Exception {
+    public void create(Stopword stopword) throws PreexistingEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
+            utx.begin();
             em = getEntityManager();
-            em.getTransaction().begin();
             em.persist(stopword);
-            em.getTransaction().commit();
+            utx.commit();
         } catch (Exception ex) {
+            try {
+                utx.rollback();
+            } catch (Exception re) {
+                throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
+            }
             if (findStopword(stopword.getIdStopWord()) != null) {
                 throw new PreexistingEntityException("Stopword " + stopword + " already exists.", ex);
             }
@@ -50,14 +59,19 @@ public class StopwordJpaController implements Serializable {
         }
     }
 
-    public void edit(Stopword stopword) throws NonexistentEntityException, Exception {
+    public void edit(Stopword stopword) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
+            utx.begin();
             em = getEntityManager();
-            em.getTransaction().begin();
             stopword = em.merge(stopword);
-            em.getTransaction().commit();
+            utx.commit();
         } catch (Exception ex) {
+            try {
+                utx.rollback();
+            } catch (Exception re) {
+                throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
+            }
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
                 Integer id = stopword.getIdStopWord();
@@ -73,11 +87,11 @@ public class StopwordJpaController implements Serializable {
         }
     }
 
-    public void destroy(Integer id) throws NonexistentEntityException {
+    public void destroy(Integer id) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
+            utx.begin();
             em = getEntityManager();
-            em.getTransaction().begin();
             Stopword stopword;
             try {
                 stopword = em.getReference(Stopword.class, id);
@@ -86,7 +100,14 @@ public class StopwordJpaController implements Serializable {
                 throw new NonexistentEntityException("The stopword with id " + id + " no longer exists.", enfe);
             }
             em.remove(stopword);
-            em.getTransaction().commit();
+            utx.commit();
+        } catch (Exception ex) {
+            try {
+                utx.rollback();
+            } catch (Exception re) {
+                throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
+            }
+            throw ex;
         } finally {
             if (em != null) {
                 em.close();

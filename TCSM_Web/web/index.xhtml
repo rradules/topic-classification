@@ -3,31 +3,65 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
-
       xmlns:c="http://java.sun.com/jsp/jstl/core"
       xmlns:p="http://primefaces.org/ui">
 
     <h:head>
         <title>TCSM - FILS</title>
     </h:head>
-    <h:body>
-        Topic Classification in Social Media
+    <h:body style="padding-top: 30px; background-color: gainsboro" >
+        <p:clock/>
+        <div align="center">
+            <h1> Topic Classification in Social Media </h1>
+            <h2> A study on the Romanian Blogosphere</h2>
+        </div>
+
+        <p:spacer height="100"/>
+
+        <br/>
+
+        <h:form>
+            <table align="center">
+                <tr align="center">
+                    <td>URL:</td>
+                    <td>
+                        <p:inputText value="#{classifierBean.URL}" id="url" label="url"
+                                     required="true"
+                                     requiredMessage="An URL is required."
+                                     size="42"
+                                     />
+                        <p:watermark for="url" value="Enter URL" />
+                        <p:message for="url" />
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td>Classifier:</td>
+                    <td>
+                        <p:selectOneMenu value="#{classifierBean.chosenClsf}">
+                            <f:selectItems value="#{classifierBean.clsf}" /> 
+                        </p:selectOneMenu>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <p:commandButton value="Classify Post" actionListener="#{classifierBean.classifyBlog()}" 
+                                         id="sendRequest" update="res" ajax="false"/>
+                    </td>
+                </tr>
+            </table>
+            <hr/>   
+            <div align="center">
+                <h:outputText id="res" value="#{classifierBean.result}"/>
+            </div>
+
+
+        </h:form>
+
+
+
+
+
     </h:body>
-    <h:form>
-        <h:inputText value="#{classifierBean.URL}" 
-                     required="true"
-                     requiredMessage="An URL is required."
-                     size="50"
-                     />
-        <br></br>
-        <h:selectOneMenu value="#{classifierBean.chosenClsf}">
-            <c:forEach items="#{classifierBean.clsf}" var="classifier">
-                <f:selectItems value="#{classifierBean.clsf}" 
-                               itemValue="#{clsf}" itemLabel="#{clsf}"/> 
-            </c:forEach>
-        </h:selectOneMenu>
-         <br></br>
-        <p:commandButton value="Classify Post" actionListener="#{classifierBean.classifyBlog()}"/>
-    </h:form>
 </html>
 

@@ -6,6 +6,7 @@ package controller;
 
 import controller.exceptions.NonexistentEntityException;
 import controller.exceptions.PreexistingEntityException;
+import controller.exceptions.RollbackFailureException;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -14,6 +15,7 @@ import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import javax.transaction.UserTransaction;
 import model.Blogroll;
 import model.Domain;
 
@@ -23,23 +25,30 @@ import model.Domain;
  */
 public class BlogrollJpaController implements Serializable {
 
-    public BlogrollJpaController(EntityManagerFactory emf) {
+    public BlogrollJpaController(UserTransaction utx, EntityManagerFactory emf) {
+        this.utx = utx;
         this.emf = emf;
     }
+    private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
 
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
 
-    public void create(Blogroll blogroll) throws PreexistingEntityException, Exception {
+    public void create(Blogroll blogroll) throws PreexistingEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
+            utx.begin();
             em = getEntityManager();
-            em.getTransaction().begin();
             em.persist(blogroll);
-            em.getTransaction().commit();
+            utx.commit();
         } catch (Exception ex) {
+            try {
+                utx.rollback();
+            } catch (Exception re) {
+                throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
+            }
             if (findBlogroll(blogroll.getIdBlogRoll()) != null) {
                 throw new PreexistingEntityException("Blogroll " + blogroll + " already exists.", ex);
             }
@@ -51,14 +60,19 @@ public class BlogrollJpaController implements Serializable {
         }
     }
 
-    public void edit(Blogroll blogroll) throws NonexistentEntityException, Exception {
+    public void edit(Blogroll blogroll) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
+            utx.begin();
             em = getEntityManager();
-            em.getTransaction().begin();
             blogroll = em.merge(blogroll);
-            em.getTransaction().commit();
+            utx.commit();
         } catch (Exception ex) {
+            try {
+                utx.rollback();
+            } catch (Exception re) {
+                throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
+            }
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
                 Integer id = blogroll.getIdBlogRoll();
@@ -74,11 +88,11 @@ public class BlogrollJpaController implements Serializable {
         }
     }
 
-    public void destroy(Integer id) throws NonexistentEntityException {
+    public void destroy(Integer id) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
+            utx.begin();
             em = getEntityManager();
-            em.getTransaction().begin();
             Blogroll blogroll;
             try {
                 blogroll = em.getReference(Blogroll.class, id);
@@ -87,7 +101,14 @@ public class BlogrollJpaController implements Serializable {
                 throw new NonexistentEntityException("The blogroll with id " + id + " no longer exists.", enfe);
             }
             em.remove(blogroll);
-            em.getTransaction().commit();
+            utx.commit();
+        } catch (Exception ex) {
+            try {
+                utx.rollback();
+            } catch (Exception re) {
+                throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
+            }
+            throw ex;
         } finally {
             if (em != null) {
                 em.close();

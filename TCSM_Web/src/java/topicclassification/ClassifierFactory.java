@@ -4,6 +4,7 @@
  */
 package topicclassification;
 
+import controller.MainController;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.logging.Level;
@@ -118,6 +119,8 @@ public class ClassifierFactory {
                 }
             }
             // System.out.println("Result array: " + Arrays.toString(result));
+            MainController.getInstance().addDomainCategory(domainName, topics[position]);
+
             return topics[position];
         } catch (Exception ex) {
             Logger.getLogger(ClassifierFactory.class.getName()).log(Level.SEVERE, null, ex);
