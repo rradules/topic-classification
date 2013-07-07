@@ -4,6 +4,7 @@
  */
 package topicclassification;
 
+import functions.DrawPieChart;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.logging.Level;
@@ -27,6 +28,7 @@ public class ClassifierFactory {
     private TextClassifier tc;
     private String classS;
     private DocumentConstructor docCons;
+    private DrawPieChart drawChart;
     private final String[] topics = {"Activism", "Business and finance", "Art", "Travel",
         "Gastronomy", "Literature", "Fashion", "Personal journal", "Politics", "Religion and spirituality"};
 
@@ -108,6 +110,8 @@ public class ClassifierFactory {
         double[] result;
         try {
             result = tc.classifyMessage(docCons.getDocumentToClassify(domainName).getParsedContent());
+            drawChart = new DrawPieChart(result);
+            drawChart.createChartWeka();
 
             int position = -1;
             double max = 0;
