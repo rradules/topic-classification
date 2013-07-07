@@ -5,6 +5,7 @@
 package topicclassification;
 
 import controller.MainController;
+import functions.DrawPieChart;
 import functions.ScoreCalculator;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -24,6 +25,7 @@ public class TFIDFClassifier {
     private URL verifiedURL;
     private DocumentConstructor docConstructor;
     private ScoreCalculator scoreCalc;
+    private DrawPieChart drawChart;
 
     public TFIDFClassifier() {
         docConstructor = new DocumentConstructor();
@@ -57,6 +59,8 @@ public class TFIDFClassifier {
                 String[] tokens = content.split("\\s+");
                 System.out.println("Tokens: " + tokens.length);
                 HashMap<Integer, Double> scores = scoreCalc.getScore(tokens);
+                drawChart = new DrawPieChart(scores);
+                drawChart.createChartTFIDF();
                 printScores(scores);
                 
                 return getMaxScore(scores);
@@ -84,6 +88,7 @@ public class TFIDFClassifier {
         //System.out.println("Tokens: " + tokens.length);
         //System.out.println("Domain: "+domain.getDomainName());
         HashMap<Integer, Double> scores = scoreCalc.getScore(tokens);
+        
 
         return getMaxScore(scores);
 
