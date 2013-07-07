@@ -16,6 +16,8 @@ import model.Category;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
+import org.jfree.chart.plot.PiePlot;
 import org.jfree.data.general.DefaultPieDataset;
 
 /**
@@ -37,21 +39,26 @@ public class DrawPieChart {
         this.scores = scores;
     }
 
-    private String createChartWeka() {
-        String file = "piechart.png";
+    public DrawPieChart() {
+    }
 
+    public String createChartWeka() {
+        String file = "piechart.png";
         DefaultPieDataset dataset = new DefaultPieDataset();
         for (int i = 0; i < result.length; i++) {
-            if (result[i] != 0) {
+            if (result[i] != 0.0) {
                 dataset.setValue(topics[i], result[i]);
             }
         }
-        JFreeChart chart = ChartFactory.createPieChart3D(
+        JFreeChart chart = ChartFactory.createPieChart(
                 "Categories scoring", // chart title
                 dataset, // data
                 true, // include legend
                 true,
                 false);
+        PiePlot plot = (PiePlot) chart.getPlot();
+        plot.setLabelGenerator(
+                new StandardPieSectionLabelGenerator("{0}: {2}"));
         try {
             ChartUtilities.saveChartAsPNG(new File(file), chart, 800, 600);
         } catch (IOException ex) {
@@ -61,7 +68,7 @@ public class DrawPieChart {
         return file;
     }
 
-    private String createChartTFIDF() {
+    public String createChartTFIDF() {
         String file = "piechart.png";
 
         DefaultPieDataset dataset = new DefaultPieDataset();
@@ -76,12 +83,15 @@ public class DrawPieChart {
                 dataset.setValue(category, val);
             }
         }
-        JFreeChart chart = ChartFactory.createPieChart3D(
+        JFreeChart chart = ChartFactory.createPieChart(
                 "Categories scoring", // chart title
                 dataset, // data
                 true, // include legend
                 true,
                 false);
+        PiePlot plot = (PiePlot) chart.getPlot();
+        plot.setLabelGenerator(
+                new StandardPieSectionLabelGenerator("{0}: {2}"));
         try {
             ChartUtilities.saveChartAsPNG(new File(file), chart, 800, 600);
         } catch (IOException ex) {
@@ -90,7 +100,7 @@ public class DrawPieChart {
         return file;
     }
 
-    private String createGeneralChart() {
+    public String createGeneralChart() {
         String file = "generalchart.png";
 
         DefaultPieDataset dataset = new DefaultPieDataset();
@@ -103,12 +113,15 @@ public class DrawPieChart {
         }
 
 
-        JFreeChart chart = ChartFactory.createPieChart3D(
+        JFreeChart chart = ChartFactory.createPieChart(
                 "Domain distribution over categories", // chart title
                 dataset, // data
                 true, // include legend
                 true,
                 false);
+        PiePlot plot = (PiePlot) chart.getPlot();
+        plot.setLabelGenerator(
+                new StandardPieSectionLabelGenerator("{0}: {2}"));
         try {
             ChartUtilities.saveChartAsPNG(new File(file), chart, 800, 600);
         } catch (IOException ex) {
