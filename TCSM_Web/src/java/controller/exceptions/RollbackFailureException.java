@@ -1,7 +1,5 @@
 package controller.exceptions;
 
-import beans.exceptions.*;
-
 public class RollbackFailureException extends Exception {
     public RollbackFailureException(String message, Throwable cause) {
         super(message, cause);

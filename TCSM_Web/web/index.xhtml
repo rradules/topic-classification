@@ -16,50 +16,56 @@
             <h2> A study on the Romanian Blogosphere</h2>
         </div>
 
-        <p:spacer height="100"/>
-
         <br/>
+        <div align="center">
+            <h:graphicImage value="images/#{classifierBean.drawChart()}"
+                            style="height: 400px; width:550px;"
+                            title="Scoring results"/> 
+        </div>
 
-        <h:form>
-            <table align="center">
-                <tr align="center">
-                    <td>URL:</td>
-                    <td>
-                        <p:inputText value="#{classifierBean.URL}" id="url" label="url"
-                                     required="true"
-                                     requiredMessage="An URL is required."
-                                     size="42"
-                                     />
-                        <p:watermark for="url" value="Enter URL" />
-                        <p:message for="url" />
-                    </td>
-                </tr>
-                <tr align="center">
-                    <td>Classifier:</td>
-                    <td>
-                        <p:selectOneMenu value="#{classifierBean.chosenClsf}">
-                            <f:selectItems value="#{classifierBean.clsf}" /> 
-                        </p:selectOneMenu>
-                    </td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td>
-                        <p:commandButton value="Classify Post" actionListener="#{classifierBean.classifyBlog()}" 
-                                         id="sendRequest" update="res" ajax="false"/>
-                    </td>
-                </tr>
-            </table>
-            <hr/>   
-            <div align="center">
-                <h:outputText id="res" value="#{classifierBean.result}"/>
-            </div>
+        <p:spacer height="50"/>
+        <div id="left" >
+            <h:form>
+                <table align="center">
+                    <tr align="center">
+                        <td>URL:</td>
+                        <td>
+                            <p:inputText value="#{classifierBean.URL}" id="url" label="url"
+                                         required="true"
+                                         requiredMessage="An URL is required."
+                                         size="42"
+                                         />
+                            <p:watermark for="url" value="Enter URL" />
+                            <p:message for="url" />
+                        </td>
+                    </tr>
+                    <tr align="center">
+                        <td>Classifier:</td>
+                        <td>
+                            <p:selectOneMenu value="#{classifierBean.chosenClsf}">
+                                <f:selectItems value="#{classifierBean.clsf}" /> 
+                            </p:selectOneMenu>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <p:commandButton value="Classify Post" actionListener="#{classifierBean.classifyBlog()}" 
+                                             id="sendRequest" update="res" ajax="false"/>
+                        </td>
+                    </tr>
+                </table>
+                <hr/>   
+                <div align="center">
+                    <h:outputText id="res" value="#{classifierBean.result}" style="font-weight:bold; font-size: 40px"/>
+                    <div align="center">
+                        <h:graphicImage value="#{classifierBean.image}"
+                                        style="height: 400px; width:550px;" /> 
+                    </div>
+                </div>
+            </h:form>
 
-
-        </h:form>
-
-
-
+        </div>
 
 
     </h:body>

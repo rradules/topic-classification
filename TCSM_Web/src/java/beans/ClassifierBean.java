@@ -4,6 +4,7 @@
  */
 package beans;
 
+import functions.DrawPieChart;
 import java.util.ArrayList;
 import java.util.List;
 import javax.faces.model.SelectItem;
@@ -17,7 +18,7 @@ import topicclassification.TFIDFClassifier;
 public class ClassifierBean implements java.io.Serializable {
 
     private String URL;
-    private String image = "pieChart.jpg";
+    private String image;
     private String result;
     private List<String> classifiers = new ArrayList<>();
     private String[] clsf = {"Naive Bayes", "Naive Bayes Updatable",
@@ -26,6 +27,7 @@ public class ClassifierBean implements java.io.Serializable {
     private String chosenClsf;
     private TFIDFClassifier myClassifier = new TFIDFClassifier();
     private ClassifierController clsfController = new ClassifierController();
+    private DrawPieChart chart;
 
     public ClassifierBean() {
     }
@@ -111,6 +113,8 @@ public class ClassifierBean implements java.io.Serializable {
         if (!chosenClsf.equals("TF-IDF")) {
             result = clsfController.classifyPost(c, URL);
         }
+        image = "images/piechart.png";
+        
     }
 
     public List<SelectItem> toSelectItems() {
@@ -129,5 +133,10 @@ public class ClassifierBean implements java.io.Serializable {
                     + url.substring(index + 7);
         }
         return (url);
+    }
+
+    public String drawChart() {
+        chart = new DrawPieChart();
+        return chart.createGeneralChart();
     }
 }

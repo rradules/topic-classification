@@ -1,6 +1,5 @@
 package controller.exceptions;
 
-import beans.exceptions.*;
 import java.util.ArrayList;
 import java.util.List;
 
