@@ -1,0 +1,194 @@
+@relation TextClassificationProblem
+
+@attribute text string
+@attribute topic {activism,'business and finance',art,travel,gastronomy,literature,fashion,'personal journal',politics,'religion and spirituality'}
+
+@data
+{},{23.460452}
+{0 transplant},{19.987344}
+{0 prezerv},{17.814552}
+{0 maduv},{17.206457}
+{0 procedur},{16.327807}
+{0 intepatur},{16.128613}
+{0 pacient},{15.590095}
+{0 donat},{15.245235}
+{0 axiopolis},{15.010522}
+{0 registru},{14.75351}
+{0 ombil},{14.75351}
+{0 donar},{14.53826}
+{0 compat},{14.1975}
+{0 comunal},{14.196199}
+{0 consimtam},{13.569052}
+{0 cernavodǎ},{13.569052}
+{0 administreaz},{13.223354}
+{0 adult},{13.035661}
+{0 prelev},{12.852026}
+{0 testar},{12.852026}
+{0 smiron},{12.852026}
+{0 ﻿krem,1 'business and finance'},{18.356771}
+{0 savarin,1 'business and finance'},{16.514237}
+{0 pavlov,1 'business and finance'},{16.128613}
+{0 diplom,1 'business and finance'},{14.713901}
+{0 fursecur,1 'business and finance'},{14.62185}
+{0 premiu,1 'business and finance'},{14.527579}
+{0 tort,1 'business and finance'},{14.22046}
+{0 albusur,1 'business and finance'},{14.066793}
+{0 frisc,1 'business and finance'},{14.053044}
+{0 prajitur,1 'business and finance'},{13.981638}
+{0 clafoutis,1 'business and finance'},{13.897458}
+{0 capsun,1 'business and finance'},{13.813444}
+{0 pricomigdal,1 'business and finance'},{13.569052}
+{0 vintag,1 'business and finance'},{13.532702}
+{0 varz,1 'business and finance'},{13.305562}
+{0 cornulet,1 'business and finance'},{13.305562}
+{0 ecler,1 'business and finance'},{13.223354}
+{0 placint,1 'business and finance'},{13.166719}
+{0 mamai,1 'business and finance'},{13.144689}
+{0 pufoas,1 'business and finance'},{13.135025}
+{0 ﻿doicescu,1 art},{15.710818}
+{0 garden,1 art},{14.196199}
+{0 comisar,1 art},{12.852026}
+{0 portraits,1 art},{11.074138}
+{0 sindril,1 art},{11.009491}
+{0 proofreading,1 art},{11.009491}
+{0 released,1 art},{11.009491}
+{0 bistro,1 art},{11.009491}
+{0 carmel,1 art},{11.009491}
+{0 marasest,1 art},{11.009491}
+{0 literary,1 art},{11.009491}
+{0 haworth,1 art},{11.009491}
+{0 guestbook,1 art},{11.009491}
+{0 district,1 art},{11.009491}
+{0 tonitz,1 art},{11.009491}
+{0 balotest,1 art},{11.009491}
+{0 schiulest,1 art},{11.009491}
+{0 paredes,1 art},{11.009491}
+{0 pigeon,1 art},{11.009491}
+{0 maaik,1 art},{11.009491}
+{0 photographer,1 art},{9.486491}
+{0 capodop,1 art},{9.486491}
+{0 architect,1 art},{9.261822}
+{0 petedeculoar,1 art},{8.977853}
+{0 ﻿rulot,1 travel},{21.28766}
+{0 skiur,1 travel},{18.728099}
+{0 duba,1 travel},{18.226618}
+{0 poienar,1 travel},{16.696462}
+{0 mosche,1 travel},{16.325134}
+{0 vidraru,1 travel},{14.75351}
+{0 ţepeş,1 travel},{14.75351}
+{0 camping,1 travel},{14.684629}
+{0 pasarel,1 travel},{14.386753}
+{0 altitudin,1 travel},{13.433837}
+{0 golf,1 travel},{13.345539}
+{0 transav,1 travel},{13.223354}
+{0 rulotist,1 travel},{12.852026}
+{0 kajal,1 travel},{12.852026}
+{0 tabar,1 travel},{12.733398}
+{0 varf,1 travel},{12.567034}
+{0 ﻿brinz,1 gastronomy},{21.335482}
+{0 somon,1 gastronomy},{19.469097}
+{0 gorgonzol,1 gastronomy},{18.092993}
+{0 ciuperc,1 gastronomy},{17.823991}
+{0 gratin,1 gastronomy},{17.379754}
+{0 lingurit,1 gastronomy},{17.206457}
+{0 sunc,1 gastronomy},{17.13356}
+{0 salat,1 gastronomy},{16.464764}
+{0 mozzarell,1 gastronomy},{16.443676}
+{0 ricott,1 gastronomy},{16.338194}
+{0 friptur,1 gastronomy},{16.327807}
+{0 grilat,1 gastronomy},{16.325134}
+{0 naturist,1 gastronomy},{16.325134}
+{0 vinet,1 gastronomy},{16.288343}
+{0 spanac,1 gastronomy},{16.283204}
+{0 rulad,1 gastronomy},{16.042049}
+{0 zucchin,1 gastronomy},{15.95142}
+{0 smooth,1 gastronomy},{15.926693}
+{0 foietaj,1 gastronomy},{15.924069}
+{0 varz,1 gastronomy},{15.893213}
+{0 ﻿humanitas,1 literature},{18.280705}
+{0 zomb,1 literature},{16.675702}
+{0 antolog,1 literature},{16.128613}
+{0 traduc,1 literature},{15.150598}
+{0 polirom,1 literature},{14.527579}
+{0 pricajan,1 literature},{14.482599}
+{0 ledacorint,1 literature},{14.196199}
+{0 nemir,1 literature},{14.066793}
+{0 povestir,1 literature},{13.678418}
+{0 comprom,1 literature},{13.537459}
+{0 oravitzan,1 literature},{13.223354}
+{0 fumurescu,1 literature},{12.852026}
+{0 nautilus,1 literature},{12.852026}
+{0 poetic,1 literature},{12.852026}
+{0 tulan,1 literature},{12.852026}
+{0 recenz,1 literature},{12.592316}
+{0 haulic,1 literature},{12.450961}
+{0 millennium,1 literature},{12.450961}
+{0 poes,1 literature},{12.014979}
+{0 recitest,1 literature},{12.014979}
+{0 ﻿eşarf,1 fashion},{17.519724}
+{0 utilizar,1 fashion},{16.696462}
+{0 alapt,1 fashion},{16.514237}
+{0 bebeluş,1 fashion},{16.514237}
+{0 infant,1 fashion},{16.514237}
+{0 babywearing,1 fashion},{15.488086}
+{0 vandut,1 fashion},{14.365576}
+{0 nounasc,1 fashion},{14.196199}
+{0 reglabil,1 fashion},{14.125994}
+{0 marsupiu,1 fashion},{13.892431}
+{0 riscur,1 fashion},{13.172939}
+{0 patur,1 fashion},{13.0624}
+{0 vintag,1 fashion},{13.031637}
+{0 instruct,1 fashion},{12.89339}
+{0 bavet,1 fashion},{12.852026}
+{0 fermoar,1 fashion},{12.032317}
+{0 culcat,1 fashion},{12.014979}
+{0 quilt,1 fashion},{11.970619}
+{0 poziţ,1 fashion},{11.887845}
+{0 portbeb,1 fashion},{11.537414}
+{0 ﻿didact,1 politics},{22.602272}
+{0 decont,1 politics},{21.802693}
+{0 invaţamant,1 politics},{20.992832}
+{0 deconteaz,1 politics},{20.169569}
+{0 navet,1 politics},{20.169569}
+{0 contravaloar,1 politics},{18.607355}
+{0 contravalor,1 politics},{18.607355}
+{0 premium,1 politics},{18.607355}
+{0 parcurş,1 politics},{17.206457}
+{0 sindic,1 politics},{16.033303}
+{0 consiliu,1 politics},{15.254992}
+{0 lunar,1 politics},{14.826199}
+{0 benzin,1 politics},{13.902567}
+{0 buceg,1 politics},{13.897458}
+{0 jurist,1 politics},{13.892431}
+{0 navete,1 politics},{13.892431}
+{0 stoenic,1 politics},{13.892431}
+{0 excurs,1 politics},{13.453259}
+{0 corespunz,1 politics},{13.433837}
+{0 reşedinţ,1 politics},{13.433837}
+{0 vranc,1 politics},{13.223354}
+{0 basescu,1 politics},{13.179187}
+{0 legitim,1 politics},{13.144689}
+{0 ﻿iisus,1 'religion and spirituality'},{17.731633}
+{0 invier,1 'religion and spirituality'},{17.379408}
+{0 zamisnicu,1 'religion and spirituality'},{17.206457}
+{0 stareţ,1 'religion and spirituality'},{17.04216}
+{0 dejan,1 'religion and spirituality'},{16.696462}
+{0 protopop,1 'religion and spirituality'},{16.696462}
+{0 pilat,1 'religion and spirituality'},{16.530114}
+{0 psalm,1 'religion and spirituality'},{16.530114}
+{0 bucium,1 'religion and spirituality'},{16.338194}
+{0 şinc,1 'religion and spirituality'},{16.325134}
+{0 numeşt,1 'religion and spirituality'},{15.924069}
+{0 brancoveanu,1 'religion and spirituality'},{15.710818}
+{0 faget,1 'religion and spirituality'},{15.710818}
+{0 manastir,1 'religion and spirituality'},{15.618092}
+{0 caucasus,1 'religion and spirituality'},{15.488086}
+{0 vieţuit,1 'religion and spirituality'},{15.488086}
+{0 boholţ,1 'religion and spirituality'},{15.254992}
+{0 iude,1 'religion and spirituality'},{14.803837}
+{0 aşezamant,1 'religion and spirituality'},{14.75351}
+{0 munster,1 'religion and spirituality'},{14.75351}
+{0 proroc,1 'religion and spirituality'},{14.75351}
+{0 manastireanu,1 'religion and spirituality'},{14.482599}
+{0 praznic,1 'religion and spirituality'},{14.196199}
+{0 islam,1 'religion and spirituality'},{14.125994}
