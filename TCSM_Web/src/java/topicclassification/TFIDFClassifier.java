@@ -40,33 +40,28 @@ public class TFIDFClassifier {
         this.givenURL = givenURL;
     }
 
-    public String classifyBlog(String url) {
+    public String classifyBlog(String url) throws MalformedURLException {
         givenURL = url;
         if (!url.equals("")) {
-            try {
 
-                verifiedURL = new URL(url);
-                String domName = verifiedURL.getHost();
-                Domain domain = MainController.getInstance().findDomainByName(domName);
-                if (domain == null) {
-                    System.out.println("Adding new domain in the DB");
-                    //Crawler.getInstance().search(verifiedURL.toString(), 6);
-                    //domain = MainController.getInstance().findDomainByName(domName);
-                }
-
-                Document document = docConstructor.getDocumentToClassify(domName);
-                String content = document.getParsedContent();
-                String[] tokens = content.split("\\s+");
-                System.out.println("Tokens: " + tokens.length);
-                HashMap<Integer, Double> scores = scoreCalc.getScore(tokens);
-                printScores(scores);
-                MainController.getInstance().addDomainCategory(domName, getMaxScore(scores));
-                return getMaxScore(scores);
-
-
-            } catch (MalformedURLException ex) {
-                Logger.getLogger(TFIDFClassifier.class.getName()).log(Level.SEVERE, null, ex);
+            verifiedURL = new URL(url);
+            String domName = verifiedURL.getHost();
+            Domain domain = MainController.getInstance().findDomainByName(domName);
+            if (domain == null) {
+                System.out.println("Adding new domain in the DB");
+                //Crawler.getInstance().search(verifiedURL.toString(), 6);
+                //domain = MainController.getInstance().findDomainByName(domName);
             }
+
+            Document document = docConstructor.getDocumentToClassify(domName);
+            String content = document.getParsedContent();
+            String[] tokens = content.split("\\s+");
+            System.out.println("Tokens: " + tokens.length);
+            HashMap<Integer, Double> scores = scoreCalc.getScore(tokens);
+            printScores(scores);
+            MainController.getInstance().addDomainCategory(domName, getMaxScore(scores));
+            return getMaxScore(scores);
+
 
 
         }

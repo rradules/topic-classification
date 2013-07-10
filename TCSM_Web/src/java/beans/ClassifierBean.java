@@ -83,38 +83,43 @@ public class ClassifierBean implements java.io.Serializable {
     public void classifyBlog() {
         String c = null;
         URL = removeWwwFromUrl(URL);
-        switch (chosenClsf) {
-            case "TF-IDF":
-                result = myClassifier.classifyBlog(URL);
-            case "Naive Bayes":
-                c = "NB";
-                break;
-            case "Naive Bayes Updatable":
-                c = "NBU";
-                break;
-            case "Complement Naive Bayes":
-                c = "CNB";
-                break;
-            case "K Nearest Neighbor":
-                c = "KNN";
-                break;
-            case "Decision tree C4.5":
-                c = "J48";
-                break;
-            case "SVM with Sequential Minimal Optimization":
-                c = "SMO";
-                break;
-            case "MultiLayer Perceptron":
-                c = "MLP";
-                break;
-            default:
-                result = clsfController.classifyPost("CNB", URL);
+        try {
+            switch (chosenClsf) {
+                case "TF-IDF":
+                    result = myClassifier.classifyBlog(URL);
+                case "Naive Bayes":
+                    c = "NB";
+                    break;
+                case "Naive Bayes Updatable":
+                    c = "NBU";
+                    break;
+                case "Complement Naive Bayes":
+                    c = "CNB";
+                    break;
+                case "K Nearest Neighbor":
+                    c = "KNN";
+                    break;
+                case "Decision tree C4.5":
+                    c = "J48";
+                    break;
+                case "SVM with Sequential Minimal Optimization":
+                    c = "SMO";
+                    break;
+                case "MultiLayer Perceptron":
+                    c = "MLP";
+                    break;
+                default:
+                    result = clsfController.classifyPost("CNB", URL);
+            }
+            if (!chosenClsf.equals("TF-IDF")) {
+                result = clsfController.classifyPost(c, URL);
+            }
+            image = "images/piechart.png";
+        } catch (Exception e) {
+            result = "An error occured, please make sure the URL is correct.";
+            image = "";
         }
-        if (!chosenClsf.equals("TF-IDF")) {
-            result = clsfController.classifyPost(c, URL);
-        }
-        image = "images/piechart.png";
-        
+
     }
 
     public List<SelectItem> toSelectItems() {
